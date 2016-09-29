@@ -1,0 +1,14 @@
+{
+    "@odata.context": "/rest/v1/$metadata#TaskService/$entity",
+    "@odata.type": "#Tasks.0.94.0.TaskCollection",
+    "Name": "Task Collection",
+    "Modified": "2012-03-07T14:44",
+    "Links": {
+        "Members@odata.count": 1,
+        "Members": [
+            {
+                "@odata.id": "/redfish/v1/TaskService/1"
+            }
+        ]
+    }
+}

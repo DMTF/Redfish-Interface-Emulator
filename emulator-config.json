@@ -1,0 +1,6 @@
+{
+    "SPEC": "Redfish",
+    "MODE": "Local",
+    "TRAYS": [
+        "./Resources/Systems/1/index.json"    ]
+}

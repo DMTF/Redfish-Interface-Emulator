@@ -1,0 +1,14 @@
+{
+    "@Redfish.Copyright": "Copyright © 2014-2015 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@odata.context": "/redfish/v1/$metadata#Managers",
+    "@odata.id": "/redfish/v1/Managers",
+    "@odata.type": "#ManagerCollection.ManagerCollection",
+    "Name": "Manager Collection",
+    "Members@odata.count": 1,
+    "Members": [
+        {
+            "@odata.id": "/redfish/v1/Managers/BMC"
+        }
+    ],
+    "Oem": {}
+}
