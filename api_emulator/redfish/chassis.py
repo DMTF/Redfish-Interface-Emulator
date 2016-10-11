@@ -1,20 +1,9 @@
-#
-# Copyright (c) 2016 Intel Corporation. All Rights Reserved.
-#
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-#
-# Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-#
-# Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-#
-# Neither the name of the Distributed Management Task Force (DMTF) nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Copyright Notice:
+# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-"""
-Redfish Chassis Collection and Chassis Resource
-"""
+# Redfish Chassis Collection and Chassis Resource
+
 import strgen
 
 from .templates.redfish_chassis import get_chassis_template
@@ -50,12 +39,12 @@ class Chassis(object):
 	    Create a copy of the Chassis dictionary, then fix it up.
         """
         config = self.config.copy()
-    
+
         # Change to random string - 3 letters and 10 digits
         config['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
-    
+
         return config
-    
+
     def update(self,config):
         for key in config:
             self.config[key]=config[key]
@@ -71,7 +60,7 @@ class ChassisCollection(object):
 
         Inserts a placeholder for the Links property.  The Links property will be set
 	when configuration() is called.
-	
+
 	Arguments:
             rest_base - Base URL of the RESTful interface
         """
@@ -90,7 +79,7 @@ class ChassisCollection(object):
 
     def __getitem__(self, idx):
         return self.members[idx - 1]
-    
+
     def update_member(self,rs,idx):
         self.members[idx - 1].update(rs)
 

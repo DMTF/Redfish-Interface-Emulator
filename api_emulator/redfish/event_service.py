@@ -1,20 +1,8 @@
-#
-# Copyright (c) 2016 Intel Corporation. All Rights Reserved.
-#
-# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-#
-# Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
-#
-# Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-#
-# Neither the name of the Distributed Management Task Force (DMTF) nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Copyright Notice:
+# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-"""
-Redfish Event Service and Events
-"""
+# Redfish Event Service and Events
 
 class Subscription(object):
     """
@@ -23,7 +11,7 @@ class Subscription(object):
     def __init__(self, rest_base, idx, dest, types, context):
         """
         Subscription constructor
-        
+
         Arguments:
             rest_base - Base URL of the RESTful interface
             idx - Subscription id
@@ -32,7 +20,7 @@ class Subscription(object):
             context - User name
         """
         self.rb = rest_base
-        
+
         self.config = {
             '@odata.context': '/redfish/v1/$metadata#EventService/Members/Subscriptions/Members/$entity',
             '@odata.id': '/redfish/v1/EventService/Subscriptions/' + str(idx),
@@ -44,7 +32,7 @@ class Subscription(object):
             'Context': context,
             'Protocol': 'Redfish'
         }
-        
+
     @property
     def configuration(self):
         """
@@ -60,13 +48,13 @@ class Subscriptions(object):
     def __init__(self, rest_base):
         """
         Subscription collection constructor
-        
+
         Arguments:
             rest_base - Base URL of the RESTful interface
         """
         self.rb = rest_base
         self.members = []
-        
+
         self.config = {
             '@odata.context': self.rb + '$metadata#EventService/Members/Events/$entity',
             '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
@@ -74,7 +62,7 @@ class Subscriptions(object):
             'Members': {},
             'Members@odata.count': 0
         }
-        
+
     @property
     def configuration(self):
         """
@@ -84,11 +72,11 @@ class Subscriptions(object):
         c['Members@odata.count'] = len(self.members)
         c['Members'] = self.members
         return c
-    
+
     def add_subscription(self, destination, types, context):
         """
         Add subscription to the collection
-        
+
         Arguments:
             destination - Event destination URI
             types - Event types
@@ -97,9 +85,8 @@ class Subscriptions(object):
         sub_id = len(self.members) + 1
         sub = Subscription(self.rb, sub_id, destination, types, context)
         self.members.append('/redfish/v1/EventService/Subscriptions/' + str(sub_id))
-        
-        return sub                
-            
+        return sub
+
 class EventService(object):
     """
     Event Service class
@@ -107,7 +94,7 @@ class EventService(object):
     def __init__(self, rest_base):
         """
         EventService Constructor
-    
+
         Arguments:
             rest_base - Base URL of the RESTful interface
         """
