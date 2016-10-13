@@ -16,13 +16,21 @@ class ResourceDictionary(object):
     def get_resource(self, path):
         obj = resdict[path].configuration
         return obj
-    
+
     def get_object(self, path):
         return resdict[path]
 
     def add_resource(self, path, obj):
         resdict[path] = obj
         return obj
-    
+
     def delete_resource(self, path):
         del resdict[path]
+
+    def print_dictionary(self):
+        for x in resdict:
+            print('Key: ')
+            print(x)
+            print('Value: ')
+            print(resdict[x])
+

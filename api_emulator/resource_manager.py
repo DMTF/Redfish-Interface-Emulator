@@ -56,12 +56,13 @@ class ResourceManager(object):
         # Loads each resource into dictionary
         self.resource_dictionary = ResourceDictionary()
 
-        self.TaskService = load_static('TaskService', 'redfish', rest_base, self.resource_dictionary)
-        self.Managers = load_static('Managers', 'redfish', rest_base, self.resource_dictionary)
-        self.SessionService = load_static('SessionService', 'redfish', rest_base, self.resource_dictionary)
-        self.AccountService = load_static('AccountService', 'redfish', rest_base, self.resource_dictionary)
-        #self.EventService = load_static('EventService', 'redfish', rest_base, self.resource_dictionary)
-        self.Registries = load_static('Registries', 'redfish', rest_base, self.resource_dictionary)
+        self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
+        #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.TelemetryService = load_static('TelemetryService', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Load dynamic resources
         #
@@ -83,7 +84,7 @@ class ResourceManager(object):
         self.remove_method = self._remove_redfish
         self.Systems = ComputerSystemCollection(rest_base)
 
-        self.resource_dictionary.add_resource('Systems', self.Systems)
+#        self.resource_dictionary.add_resource('Systems', self.Systems)
 
         #Event Service
         self.EventService = EventService(rest_base)
@@ -128,7 +129,8 @@ class ResourceManager(object):
                 'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
                 'EventService': {'@odata.id': self.rest_base + 'EventService'},
                 'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems':{'@odata.id':self.rest_base+'Systems'}
+                'Systems':{'@odata.id':self.rest_base+'Systems'},
+                'TelemetryService':{'@odata.id':self.rest_base+'TelemetryService'}
              }
         }
 

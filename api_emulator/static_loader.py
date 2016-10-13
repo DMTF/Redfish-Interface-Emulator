@@ -20,7 +20,7 @@ class Member():
     def configuration(self):
         return self.config
 
-def load_static(name, spec, rest_base, resource_dictionary):
+def load_static(name, spec, mode, rest_base, resource_dictionary):
     """
     Loads the static data starting at the directory ./<spec>/static/<name>, recursively.
 
@@ -36,6 +36,7 @@ def load_static(name, spec, rest_base, resource_dictionary):
     """
     try:
         assert spec.lower() in ['redfish', 'chinook'], 'Unknown spec: ' + spec
+        assert mode.lower() in ['local', 'cloud'], 'Unknown mode: ' + mode
         dirname = os.path.dirname(__file__)
         base_dir = os.path.join(dirname, spec.lower(), 'static')
         index = os.path.join(dirname, spec, 'static', name, 'index.json')
@@ -43,7 +44,7 @@ def load_static(name, spec, rest_base, resource_dictionary):
 
         startDir = os.path.join(dirname, spec, 'static', name)
         for dirName, subdirList, fileList in os.walk(startDir):
-    #	print('Found directory: %s' % dirName)
+            print('Found directory: %s' % dirName)
             for fname in fileList:
                 if fname != 'index.json':
                     continue
@@ -52,14 +53,18 @@ def load_static(name, spec, rest_base, resource_dictionary):
                 index = json.load(f)
                 m = Member(index)
 
-                shortpath = re.sub(os.path.join(dirname, spec, 'static/'), '', path)
+# Create shortpath starting at ServiceRoot
+                if mode == 'Cloud':
+                    shortpath = re.sub(os.path.join(dirname, spec, 'static/'), '', path)
+                else:
+                    relpath = os.path.join(dirname, spec, 'static')
+                    shortpath = os.path.relpath(path, relpath)
+                    shortpath = shortpath.replace('\\', '/')
+
                 shortpath = re.sub('/index.json', '', shortpath)
                 resource_dictionary.add_resource(shortpath, m)
-	# for x in resdict:
-	#	print('Key: ')
-	#	print(x)
-	#	print('Value: ')
-	#	print(resdict[x])
+# debug print
+        resource_dictionary.print_dictionary()
 
     except AssertionError as e:
         raise StaticLoadError(e.message)
