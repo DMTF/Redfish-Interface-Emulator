@@ -44,7 +44,7 @@ def load_static(name, spec, mode, rest_base, resource_dictionary):
 
         startDir = os.path.join(dirname, spec, 'static', name)
         for dirName, subdirList, fileList in os.walk(startDir):
-            print('Found directory: %s' % dirName)
+#            print('Found directory: %s' % dirName)
             for fname in fileList:
                 if fname != 'index.json':
                     continue
@@ -64,7 +64,7 @@ def load_static(name, spec, mode, rest_base, resource_dictionary):
                 shortpath = re.sub('/index.json', '', shortpath)
                 resource_dictionary.add_resource(shortpath, m)
 # debug print
-        resource_dictionary.print_dictionary()
+#        resource_dictionary.print_dictionary()
 
     except AssertionError as e:
         raise StaticLoadError(e.message)

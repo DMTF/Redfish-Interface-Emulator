@@ -19,8 +19,6 @@ from .redfish.computer_system import ComputerSystem
 from .redfish.computer_systems import ComputerSystemCollection
 #from .redfish.chassis import ChassisCollection
 from .exceptions import CreatePooledNodeError, RemovePooledNodeError, EventSubscriptionError
-from .redfish.templates.Managers.class_NIC_1 import NICs_1
-from .ovf import parse_ovf, OVFParser
 from .redfish.event_service import EventService, Subscriptions
 from .redfish.event import Event
 
@@ -56,13 +54,14 @@ class ResourceManager(object):
         # Loads each resource into dictionary
         self.resource_dictionary = ResourceDictionary()
 
-        self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+        # Load Event and Chassis as dynamic resources
         self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
         #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.TelemetryService = load_static('TelemetryService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.Systems = load_static('Systems', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Load dynamic resources
         #
@@ -129,8 +128,7 @@ class ResourceManager(object):
                 'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
                 'EventService': {'@odata.id': self.rest_base + 'EventService'},
                 'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems':{'@odata.id':self.rest_base+'Systems'},
-                'TelemetryService':{'@odata.id':self.rest_base+'TelemetryService'}
+                'Systems':{'@odata.id':self.rest_base+'Systems'}
              }
         }
 
@@ -165,10 +163,8 @@ class ResourceManager(object):
 
         Arguments:
             rs  - The requested pooled node
-            ovf - Flag for whether or not rs an OVF file
         """
         try:
-            #ovf = isinstance(rs, OVFParser)
             pn = ComputerSystem(rs, self.cs_puid_count + 1, self.rest_base, 'Systems')
             self.Systems.add_computer_system(pn)
         except KeyError as e:
