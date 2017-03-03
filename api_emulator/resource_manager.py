@@ -6,7 +6,7 @@
 
 import os
 import json
-import urllib2
+import urllib3
 from uuid import uuid4
 from threading import Thread
 
@@ -24,7 +24,6 @@ from .redfish.event import Event
 
 from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
-
 
 class ResourceManager(object):
     """
@@ -51,7 +50,7 @@ class ResourceManager(object):
         self.time = self.modified
         self.cs_puid_count = 0
 
-        # Loads each resource into dictionary
+        # Loads each resource into dictionary from the mockup
         self.resource_dictionary = ResourceDictionary()
 
         # Load Event and Chassis as dynamic resources
@@ -63,29 +62,28 @@ class ResourceManager(object):
         self.Systems = load_static('Systems', 'redfish', mode, rest_base, self.resource_dictionary)
         self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
 
-        # Load dynamic resources
+        # Load dynamic resources (flask-restful method)
         #
         # Note: Corresponding resource should be commented out, above (if one exists)
         # - populate with a single chassis with Id=Test2
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
         g.api.add_resource(ChassisAPI,   '/redfish/v1/Chassis/<string:ident>')
 #        config = CreateChassis()
-#        out = config.put('Test2')
+#        out = config.put('Chassis2')
 
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
-        # Old method of adding dynamic resources.
-        # These method are defined within this file (see below)
+        # Load dynamic resources (flask method).
+        # Note: The methods are defined later in this file
         #
-        # Create pooled node
+        # Create computer system
         self.create_method = self._create_redfish
         self.remove_method = self._remove_redfish
         self.Systems = ComputerSystemCollection(rest_base)
+        self.resource_dictionary.add_resource('Systems', self.Systems)
 
-#        self.resource_dictionary.add_resource('Systems', self.Systems)
-
-        #Event Service
+        # Event Service
         self.EventService = EventService(rest_base)
         self.EventSubscriptions = Subscriptions(rest_base)
         self.resource_dictionary.add_resource('EventService', self.EventService)

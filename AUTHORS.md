@@ -5,7 +5,7 @@
 * Bartosz Furtak - Intel Corporation
 
 # Other Key Contributions:
-* 
+* George Clement - Intel Corporation
 
 append new contributions to the bottom
 
