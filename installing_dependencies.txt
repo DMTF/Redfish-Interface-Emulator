@@ -1,0 +1,27 @@
+Installing the emulator requires some libraries you can easily get from PIP. 
+python -m pip  install --upgrade pip 
+
+python -m pip  install setuptools
+python -m pip  install markupsafe
+python -m pip  install itsdangerous
+python -m pip  install flask
+python -m pip  install aniso8601
+python -m pip  install pytz
+python -m pip  install flask_httpauth
+python -m pip  install requests
+python -m pip  install flask_restful
+python -m pip  install StringGenerator
+python -m pip  install urllib3
+python -m pip  install markupsafe
+python -m pip  install six
+
+Install notes:
+- Installing flask-0.11.1 will also install Jinja2-2.8 Werkzeug-0.11.11 click-6.6
+- Installing aniso8601-1.2.0 will also install python-dateutil-2.6.0 six-1.10.0
+
+Now that you have all the updates you need, proceed to the emulator directory and start the emulator.py
+Please see the user guide for more information on how the emulator operates.
+
+
+ 
+
