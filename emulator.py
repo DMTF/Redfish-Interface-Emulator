@@ -11,11 +11,13 @@ import argparse
 import traceback
 import xml.etree.ElementTree as ET
 
-import g
+#import g
 
 # Flask Imports
 from flask import Flask, request, make_response, render_template
 from flask.ext.restful import reqparse, Api, Resource
+
+import g
 
 # Emulator Imports
 from api_emulator import __version__
@@ -348,13 +350,13 @@ def main():
     try:
         startup()
     except ConfigurationError as e:
-        print 'Error Loading Trays:', e.message
+        print ('Error Loading Trays:', e.message)
     else:
         kwargs = {'debug': args.debug, 'port': args.port}
         if not args.debug:
             kwargs['host'] = '0.0.0.0'
 
-        print ' * Running in', SPEC, 'mode'
+        print (' * Running in', SPEC, 'mode')
         g.app.run(**kwargs)
 
 if __name__ == '__main__':
