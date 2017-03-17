@@ -19,7 +19,7 @@ class ComputerSystemCollection(object):
         self.systems = {}
 
     def __getitem__(self, idx):
-        print 'Index is...%s...'%idx
+        print ('Index is...%s...'%idx)
         return self.systems[idx]
 
     @property
@@ -30,7 +30,7 @@ class ComputerSystemCollection(object):
         systems = []
 
         for pn in self.systems:
-            print pn
+            print (pn)
             pn = self.systems[pn]
             systems.append({'@odata.id': pn.odata_id})
 
@@ -39,6 +39,7 @@ class ComputerSystemCollection(object):
             '@odata.type': '#ComputerSystem.1.0.0.ComputerSystemCollection',
             '@odata.id': '/redfish/v1/Systems',
             'Name': 'Computer System Collection',
+            
             'Links': {
                 'Members@odata.count': len(systems),
                 'Members': systems

@@ -23,7 +23,9 @@ import g
 from api_emulator import __version__
 from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
-from api_emulator.resource_dictionary import ResourceDictionary
+from api_emulator.resource_dictionary import ResourceDictionary 
+from api_emulator import __version__
+
 # Trays to load into the resource manager
 TRAYS = None
 SPEC = None
@@ -316,12 +318,12 @@ def main():
     with open(CONFIG, 'r') as f:
         config = json.load(f)
 
+    HTTPS = config['HTTPS']
     MODE = config['MODE']
     if(MODE=='Cloud'):
 
         argparser = argparse.ArgumentParser(
-        version=__version__,
-        description='Redfish Interface Emulator - Version: ' + __version__,
+        description='Redfish Manageability API Emulator - Version: ' + __version__,
         epilog='Developed by Intel')
         argparser.add_argument('-port', type=int, default=port,
                            help='Port to run the emulator on. Default define by Foundry')
@@ -332,9 +334,11 @@ def main():
         args = argparser.parse_args()
 
     elif(MODE=='Local'):
+
+
+        print (__version__)
         argparser = argparse.ArgumentParser(
-        version=__version__,
-        description='Redfish Interface Emulator - Version: ' + __version__,
+        description='Redfish Manageability API Emulator - Version: ' + __version__,
         epilog='Developed by Intel')
 
         argparser.add_argument('-port', type=int, default=5000,
@@ -344,7 +348,6 @@ def main():
                                 ' run in debug mode, then the emulator will only'
                                 'be ran locally.')
 
-
         args = argparser.parse_args()
 
     try:
@@ -352,7 +355,12 @@ def main():
     except ConfigurationError as e:
         print ('Error Loading Trays:', e.message)
     else:
-        kwargs = {'debug': args.debug, 'port': args.port}
+        if (HTTPS == 'Enable'):
+            context = ('server.crt', 'server.key')
+            kwargs = {'debug': args.debug, 'port': args.port, 'ssl_context' : context}
+        else:
+            kwargs = {'debug': args.debug, 'port': args.port}
+
         if not args.debug:
             kwargs['host'] = '0.0.0.0'
 
@@ -360,6 +368,7 @@ def main():
         g.app.run(**kwargs)
 
 if __name__ == '__main__':
+    
     main()
 else:
     startup()

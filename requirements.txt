@@ -1,5 +1,4 @@
 Flask
-Flask-RESTful
 aniso8601
 itsdangerous
 Jinja2
@@ -9,4 +8,6 @@ requests
 six
 Werkzeug
 StringGenerator
-flask_httpauth
+flask_restful
+urllib3
+flask_httpauth 
