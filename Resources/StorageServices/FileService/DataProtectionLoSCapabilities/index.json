@@ -1,0 +1,34 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#DataProtectionLoSCapabilites.DataProtectionLoSCapabilites",
+  "@odata.id": "/redfish/v1/StorageServices/1/DataProtectionLoSCapabilites",
+  "@odata.type": "#DataProtectionLoSCapabilites_1_0_0.DataProtectionLoSCapabilites",
+  "Name": "DataProtectionLoSCapabilites",
+    "SupportedRecoveryGeographicObjectives": [
+      "Server",
+      "Rack",
+      "RackGroup",
+      "Row",
+      "DataCenter",
+      "Region"
+    ],
+    "SupportedRecoveryPointObjectiveSeconds": ["PT0S",
+        "PT4S",
+        "PT1M",
+        "PT1H"],
+    "SupportedRecoveryTimeObjectives": [
+      "Immediate",
+      "Online",
+      "Nearline",
+      "Offline"
+    ],
+    "SupportedReplicaTypes": [
+      "Mirror",
+      "Clone",
+      "Delta"
+    ],
+    "MinimumLifetime": "PT1M",
+    "SupportsIsolated": true,
+    "SupportedReplicaOptions": [],
+    "SupportedLocations": []
+  }

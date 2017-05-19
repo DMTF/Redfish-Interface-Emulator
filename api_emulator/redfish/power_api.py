@@ -10,6 +10,7 @@ import sys, traceback
 from flask import Flask, request, make_response, render_template
 from flask.ext.restful import reqparse, Api, Resource
 
+from constants import PATHS
 from .templates.power import get_power_template
 
 # config is instantiated by CreatePower()
@@ -21,10 +22,12 @@ class PowerAPI(Resource):
     # Can't initialize the resource since the URI variables are not in the argument list.
     # Need the variables to set the Odata.id properties
     def __init__(self):
-        print ('PowerAPI init called')
+        self.root = PATHS['Root']
+        self.chassis = PATHS['Chassis']['path']
+        self.power = PATHS['power']
 
     # HTTP GET
-    def get(self,ch_id):
+    def get(self, ch_id):
         try:
             global config
             resp = config, 200

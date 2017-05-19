@@ -49,7 +49,6 @@ class Chassis(object):
         for key in config:
             self.config[key]=config[key]
 
-
 class ChassisCollection(object):
     """
     ChassisCollection class based on ChassisCollection.1.0.0.ChassisCollection

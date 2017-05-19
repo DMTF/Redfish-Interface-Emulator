@@ -1,0 +1,75 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#Volume.Volume",
+  "@odata.id": "/redfish/v1/StorageServices/1/Volumes/61001234876545676100123487654567",
+  "@odata.type": "#Volume_1_0_0.Volume",
+  "Name": "Volume 1",
+  "Id": "61001234876545676100123487654567",
+  "Description": "Bob's Pizza Recipe",
+  "Identifiers": [
+    {
+      "DurableNameFormat": "NAA6",
+      "DurableName": "61001234876545676100123487654567"
+    }
+  ],
+  "Manufacturer": "SuperDuperStorageProvider",
+  "Model": "Drive Model string",
+  "Status": {
+    "State": "Enabled",
+    "Health": "Warning"
+  },
+  "AccessCapabilities": [
+    "Read",
+    "Write"
+  ],
+  "BlockSizeBytes": 512,
+  "LowSpaceWarningThresholdPercent": [
+    70,
+    80,
+    90,
+    null,
+    null
+  ],
+  "CapacitySources": [
+    {
+      "ProvidedCapacity": {
+        "ConsumedBytes": 70390755885056,
+        "AllocatedBytes": 140759500062720,
+        "GuaranteedBytes": 17592722915328,
+        "ProvisionedBytes": 565148976676864
+      },
+      "Links": {
+        "ClassOfService": {
+          "@odata.id": "/redfish/v1/StorageServices/1/ClassesOfService/GoldBoston"
+        },
+        "ProvidingPool": {
+           "Members": [{"@odata.id": "/redfish/v1/StorageServices/1/StoragePools/BasePool"}] 
+        },
+        "ProvidingVolume": null
+      }
+    }
+  ],
+  "Capacity": {
+    "Data": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 10737418240,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 1099511627776
+    },
+    "Metadata": {
+      "ConsumedBytes": 536870912,
+      "AllocatedBytes": 536870912,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 2199023255552
+    },
+    "Snapshot": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 21474836480,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 2199023255552
+    }
+  },
+  "Links": {
+    "ConsumingResource": null
+  }
+}

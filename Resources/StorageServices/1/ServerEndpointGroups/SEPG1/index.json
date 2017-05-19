@@ -1,0 +1,12 @@
+{
+  "@Redfish.Copyright": "Copyright © 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/StorageService/1/ServerEndpointGroups/SEPG1",
+  "@odata.id": "/redfish/v1/StorageService/1/ServerEndpointGroups/SEPG1",
+  "@odata.type": "#EndpointGroup.v1_0_0.EndpointGroup",
+  "Name": "Server EP group",
+  "Description": "Group of target endpoints for Storage Server 1",
+  "AccessState": "Optimized",
+  "TargetPortGroupIdentifier": 3,
+  "Preferred": true,
+  "Endpoints": {"@odata.id": "/redfish/v1/StorageServices/1/ServerEndpointGroups/SEPG1/EPC1"}
+}

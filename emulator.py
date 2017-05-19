@@ -20,11 +20,11 @@ from flask.ext.restful import reqparse, Api, Resource
 import g
 
 # Emulator Imports
-from api_emulator import __version__
 from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary 
 from api_emulator import __version__
+from scheduler import *
 
 # Trays to load into the resource manager
 TRAYS = None
@@ -36,6 +36,7 @@ CONFIG = 'emulator-config.json'
 # Base URL of the RESTful interface
 REST_BASE = '/redfish/v1/'
 g.rest_base = REST_BASE
+
 
 # Creating the ResourceManager
 resource_manager = None
@@ -352,6 +353,7 @@ def main():
 
     try:
         startup()
+        #schedule()
     except ConfigurationError as e:
         print ('Error Loading Trays:', e.message)
     else:
@@ -368,7 +370,6 @@ def main():
         g.app.run(**kwargs)
 
 if __name__ == '__main__':
-    
     main()
 else:
     startup()

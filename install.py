@@ -103,21 +103,21 @@ def main():
     global _dependencies
 
     if len(sys.argv) == 2 and (sys.argv[1] == '-h' or sys.argv[1] == '--help'):
-        print 'Checks if a given dependency has been installed and installs '\
-              'it if it hasn\'t. \n\nThe following dependencies are checked:'
+        print ('Checks if a given dependency has been installed and installs '\
+              'it if it hasn\'t. \n\nThe following dependencies are checked:')
         for dep in _dependencies:
-            print '\t', dep
+            print ('\t', dep)
     else:
         try:
             for dep in _dependencies:
                 if not dep.installed:
-                    print 'Installing dependency', dep
+                    print ('Installing dependency', dep)
                     dep.install()
                 else:
-                    print 'Dependency: "{0}" is already installed'.format(dep)
+                    print ('Dependency: "{0}" is already installed'.format(dep))
         except InstallError as e:
-            print 'Error installing dependencies'
-            print e.message
+            print ('Error installing dependencies')
+            print (e.message)
 
 
 if __name__ == '__main__':

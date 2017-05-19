@@ -1,0 +1,74 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#Volume.Volume",
+  "@odata.id": "/redfish/v1/StorageServices/1/Volumes/4",
+  "@odata.type": "#Volume_1_0_0.Volume",
+  "Name": "Volume 4",
+  "Id": "4",
+  "Description": "Volume with remote replica",
+  "Identifiers": [
+    {
+      "DurableNameFormat": "NAA6",
+      "DurableName": "65456765456761001244076100123487"
+    }
+  ],
+  "Manufacturer": "SuperDuperSSD",
+  "Model": "Drive Model string",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "AccessCapabilities": [
+    "Read",
+    "Write",
+    "Append",
+    "Streaming"
+  ],
+  "BlockSizeBytes": 512,
+  "CapacitySources": [
+    {
+      "ProvidedCapacity": {
+        "ConsumedBytes": 70390755885056,
+        "AllocatedBytes": 140759500062720,
+        "GuaranteedBytes": 17592722915328,
+        "ProvisionedBytes": 565148976676864
+      },
+      "Links": {
+        "ClassOfService": {
+          "@odata.id": "/redfish/v1/StorageServices/1/ClassesOfService/GoldBoston"
+        },
+        "ProvidingPool": {
+            "Members": [{"@odata.id": "/redfish/v1/StorageServices/1/StoragePools/BasePool"}]
+        },
+        "ProvidingVolume": null
+      }
+    }
+  ],
+  "Capacity": {
+    "Data": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 10737418240,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 1099511627776
+    },
+    "Metadata": {
+      "ConsumedBytes": 536870912,
+      "AllocatedBytes": 536870912
+    }
+  },
+  "ReplicaInfos": [{
+	"ReplicaState": "Synchronized",
+	"ReplicaProgressStatus": "Completed",
+	"ReplicaRole": "Source",
+	"Replica": {
+	   "@odata.id":	"https://10.1.1.13/redfish/v1/StorageServices/A/Volume/ABC"
+	}
+  }
+  ],
+  "Links": {
+    "AllocatedPool": null,
+    "StorageGroup": {
+	"@odata.id": "/redfish/v1/StorageServices/1/StorageGroups/2"
+    }
+  }
+}

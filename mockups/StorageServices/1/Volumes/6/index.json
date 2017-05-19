@@ -1,0 +1,78 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageVolume.StorageVolume",
+  "@odata.id": "/redfish/v1/StorageServices/1/StorageVolumes/6",
+  "@odata.type": "#StorageVolume_1_0_0.StorageVolume",
+  "Name": "TP Volume 6",
+  "Id": "6",
+  "Description": "",
+  "Identifiers": [
+    {
+      "DurableNameFormat": "NAA6",
+      "DurableName": "65456715451761001244076100123487"
+    }
+  ],
+  "Manufacturer": "SuperDuperSSD",
+  "Model": "Drive Model string",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "AccessCapabilities": [
+    "Read",
+    "Write",
+    "Append",
+    "Streaming"
+  ],
+  "BlockSizeBytes": 512,
+  "CapacitySources": [
+    {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 10737418240,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 1099511627776,
+      "IsThinProvisioned": true,
+      "Links": {
+        "ClassOfService": {
+          "@odata.id": "/redfish/v1/StorageServices/1/ClassesOfService/SilverBoston"
+        },
+        "ProvidingPool": {
+            "Members": [{"@odata.id": "/redfish/v1/StorageServices/1/StoragePools/SpecialPool"}]     
+        },
+        "ProvidingVolume": null
+      }
+    }
+  ],
+  "Capacity": {
+    "Data": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 10737418240,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 1099511627776
+    },
+    "Metadata": {
+      "ConsumedBytes": 536870912,
+      "AllocatedBytes": 536870912
+    },
+    "Snapshots": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 21474836480,
+      "GuaranteedBytes": 536870912,
+      "ProvisionedBytes": 2199023255552
+    }
+  },
+  "ReplicaInfos": [{
+	"ReplicaState": "Synchronized",
+	"ReplicaProgressStatus": "Completed",
+	"ReplicaRole": "Target",
+	"@odata.id": {
+	  "Replica": "https://10.1.22.18/redfish/v1/StorageServices/X/Volumes/A1x2"
+	}
+  }],
+  "Links": {
+    "AllocatedPool": null,
+	"StorageGroup": {
+		"@odata.id": "/redfish/v1/StorageServices/1/StorageGroups/3"
+	}
+  }
+}

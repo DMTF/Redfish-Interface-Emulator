@@ -1,0 +1,10 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/Simple1/ServerEndpointGroups/1/EPC",
+  "@odata.id": "/redfish/v1/StorageServices/Simple1/ServerEndpointGroups/1/EPC",
+  "@odata.type": "#EndpointCollection.v1_0_0.EndpointCollection",
+  "Name": "EPC",
+  "Description": "Group of target endpoints for simple1",
+  "Members@odata.count": 1,
+  "Members": [{"@odata.id": "/redfish/v1/StorageServices/Simple1/Endpoints/2"}]  
+}

@@ -1,0 +1,90 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageGroup.StorageGroup",
+  "@odata.id": "/redfish/v1/Storage/1/Storage/FileSystems/FS1",
+  "@odata.type": "#FileSystem.FileSystem",
+  "Id": "FS1",
+  "Name": "Root",
+  "Description": "Root FileSystem, not replicated.",
+  "BlockSizeBytes": 8192,
+  "Capacity": {
+    "Data": {
+        "ConsumedBytes":     500000000000,
+        "AllocatedBytes":   1000000000000,
+        "ProvisionedBytes": 3000000000000
+    },
+    "MetaData": {
+        "ConsumedBytes": 0,
+        "AllocatedBytes": 0,
+        "ProvisionedBytes": 0
+    },
+    "Snapshot": {
+        "ConsumedBytes": 0,
+        "AllocatedBytes": 0,
+        "ProvisionedBytes": 0
+    }
+  },
+  "CapacitySources": [
+    {
+        "ProvidedCapacity": {
+            "Data": {
+                "ConsumedBytes":     500000000000,
+                "AllocatedBytes":   1000000000000,
+                "ProvisionedBytes": 3000000000000
+            },
+            "MetaData": {
+                "ConsumedBytes": 0,
+                "AllocatedBytes": 0,
+                "ProvisionedBytes": 0
+            },
+            "Snapshot": {
+                "ConsumedBytes": 0,
+                "AllocatedBytes": 0,
+                "ProvisionedBytes": 0
+            }
+        },
+        "ProvidedClassOfService": {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/GoldBoston"},
+		"ProvidingPools": {"@odata.id": "/redfish/v1/StorageServices/FileService/StoragePools/SpecialPool/ProvidingPools"}
+    }
+  ],
+  "LowSpaceWarningThresholdPercents": [ 60, 90 ],
+  "AccessCapabilities": ["read", "Write"],
+  "CaseSensitive": false,
+  "CasePreserved": false,
+  "CharacterCodeSet": ["ASCII", "Unicode"],
+  "MaxFileNameLengthBytes": 256,
+  "ClusterSizeBytes": 256,
+  "FileSystemType": "CIFS",
+  "FileSystemPersistenceType": "Persistent",
+  "ResizeIncrementBytes": 256,
+  "ExportedShares": [{ 
+        "SharedFilePath": "/Shares/MyShare",
+        "Name": "MyShare",
+        "FileSharingProtocols": ["SMBv3_1_1"],
+        "Status": {
+            "State": "Enabled",
+            "Health": "OK",
+            "HealthRollUp": "OK"
+        },
+        "DefaultReadAccess": true,
+        "DefaultWriteAccess": true,
+        "ExecuteSupport": true,
+        "RootAccess": true,
+        "CASupported": true,
+        "Links": {
+		  "EthernetInterfaces": 
+			{"@odata.id": "/redfish/v1/StorageServices/FileServer/EthernetInterfaces/1"},
+		"FileSystem": 
+			{"@odata.id": "/redfish/v1/StorageServices/FileService/FileSystems/FS1"}
+		}
+    }],
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK",
+    "HealthRollUp": "OK"
+  },
+  "ClassOfService": {
+    "Members": [{"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/GoldBoston"}]
+  },
+  "Links": {}
+}

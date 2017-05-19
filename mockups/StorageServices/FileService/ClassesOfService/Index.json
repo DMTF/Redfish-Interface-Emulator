@@ -1,0 +1,16 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/FileService/ClassesOfService",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService",
+  "@odata.type": "#ClassOfServiceCollection.v1_0_0.ClassOfServiceCollection",
+  "Name": "ClassesOfService",
+  "Members@odata.count": 6,
+  "Members": [
+        { "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Gold"},
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Silver"},
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonBunker"},
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonGoldJaw"},
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonSilverJaw" },
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonVMs"}
+     ]
+}

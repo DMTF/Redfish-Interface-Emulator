@@ -1,0 +1,44 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/1/Storage/StorageGroups/3",
+  "@odata.id": "/redfish/v1/StorageServices/1/StorageGroups/3",
+  "@odata.type": "#StorageGroup_1_0_0.StorageGroup",
+  "Id": "3",
+  "Name": "SG_abc_456",
+  "Description": "System SATA",
+  "ElementName": "MyGroup",
+  "GroupExposed": true,
+  "GroupConsistent": true,
+  "IOAccessType": "ReadWrite",
+  "AccessState": "Active/Optimized",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK",
+    "HealthRollUp": "OK"
+  },
+  
+  "ReplicaInfos": [{
+	"ReplicaState": "Failedover",
+	"ReplicaType": "Snapshot",
+	"ReplicaPriority": "Default",
+	"ReplicaRecoveryMode": "Manual",
+	"ReplicaUpdateMode": "Asynchronous",
+	"ReplicaRole": "Target",
+	"Replica": {"@odata.id": "https://10.23.11.12/redfish/v1/StorageServices/X/StorageGroups/10"}
+  },{
+	"ReplicaState": "Failedover1",
+	"ReplicaType": "Snapshot1",
+	"ReplicaPriority": "Default1",
+	"ReplicaRecoveryMode": "Manual1",
+	"ReplicaUpdateMode": "Asynchronous1",
+	"ReplicaRole": "Target1",
+	"Replica": {"@odata.id": "https://10.23.11.12/redfish/v1/StorageServices/X/StorageGroups/10"}
+  }],
+  "ServerEndpointGroups": [],
+  "ClientEndpointGroups": [],
+  "Volumes": {"@odata.id": "/redfish/v1/StorageServices/1/StorageGroups/3/Volumes"},
+  "Links": {
+    "ParentStorageGroups": [],
+    "ChildStorageGroups": []
+  }
+}

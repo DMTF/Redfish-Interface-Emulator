@@ -1,0 +1,130 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/FileService/ClassesOfService/BostonVMs",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonVMs",
+  "@odata.type": "#ClassOfService_1_0_0.ClassOfService",
+  "Id": "BostonVMs with snaps to Providence",
+  "Name": "BostonVMs",
+  "Description": "Boston VMs",
+  "ClassOfServiceVersion": "01.00.00",
+  "LinesOfService": {
+      "IOConnectivityLineOfService": {
+        "Name": "FiberChannel",
+        "AccessProtocol": "FC",
+        "MaxSupportedIoOperationsPerSecond": null
+      },
+      "IOPerformanceLineOfService": {
+        "Name": "Heavy-OLTP-HDD",
+        "IoOperationsPerSecondIsLimitedBoolean": "false",
+        "SamplePeriod": "PT1M",
+        "MaxIoOperationsPerSecondPerTerabyte": 83,
+        "AverageIoOperationLatencyMicroseconds": 8000,
+        "IOWorkload": {
+            "Name": "Duplicon:OLTP"
+        }
+      },
+      "DataProtectionLineOfService": [
+        {
+          "Name": "Providence-Weekly-Snapshot",
+          "RecoveryGeographicObjective": "Region",
+          "RecoveryPointObjective": "P7D",
+          "RecoveryTimeObjective": "Nearline",
+          "ReplicaType": "Delta",
+          "MinLifetime": "P3M",
+          "IsIsolated": true,
+          "Schedule": {
+            "InitialStartTime": "0300-0500",
+            "RecurrenceInterval": "P1W",
+            "EnabledDaysOfWeek": [
+              "Saturday"
+            ]
+          },
+          "ReplicaClassOfService": {
+            "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Silver"
+          },
+          "ReplicaAccessLocation": {
+            "Country": "",
+            "Territory": "",
+            "State": "",
+            "City": "Providence",
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PostalCode": "",
+            "Building": "",
+            "Room": "",
+            "Row": "",
+            "Rack": "",
+            "Shelf": "",
+            "Item": "",
+            "GPSCoords": "",
+            "OtherLocationInfo": ""
+          }
+        },
+        {
+          "Name": "Providence-Monthly-Clone",
+          "RecoveryGeographicObjective": "Region",
+          "RecoveryPointObjective": "P30D",
+          "RecoveryTimeObjective": "Nearline",
+          "ReplicaType": "Clone",
+          "MinLifetime": "P4M",
+          "IsIsolated": true,
+          "Schedule": {
+            "InitialStartTime": "0400-0500",
+            "RecurrenceInterval": "P1M",
+            "EnabledDaysOfWeek": [
+              "Sunday"
+            ],
+            "EnabledDaysOfMonth": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+             ],
+            "EnabledMonthsOfYear": []
+          },
+          "ReplicaClassOfService": {
+            "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Silver"
+          },
+          "ReplicaAccessLocation": {
+            "Country": "",
+            "Territory": "",
+            "State": "",
+            "City": "Providence",
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PostalCode": "",
+            "Building": "",
+            "Room": "",
+            "Row": "",
+            "Rack": "",
+            "Shelf": "",
+            "Item": "",
+            "GPSCoords": "",
+            "OtherLocationInfo": ""
+          }
+        }
+      ],
+      "DataSecurityLineOfService": {
+        "Name": "SecureData",
+        "MediaEncryptionStrength": "Bits_256",
+        "ChannelEncryptionStrength": "Bits_128",
+        "HostAuthenticationType": "Ticket",
+        "UserAuthenticationType": "Password",
+        "SecureChannelProtocol": "TLS",
+        "AntivirusScanPolicies": [],
+        "AntivirusEngineProvider": null,
+        "DataSanitizationPolicy": "CryptographicErase"
+      },
+      "DataStorageLineOfService": {
+        "Name": "HA-Thin",
+        "RecoveryTimeObjective": 0,
+        "ProvisioningPolicy": "Thin",
+        "SpaceEfficient": true
+      }
+   }
+}

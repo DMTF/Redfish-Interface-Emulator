@@ -1,0 +1,108 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#ComputerSystem.ComputerSystem",
+  "@odata.id": "/redfish/v1/StorageSystems/Complex",
+  "@odata.type": "#ComputerSystem.1.0.0.ComputerSystem",
+  "Id": "complex",
+  "Name": "My Storage System",
+  "SystemType": "Physical",
+  "AssetTag": "free form asset tag",
+  "Manufacturer": "Manufacturer Name",
+  "Model": "Model Name",
+  "SKU": "",
+  "SerialNumber": "2M220100SL",
+  "PartNumber": "",
+  "Description": "Description of server",
+  "Identifiers": {
+	"UUID": "00000000-0000-0000-0000-000000001234"
+  },
+  "HostName": "storsrv89",
+  "HostingRole": "StorageServer",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK",
+    "HealthRollUp": "OK"
+  },
+
+  "IndicatorLED": "Lit",
+  "PowerState": "On",
+  "Boot": {
+    "BootSourceOverrideEnabled": "Once",
+    "BootSourceOverrideTarget": "Pxe",
+    "BootSourceOverrideTarget@Redfish.AllowableValues": [
+      "None",
+      "BiosSetup",
+      "UefiTarget"
+    ],
+    "UefiTargetBootSourceOverride": "uefi device path"
+  },
+  "BiosVersion": "Xxxx",
+  "ProcessorSummary": {
+    "Count": 2,
+    "Model": "Multi-Core Broadcom(R) ARM processor Xxxx Series",
+    "Status": {
+      "State": "Enabled",
+      "Health": "OK",
+      "HealthRollUp": "OK"
+    }
+  },
+  "MemorySummary": {
+    "TotalSystemMemoryGiB": 16,
+    "Status": {
+      "State": "Enabled",
+      "Health": "OK",
+      "HealthRollUp": "OK"
+    }
+  },
+  "Processors": {
+    "@odata.id": "/redfish/v1/StorageSystems/Complex/Processors"
+  },
+  "EthernetInterfaces": {
+    "@odata.id": "/redfish/v1/StorageSystems/Complex/EthernetInterfaces"
+  },
+  "LogServices": {
+    "@odata.id": "/redfish/v1/StorageSystems/Complex/Logs"
+  },
+  "HostedServices": {
+    "StorageServices": [
+        {"@odata.id": "/redfish/v1/StorageSystems/Complex/StorageServices"}
+    ],
+    "Oem": {}
+  },
+  "Links": {
+    "Chassis": [
+      {
+        "@odata.id": "/redfish/v1/Chassis/Blade1"
+      }
+    ],
+    "ManagedBy": [
+      {
+        "@odata.id": "/redfish/v1/Managers/1"
+      }
+    ],
+    "PoweredBy": [
+      {
+        "@odata.id": "/redfish/v1/Chassis/Enc1/Power#/PowerSupplies/0"
+      }
+    ],
+    "CooledBy": [
+      {
+        "@odata.id": "/redfish/v1/Chassis/Enc1/Thermal#/Fans"
+      }
+    ],
+    "Oem": {}
+  },
+  "Actions": {
+     "#ComputerSystem.Reset": {
+         "target": "/redfish/v1/Systems/3/Actions/ComputerSystem.Reset",
+           "ResetType@Redfish.AllowableValues": [
+              "On",
+              "ForceOff",
+              "GracefulShutdown",
+              "ForceRestart",
+              "PushPowerButton"
+            ]
+        }
+    },
+  "Oem": {}
+}

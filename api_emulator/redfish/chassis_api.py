@@ -5,49 +5,50 @@
 # Collection API  GET, POST
 # Singleton  API  GET, PUT, PATCH, DELETE
 
+import json
+import traceback
+
+from flask import request
+from flask.ext.restful import Resource
+
 import g
-
-import sys, traceback
-from flask import Flask, request, make_response, render_template
-from flask.ext.restful import reqparse, Api, Resource
-
+from constants import PATHS
+from .power_api import PowerAPI, CreatePower
 from .templates.chassis import get_Chassis_template
 from .thermal_api import ThermalAPI, CreateThermal
-from .power_api import PowerAPI, CreatePower
-
 
 members = []
 member_ids = []
 foo = 'false'
 INTERNAL_ERROR = 500
 
-#Chassis API
+
+# Chassis API
 class ChassisAPI(Resource):
     # Can't initialize the resource since the URI variables are not in the argument list.
     # Need the variables to set the Odata.id properties
     def __init__(self):
-        print ('ChassisAPI init called')
+        self.root = PATHS['Root']
+        self.chassis = PATHS['Chassis']['path']
 
     # HTTP GET
-    def get(self,ident):
+    def get(self, ident):
+        path = '{}{}{}/{}'.format(self.root, self.chassis, ident, 'index.json')
         try:
-            # Find the entry with the correct value for Id
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-            config = cfg
-            resp = config, 200
-        except Exception:
+            chassis_json = open(path)
+            data = json.load(chassis_json)
+        except Exception as e:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
-        return resp
+            raise Exception("Unable read file because of following error::{}".format(e))
+
+        return data
 
     # HTTP PUT
     # - Create the resource (since URI variables are avaiable)
     # - Update the members and members.id lists
     # - Attach the APIs of subordinate resources (do this only once)
     # - Finally, create an instance of the subordiante resources
-    def put(self,ident):
+    def put(self, ident):
         print ('ChassisAPI put called')
         try:
             global config
@@ -116,11 +117,13 @@ class ChassisAPI(Resource):
 # Chassis Collection API (Chassis has the same form for singular and plural)
 class ChassisCollectionAPI(Resource):
     def __init__(self):
+        self.root = PATHS['Root']
+        self.chassis = PATHS['Chassis']['path']
         self.rb = g.rest_base
         self.config = {
             '@odata.context': self.rb + '$metadata#ChassisCollection',
             '@odata.id': self.rb + 'ChassisCollection',
-            '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
+            '@odata.type': '#ChassisCollesdfdsfdsction.1.0.0.ChassisCollection',
             'Name': 'Chassis Collection',
             'Links': {}
         }
@@ -128,12 +131,15 @@ class ChassisCollectionAPI(Resource):
         self.config['Links']['Members'] = member_ids
 
     def get(self):
+        path = '{}{}{}'.format(self.root, self.chassis, 'index.json')
         try:
-            resp = self.config, 200
-        except Exception:
+            chassis_json = open(path)
+            data = json.load(chassis_json)
+        except Exception as e:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
-        return resp
+            raise Exception("Unable read file because of following error::{}".format(e))
+
+        return data
 
     # The POST command should be for adding multiple instances. For now, just add one.
     # Todo - Fix so the config can be passed in the data.
