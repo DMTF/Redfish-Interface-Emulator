@@ -1,0 +1,9 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/FileService/StoragePools/SpecialPool/AllocatedVolumes",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/StoragePools/SpecialPool/AllocatedVolumes",
+  "@odata.type": "#VolumeCollection_1_0_0.VolumeCollection_1_0_0",
+  "Name": "AllocatedVolumes",
+  "Members@odata.count": 1,
+  "Members": [{"@odata.id": "/redfish/v1/StorageServices/FileService/Volumes/65456765456761001234876100123487"}]
+}

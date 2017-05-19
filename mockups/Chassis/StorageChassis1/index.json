@@ -1,0 +1,43 @@
+{
+  "@Redfish.Copyright": "Copyright © 2014-2015 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#Chassis/Members/$entity",
+  "@odata.id": "/redfish/v1/Chassis/StorageChassis1",
+  "@odata.type": "#Chassis.1.0.0.Chassis",
+  "Id": "1",
+  "Name": "Storage System Chassis",
+  "ChassisType": "RackMount",
+  "Manufacturer": "ManufacturerName",
+  "Model": "ProductModelName",
+  "SKU": "",
+  "SerialNumber": "XXXYYY",
+  "PartNumber": "",
+  "AssetTag": "CustomerWritableThingy",
+  "IndicatorLED": "Lit",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "Thermal": {
+    "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Thermal"
+  },
+  "Power": {
+    "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power"
+  },
+  "Links": {
+    "StorageSystems": [
+      {
+        "@odata.id": "/redfish/v1/StorageSystems/Simple"
+      },
+	  {
+        "@odata.id": "/redfish/v1/StorageSystems/Complex"
+      }
+    ],
+    "ManagedBy": [
+      {
+        "@odata.id": "/redfish/v1/Managers/StorageManager1"
+      }
+    ],
+    "Oem": {}
+  },
+  "Oem": {}
+}

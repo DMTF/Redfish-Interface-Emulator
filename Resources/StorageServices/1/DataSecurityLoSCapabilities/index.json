@@ -1,0 +1,25 @@
+{
+	"@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+	"@odata.context": "/redfish/v1/$metadata#DataSecurityLoSCapabilities.DataSecurityLoSCapabilities",
+	"@odata.id": "/redfish/v1/StorageServices/1/DataSecurityLoSCapabilities",
+	"@odata.type": "#DataSecurityLoSCapabilities_1_0_0.DataSecurityLoSCapabilities",
+	"Name": "DataSecurityLoSCapabilities",
+	"SupportedMediaEncryptionStrengthBits": [0, 128, 256],
+	"SupportedHostAuthentication": ["Password"],
+	"SupportedUserAuthentication": ["None",	"Ticket"],
+	"SupportedSecureChannel": ["None", "TLS"],
+	"SupportedSecureChannelStrengthBits": [0, 128, 256],
+	"SupportedAntivirusScanPolicies": [],
+	"SupportedAntivirusEngineProviders": [],
+	"SupportedDataSanitization": ["None", "Clear", "CryptographicErase"],
+    "SupportedDataSecurityLinesOfService": [{
+		"MediaEncryptionStrength": "Bits_256",
+		"ChannelEncryptionStrength": "Bits_128",
+		"HostAuthenticationType": "Ticket",
+		"UserAuthenticationType": "Password",
+		"SecureChannelProtocol": "TLS",
+		"AntivirusScanPolicies": [],
+		"AntivirusEngineProvider": null,
+		"DataSanitizationPolicy": "CryptographicErase"
+	}]
+}

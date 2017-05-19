@@ -1,0 +1,13 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageService.StorageService",
+  "@odata.id": "/redfish/v1/StorageSystems/Complex/StorageServices",
+  "@odata.type": "#StorageServiceCollection.1.0.0.StorageServiceCollection",
+  "Name": "Storage Service Collection",
+  "Members@odata.count": 1,
+  "Members": [
+    {
+      "@odata.id": "/redfish/v1/StorageServices/1"
+    }
+  ]
+}

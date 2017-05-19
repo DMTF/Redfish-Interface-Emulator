@@ -179,3 +179,8 @@ def get_power_template(rest_base, ident):
     c['PowerSupplies'][2]['@odata.id']=c['PowerSupplies'][2]['@odata.id'].format(rb=rest_base,ch_id=ident)
 
     return c
+
+
+if __name__ == '__main__':
+    data = get_power_template('/redfish/v1/', 20)
+    print ("DDDDDDDDDDDDD-----{}".format(data))

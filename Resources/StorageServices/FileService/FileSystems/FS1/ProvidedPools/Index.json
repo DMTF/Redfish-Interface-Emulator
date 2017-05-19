@@ -1,0 +1,9 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/FileService/FileSystems/FS1/ProvidedPools",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/FileSystems/FS1/ProvidedPools",
+  "@odata.type": "#StoragePoolCollection.v1_0_0.StoragePoolCollection",
+  "Name": "ProvidedPools",
+  "Members@odata.count": 1,
+  "Members": [{"@odata.id": "/redfish/v1/StorageServices/FileService/StoragePools/SpecialPool"}]
+}

@@ -1,0 +1,108 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/FileService/ClassesOfService/BostonGoldJaw",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/BostonGoldJaw",
+  "@odata.type": "#ClassOfService_1_0_0.ClassOfService",
+  "Id": "BostonGoldJaw",
+  "Name": "BostonGoldJaw",
+  "Description": "Boston with Open Jaw config to Providence and Dallas",
+  "ClassOfServiceVersion": "01.00.00",
+  "LinesOfService": {
+      "IOConnectivityLineOfService": {
+        "Name": "FiberChannel",
+        "AccessProtocol": "FC",
+        "MaxSupportedIoOperationsPerSecond": null
+      },
+      "IOPerformanceLineOfService": {
+        "Name": "Heavy-OLTP-SDD",
+        "IoOperationsPerSecondIsLimitedBoolean": "false",
+        "SamplePeriod": "PT1M",
+        "MaxIoOperationsPerSecondPerTerabyte": 100000,
+        "AverageIoOperationLatencyMicroseconds": 10,
+        "IOWorkload": {
+            "Name":"Duplicon:OLTP"
+        }
+      },
+      "DataProtectionLineOfService": [
+        {
+          "Name": "Providence-Synchronous-Mirror",
+          "RecoveryGeographicObjective": "Region",
+          "RecoveryPointObjective": "PT0S",
+          "RecoveryTimeObjective": "Online",
+          "ReplicaType": "Mirror",
+          "MinLifetime": null,
+          "IsIsolated": true,
+          "Schedule": null, 
+          "ReplicaClassOfService": {
+            "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Gold"
+          },
+          "ReplicaAccessLocation": {
+            "Country": "",
+            "Territory": "",
+            "State": "",
+            "City": "Providence",
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PostalCode": "",
+            "Building": "",
+            "Room": "",
+            "Row": "",
+            "Rack": "",
+            "Shelf": "",
+            "Item": "",
+            "GPSCoords": "",
+            "OtherLocationInfo": ""
+          }
+        },
+        {
+          "Name": "Dallas-Asynchronous-Mirror",
+          "RecoveryGeographicObjective": "Region",
+          "RecoveryPointObjective": "PT4S",
+          "RecoveryTimeObjective": "Online",
+          "ReplicaType": "Mirror",
+          "MinLifetime": null,
+          "IsIsolated": true,
+          "Schedule": null, 
+          "ReplicaClassOfService": {
+            "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/Gold"
+          },
+          "ReplicaAccessLocation": {
+            "Country": "",
+            "Territory": "",
+            "State": "",
+            "City": "Dallas",
+            "Address1": "",
+            "Address2": "",
+            "Address3": "",
+            "PostalCode": "",
+            "Building": "",
+            "Room": "",
+            "Row": "",
+            "Rack": "",
+            "Shelf": "",
+            "Item": "",
+            "GPSCoords": "",
+            "OtherLocationInfo": ""
+          }
+        }
+      ],
+      "DataSecurityLineOfService": {
+        "Name": "SecureData",
+        "MediaEncryptionStrength": "Bits_256",
+        "ChannelEncryptionStrength": "Bits_128",
+        "HostAuthenticationType": "Ticket",
+        "UserAuthenticationType": "Password",
+        "SecureChannelProtocol": "TLS",
+        "AntivirusScanPolicies": [],
+        "AntivirusEngineProvider": null,
+        "DataSanitizationPolicy": "CryptographicErase"
+      },
+      "DataStorageLineOfService": {
+        "Name": "HA-Thin",
+        "RecoveryTimeObjective": 0,
+        "ProvisioningPolicy": "Thin",
+        "SpaceEfficient": true
+      }
+  }
+}

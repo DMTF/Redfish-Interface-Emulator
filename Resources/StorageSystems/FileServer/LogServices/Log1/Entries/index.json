@@ -1,0 +1,64 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageSystems/Members/Simple/LogServices/Members/Log1/Entries",
+  "@odata.id": "/redfish/v1/StorageSystems/Simple/LogServices/Log1/Entries",
+  "@odata.type": "#LogEntryCollection.LogEntryCollection",
+  "Name": "Log Service Collection",
+  "Description": "Collection of Logs for this System",
+  "members@odata.count": 2,
+  "members": [
+    {
+      "@odata.id": "/redfish/v1/StorageSystems/Simple/LogServices/Log1/Entries/1",
+      "@odata.type": "#LogEntry.1.0.0.LogEntry",
+      "Id": "1",
+      "Name": "Log Entry 1",
+      "EntryType": "SEL",
+      "OemRecordFormat": "CompanyX",
+      "RecordId": 1,
+      "Severity": "Critical",
+      "Created": "2012-03-07T14:44",
+      "EntryCode": "Assert",
+      "SensorType": "Temperature",
+      "Number": 1,
+      "Message": "Message for Event, Description for SEL, OEM depends",
+      "MessageId": "Event.1.0.TempAssert",
+      "MessageArgs": [
+        "ArrayOfMessageArgs"
+      ],
+      "Links": {
+        "OriginOfCondition": {
+          "@odata.id": "/redfish/v1/Chassis/1/Thermal"
+        },
+        "Oem": {}
+      },
+      "Oem": {}
+    },
+    {
+      "@odata.id": "/redfish/v1/StorageSystems/Simple/LogServices/Log1/Entries/2",
+      "@odata.type": "#LogEntry.1.0.0.LogEntry",
+      "Id": "2",
+      "Name": "Log Entry 2",
+      "EntryType": "SEL",
+      "OEMRecordFormat": "CompanyX",
+      "RecordId": 2,
+      "Severity": "Critical",
+      "Created": "2012-03-07T14:45",
+      "EntryCode": "Assert",
+      "SensorType": "Temperature",
+      "Number": 2,
+      "Message": "Message for Event, Description for SEL, OEM depends",
+      "MessageId": "Event.1.0.TempAssert",
+      "MessageArgs": [
+        "ArrayOfMessageArgs"
+      ],
+      "Links": {
+        "OriginOfCondition": {
+          "@odata.id": "/redfish/v1/Chassis/1/Thermal"
+        },
+        "Oem": {}
+      },
+      "Oem": {}
+    }
+  ],
+  "@odata.nextLink": "/redfish/v1/StorageSystems/Simple/LogServices/Log1/Entries?$skiptoken=2"
+}

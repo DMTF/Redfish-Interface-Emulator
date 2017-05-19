@@ -1,0 +1,28 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.id": "/redfish/v1/StorageSystems/Simple/Processors/1",
+  "@odata.type": "#Processor.1.0.0.Processor",
+  "Name": "Processor",
+  "Id": "1",
+  "Socket": "CPU 1",
+  "ProcessorType": "CPU",
+  "ProcessorArchitecture": "ARM",
+  "InstructionSet": "ARM-A64",
+  "Manufacturer": "Broadcom Limited",
+  "Model": "Model XXXX",
+  "ProcessorID": {
+    "VendorID": "Broadcom",
+    "IdentificationRegisters": "0x34AC34DC8901274A",
+    "EffectiveFamily": "0x42",
+    "EffectiveModel": "0x61",
+    "Step": "0x1",
+    "MicrocodeInfo": "0x429943"
+  },
+  "MaxSpeedMHz": 3700,
+  "TotalCores": 4,
+  "TotalThreads": 16,
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  }
+}

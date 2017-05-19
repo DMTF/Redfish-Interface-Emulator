@@ -1,0 +1,51 @@
+{
+	"@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+	"@odata.context": "/redfish/v1/$metadata#IOPerformanceLoSCapabilities.IOPerformanceLoSCapabilities",
+	"@odata.id": "/redfish/v1/StorageServices/1/IOPerformanceLoSCapabilities",
+	"@odata.type": "#IOPerformanceLoSCapabilities_1_0_0.IOPerformanceLoSCapabilities",
+	"Name": "IOPerformanceLoSCapabilities",
+	"IoOperationsPerSecondLimitingIsSupported": true,
+	"MinSamplePeriod": "PT5S",
+	"MaxSamplePeriod": "PT1H",
+	"MaxIoOperationsPerSecondPerTerabyte": 1000,
+	"MinAverageIoOperationLatencyMicroseconds": 200,
+	"SupportedIOWorkloads": [{
+		"Name": "Duplicon:DSS"
+	},
+	{
+		"Name": "Duplicon:OLTP"
+	},
+	{
+		"Name": "Duplicon:Streaming",
+		"Components": [{
+			"AccessPattern ": "SequentialRead",
+			"AverageIOBytes ": 8192,
+			"PercentOfData ": 66,
+			"PercentOfIOPS ": 33
+		},
+		{
+			"AccessPattern ": "SequentialWrite",
+			"AverageIOBytes ": 4096,
+			"PercentOfData ": 33,
+			"PercentOfIOPS ": 66
+		}]
+	}],
+	"SupportedIOPerformanceLinesOfService": [{
+		"IoOperationsPerSecondIsLimitedBoolean": false,
+		"SamplePeriod": "PT1M",
+		"MaxIoOperationsPerSecondPerTerabyte": 83,
+		"AverageIoOperationLatencyMicroseconds": 8000,
+		"IOWorkload": {
+			"Name": "Duplicon: OLTP"
+		}
+	},
+	{
+		"IoOperationsPerSecondIsLimitedBoolean": "false",
+		"SamplePeriod": "PT1M",
+		"MaxIoOperationsPerSecondPerTerabyte": 133,
+		"AverageIoOperationLatencyMicroseconds": 5000,
+		"IOWorkload": {
+			"Name": "Duplicon: OLTP"
+		}
+	}]
+}

@@ -1,0 +1,10 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/1/ClientEndpointGroups",
+  "@odata.id": "/redfish/v1/StorageServices/1/ClientEndpointGroups",
+  "@odata.type": "#EndpointGroupCollection.v1_0_0.EndpointGroupCollection",
+  "Name": "ClientEndpointGroups",
+  "Description": "List of client endpoint groups contained in StorageService #1",
+  "Members@odata.count": 1,
+  "Members": [{"@odata.id": "/redfish/v1/StorageServices/1/ClientEndpointGroups/CEPG1"}]
+}

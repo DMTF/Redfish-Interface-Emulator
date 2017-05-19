@@ -1,0 +1,69 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StoragePool.StoragePool",
+  "@odata.id": "/redfish/v1/StorageServices/FileService/StoragePools/BasePool",
+  "@odata.type": "#StoragePool_1_0_0.StoragePool",
+  "Id": "BasePool",
+  "Name": "BasePool",
+  "Description": "Base storage pool",
+  "BlockSizeBytes": 8192,
+  "Capacity": {
+    "Data": {
+      "ConsumedBytes": 0,
+      "AllocatedBytes": 0,
+      "GuaranteedBytes": 0,
+      "ProvisionedBytes": 0
+    },
+    "Metadata": null,
+    "Snapshot": null
+  },
+  "CapacitySources": [
+    {
+      "ProvidedCapacity": {
+        "ConsumedBytes": 70368744177664,
+        "AllocatedBytes": 140737488355328,
+        "GuaranteedBytes": 17592186044416,
+        "ProvisionedBytes": 562949953421312
+      },
+      "Links": {
+        "ClassOfService": {
+          "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/GoldBoston"
+        },
+        "ProvidingPool": null,
+        "ProvidingVolume": null
+      }
+    }
+  ],
+  "LowSpaceWarningThresholdPercent": [
+    70,
+    80,
+    90
+  ],
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK",
+    "HealthRollUp": "Degraded"
+  },
+  "ClassesOfService": {
+    "Members":[
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/GoldBoston"},
+        {"@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/SilverBoston"}
+    ]
+  },
+  "Links": {
+    "AllocatedPools": [],
+    "AllocatedVolumes": [
+      {
+        "@odata.id": "/redfish/v1/StorageServices/FileService/Volumes/61001234876545676100123487654567"
+      }
+    ],
+    "ClassesOfService": [
+      {
+        "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/GoldBoston"
+      },
+      {
+        "@odata.id": "/redfish/v1/StorageServices/FileService/ClassesOfService/SilverBoston"
+      }
+    ]
+  }
+}

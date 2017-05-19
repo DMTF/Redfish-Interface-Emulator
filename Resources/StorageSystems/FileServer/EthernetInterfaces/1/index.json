@@ -1,0 +1,43 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageSystems/Members/Simple/EthernetInterfaces/Members/$entity",
+  "@odata.id": "/redfish/v1/StorageSystems/Simple/EthernetInterfaces/1",
+  "@odata.type": "#EthernetInterface.1.0.0.EthernetInterface",
+  "Id": "1",
+  "Name": "Ethernet Interface",
+  "Description": "System NIC 1",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "FactoryMACAddress": "AA:BB:CC:DD:EE:FF",
+  "MACAddress": "AA:BB:CC:DD:EE:FF",
+  "SpeedMbps": 100,
+  "FullDuplex": true,
+  "HostName": "web483",
+  "FQDN": "web483.redfishspecification.org",
+  "IPv6DefaultGateway": "fe80::3ed9:2bff:fe34:600",
+  "NameServers": [
+    "names.redfishspecification.org"
+  ],
+  "IPv4Addresses": [
+    {
+      "Address": "192.168.0.10",
+      "SubnetMask": "255.255.252.0",
+      "AddressOrigin": "Static",
+      "Gateway": "192.168.0.1"
+    }
+  ],
+  "IPv6Addresses": [
+    {
+      "Address": "fe80::1ec1:deff:fe6f:1e24",
+      "PrefixLength": 64,
+      "AddressOrigin": "Static",
+      "AddressState": "Preferred"
+    }
+  ],
+  "VLANs": {
+    "@odata.id": "/redfish/v1/StorageSystems/Simple/EthernetInterfaces/1/VLANs"
+  },
+  "Oem": {}
+}

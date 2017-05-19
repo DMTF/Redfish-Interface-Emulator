@@ -13,5 +13,12 @@ rest_base = 'base'
 # Create Flask server
 app = Flask(__name__)
 
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'xxxxx@gmail.com'
+app.config['MAIL_PASSWORD'] = 'xxxxxx'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
 # Create RESTful API
 api = Api(app)

@@ -1,0 +1,47 @@
+{
+  "@Redfish.Copyright": "Copyright 2014-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/1",
+  "@odata.id": "/redfish/v1/StorageServices/1",
+  "@odata.type": "#StorageService.1.0.0.StorageService",
+  "Id": "1",
+  "Name": "My Storage Service",
+  "Description": "Description of storage",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "ClassesOfService": {"@odata.id": "/redfish/v1/StorageServices/1/ClassesOfService"},
+  "Drives": {"@odata.id": "/redfish/v1/StorageServices/1/Drives"},    
+  "ClientEndpointGroups": {"@odata.id": "/redfish/v1/StorageServices/1/ClientEndpointGroups"},
+  "ServerEndpointGroups": {"@odata.id": "/redfish/v1/StorageServices/1/ServerEndpointGroups"},
+  "Endpoints": {"@odata.id": "/redfish/v1/StorageServices/1/Endpoints"}, 
+  "StorageGroups": {"@odata.id": "/redfish/v1/StorageServices/1/StorageGroups"},
+  "StoragePools": {"@odata.id": "/redfish/v1/StorageServices/1/StoragePools"},
+  "Volumes": {
+    "Members":[{"@odata.id": "/redfish/v1/StorageServices/1/Volumes"}]
+  },
+  "Links": {
+    "Enclosures": {
+      "@odata.id": "/redfish/v1/Chassis/1"
+    },
+	"HostingSystem": {
+      "@odata.id": "/redfish/v1/StorageSystems/Complex"
+    },
+    "DataProtectionLoSCapabilities": {
+      "@odata.id": "/redfish/v1/StorageServices/1/DataProtectionLoSCapabilities"
+    },
+    "DataSecurityLoSCapabilities": {
+      "@odata.id": "/redfish/v1/StorageServices/1/DataSecurityLoSCapabilities"
+    },
+    "DataStorageLoSCapabilities": {
+      "@odata.id": "/redfish/v1/StorageServices/1/DataStorageLoSCapabilities"
+    },
+    "IOConnectivityLoSCapabilities": {
+      "@odata.id": "/redfish/v1/StorageServices/1/IOConnectivityLoSCapabilities"
+    },
+    "IOPerformanceLoSCapabilities": {
+      "@odata.id": "/redfish/v1/StorageServices/1/IOPerformanceLoSCapabilities"
+    }
+  },
+  "Oem": {}
+}

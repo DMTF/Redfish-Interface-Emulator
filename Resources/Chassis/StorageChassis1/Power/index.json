@@ -1,0 +1,202 @@
+{
+  "@Redfish.Copyright": "Copyright © 2014-2015 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#Chassis/Members/1/Power/$entity",
+  "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power",
+  "@odata.type": "#Power.1.0.0.Power",
+  "Id": "Power",
+  "Name": "Power",
+  "PowerControl": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerControl/0",
+      "MemberId": "0",
+      "Name": "System Power Control",
+      "PowerConsumedWatts": 8000,
+      "PowerRequestedWatts": 8500,
+      "PowerAvailableWatts": 8500,
+      "PowerCapacityWatts": 10000,
+      "PowerAllocatedWatts": 8500,
+      "PowerMetrics": {
+        "IntervalInMin": 30,
+        "MinConsumedWatts": 7500,
+        "MaxConsumedWatts": 8200,
+        "AverageConsumedWatts": 8000
+      },
+      "PowerLimit": {
+        "LimitInWatts": 9000,
+        "LimitException": "LogEventOnly",
+        "CorrectionInMs": 42
+      },
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/StorageSystems/Simple"
+        },
+		{
+          "@odata.id": "/redfish/v1/StorageSystems/Complex"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1"
+        }
+      ],
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK"
+      },
+      "Oem": {}
+    }
+  ],
+  "Voltages": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/Voltages/0",
+      "MemberId": "0",
+      "Name": "VRM1 Voltage",
+      "SensorNumber": 11,
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK"
+      },
+      "ReadingVolts": 12,
+      "UpperThresholdNonCritical": 12.5,
+      "UpperThresholdCritical": 13,
+      "UpperThresholdFatal": 15,
+      "LowerThresholdNonCritical": 11.5,
+      "LowerThresholdCritical": 11,
+      "LowerThresholdFatal": 10,
+      "MinReadingRange": 0,
+      "MaxReadingRange": 20,
+      "PhysicalContext": "VoltageRegulator",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/StorageSystems/Simple"
+        },
+		{
+          "@odata.id": "/redfish/v1/StorageSystems/Complex"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1"
+        }
+      ]
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/Voltages/1",
+      "MemberId": "1",
+      "Name": "VRM2 Voltage",
+      "SensorNumber": 12,
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK"
+      },
+      "ReadingVolts": 5,
+      "UpperThresholdNonCritical": 5.5,
+      "UpperThresholdCritical": 7,
+      "LowerThresholdNonCritical": 4.75,
+      "LowerThresholdCritical": 4.5,
+      "MinReadingRange": 0,
+      "MaxReadingRange": 20,
+      "PhysicalContext": "VoltageRegulator",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/StorageSystems/Simple"
+        },
+		{
+          "@odata.id": "/redfish/v1/StorageSystems/Complex"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1"
+        }
+      ]
+    }
+  ],
+  "PowerSupplies": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerSupplies/0",
+      "MemberId": "0",
+      "Name": "Power Supply Bay 1",
+      "Status": {
+        "State": "Enabled",
+        "Health": "Warning"
+      },
+      "Oem": {},
+      "PowerSupplyType": "DC",
+      "LineInputVoltageType": "DCNeg48V",
+      "LineInputVoltage": -48,
+      "PowerCapacityWatts": 400,
+      "LastPowerOutputWatts": 192,
+      "Model": "499253-B21",
+      "FirmwareVersion": "1.00",
+      "SerialNumber": "1z0000001",
+      "PartNumber": "1z0000001A3a",
+      "SparePartNumber": "0000001A3a",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1"
+        }
+      ],
+      "Redundancy": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/Redundancy/0"
+        }
+      ]
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerSupplies/1",
+      "MemberId": "1",
+      "Name": "Power Supply Bay 2",
+      "Status": {
+        "State": "Disabled",
+        "Health": "Warning"
+      },
+      "Oem": {},
+      "PowerSupplyType": "AC",
+      "LineInputVoltageType": "ACMidLine",
+      "LineInputVoltage": 220,
+      "PowerCapacityWatts": 400,
+      "LastPowerOutputWatts": 190,
+      "Model": "499253-B21",
+      "FirmwareVersion": "1.00",
+      "SerialNumber": "1z0000001",
+      "PartNumber": "1z0000001A3a",
+      "SparePartNumber": "0000001A3a",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1"
+        }
+      ],
+      "Redundancy": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/Redundancy/0"
+        }
+      ]
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerSupplies/2",
+      "MemberId": "2",
+      "Name": "Power Supply Bay 3",
+      "Status": {
+        "State": "Absent"
+      }
+    }
+  ],
+  "Redundancy": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/Redundancy/0",
+      "MemberId": "0",
+      "Name": "PowerSupply Redundancy Group 1",
+      "Mode": "Failover",
+      "MaxNumSupported": 2,
+      "MinNumNeeded": 1,
+      "RedundancySet": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerSupplies/0"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/StorageChassis1/Power#/PowerSupplies/1"
+        }
+      ],
+      "Status": {
+        "State": "Offline",
+        "Health": "OK"
+      }
+    }
+  ],
+  "Oem": {}
+}

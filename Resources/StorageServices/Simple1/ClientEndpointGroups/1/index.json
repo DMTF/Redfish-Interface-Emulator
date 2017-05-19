@@ -1,0 +1,9 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/Simple1/ClientEndpointGroups/1",
+  "@odata.id": "/redfish/v1/StorageServices/Simple1/ClientEndpointGroups/1",
+  "@odata.type": "#EndpointGroup.v1_0_0.EndpointGroup",
+  "Id": "1",
+  "Description": "Group of initiator endpoints for simple1",
+  "Endpoints": {"@odata.id": "/redfish/v1/StorageServices/Simple1/ClientEndpointGroups/EPC"}
+}

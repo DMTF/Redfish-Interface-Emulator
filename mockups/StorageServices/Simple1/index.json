@@ -1,0 +1,29 @@
+{
+  "@Redfish.Copyright": "Copyright 2015-2016 SNIA. All rights reserved.",
+  "@odata.context": "/redfish/v1/$metadata#StorageServices/Simple1",
+  "@odata.id": "/redfish/v1/StorageServices/Simple1",
+  "@odata.type": "#StorageService.1.0.0.StorageService",
+  "Id": "Simple1",
+  "Name": "My Simple Storage Service",
+  "Description": "This simple system does not support service levels when provisioning storage",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK"
+  },
+  "StorageGroups": {"@odata.id": "/redfish/v1/StorageServices/Simple1/StorageGroups"},
+  "ClientEndpointGroups": {"@odata.id": "/redfish/v1/StorageServices/Simple1/ClientEndpointGroups"},
+  "ServerEndpointGroups": {"@odata.id": "/redfish/v1/StorageServices/Simple1/ServerEndpointGroups"},
+  "Endpoints":{"@odata.id": "/redfish/v1/StorageServices/Simple1/Endpoints"},
+  "StoragePools": {"@odata.id": "/redfish/v1/StorageServices/Simple1/StoragePools"},
+  "Volumes": {"@odata.id": "/redfish/v1/StorageServices/Simple1/Volumes"}, 
+  "Drives": {"@odata.id": "/redfish/v1/Chassis/StorageEnclosure1/Drives"},
+  "Links": {
+	"HostingSystem": {"@odata.id": "/redfish/v1/StorageSystems/Simple"},
+    "DataPerformanceLoSCapabilities": {"@odata.id": "/redfish/v1/StorageServices/FileService/DataPerformanceLoSCapabilities"},
+    "DataProtectionLoSCapabilities": {"@odata.id": "/redfish/v1/StorageServices/FileService/DataProtectionLoSCapabilities"},
+    "DataStorageLoSCapabilities": {"@odata.id": "/redfish/v1/StorageServices/FileService/DataStorageLoSCapabilities"},
+    "IOConnectivityLoSCapabilities": {"@odata.id": "/redfish/v1/StorageServices/FileService/IOConnectivityLoSCapabilities"},
+    "IOPerformanceLoSCapabilities": {"@odata.id": "/redfish/v1/StorageServices/FileService/IOPerformanceLoSCapabilities"}
+  },
+  "Oem": {}
+}
