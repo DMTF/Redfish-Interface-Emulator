@@ -1,0 +1,24 @@
+{
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+
+    "@odata.context": "/redfish/v1/$metadata#RFC7317/ietf_system.system.dns_resolver",
+    "@odata.type": "#ietf_system.system.dns_resolver.v1_0_0.dns_resolver",
+    "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_system/system/dns_resolver",
+
+    "Id": "dns_resolver",
+    "Name": "system dns_resolver",
+
+    "search": [ "domain1", "domain2" ],
+    "server": [
+        {
+            "name": "",
+            "transportType": "udp_and_tcp",
+            "address": "192.168.1.56",
+            "port": "53"
+        }
+    ],
+
+    "options": {
+        "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_system/system/dns_resolver/options"
+    }
+}

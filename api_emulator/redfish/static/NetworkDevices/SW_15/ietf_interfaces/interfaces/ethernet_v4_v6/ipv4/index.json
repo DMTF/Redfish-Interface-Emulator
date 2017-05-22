@@ -1,0 +1,15 @@
+{
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@odata.context": "/redfish/v1/$metadata#ietf_ip.ipv4.ipv4",
+    "@odata.type": "#ietf_ip.ipv4.v1_0_0.ipv4",
+    "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_interfaces/interfaces/ethernet_v4_v6/ipv4",
+
+    "Id": "ipv4",
+ 
+    "enabled": true,
+    "forwarding": true,
+    "mtu": 16,
+	"address": {
+        "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_interfaces/interfaces/ethernet_v4_v6/ipv4/address"
+    }
+}

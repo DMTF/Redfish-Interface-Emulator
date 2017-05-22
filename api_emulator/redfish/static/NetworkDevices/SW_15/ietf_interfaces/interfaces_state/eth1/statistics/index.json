@@ -1,0 +1,16 @@
+{
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@odata.context": "/redfish/v1/$metadata#ietf_interfaces.interfaces_state.statistics.statistics",
+    "@odata.type": "#ietf_interfaces.interfaces_state.statistics.v1_0_0.statistics",
+    "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_interfaces/interfaces_state/eth1/statistics",
+    "Id": "statistics",
+    "Name": "Statistics for interfaces",
+    "discontinuity_time": "2016-04-16T11:15.11+05:30",
+    "in_octets": 654321,
+    "in_unicast_pkts": 600000,
+    "in_broadcast_pkts": 50000,
+    "in_multicast_pkts": 4000,
+    "in_discards": 300,
+    "in_errors": 20,
+    "in_unknown_protos": 1
+}

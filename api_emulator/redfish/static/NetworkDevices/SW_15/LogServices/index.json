@@ -1,0 +1,15 @@
+{
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@odata.context": "/redfish/v1/$metadata#LogServiceCollection.LogServiceCollection",
+    "@odata.id": "/redfish/v1/NetworkDevices/SW_15/LogServices",
+    "@odata.type": "#LogServiceCollection.LogServiceCollection",
+    "Name": "Log Service Collection",
+    "Description": "Collection of Logs for this network device",
+    "Members@odata.count": 1,
+    "Members": [
+        {
+            "@odata.id": "/redfish/v1/NetworkDevices/SW_15/LogServices/Log1"
+        }
+    ],
+    "Oem": {}
+}

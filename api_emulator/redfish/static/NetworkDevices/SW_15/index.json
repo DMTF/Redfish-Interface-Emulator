@@ -1,0 +1,59 @@
+{
+    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+	"@odata.context": "NetworkDevice.NetworkDevice",
+   	"@odata.type": "#NetworkDevice.v1_0_0.NetworkDevice",
+    "@odata.id": "/redfish/v1/NetworkDevices/SW_15",
+    "Id": "SW_15",
+
+  	"Name": "Ethernet Switch",
+	"NetworkDeviceType": "BaselineEthernetSwitch",
+	"AssetTag": "xxx",
+  	"Manufacturer": "Manufacturer Name",
+  	"Model": "Model Name",
+  	"SKU": "67B",
+  	"SerialNumber": "2M220100SL",
+   	"PartNumber": "76-88883",
+	"IndicatorLED": "Off",
+	"FirmwareVersion": "1.2.4",
+
+    "Status": {
+        "State": "Enabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+    },
+
+    "LogServices": {
+        "@odata.id": "/redfish/v1/NetworkDevices/SW_15/LogServices"
+    },
+	"ietf_interfaces": {
+        "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_interfaces"
+    },
+	"ietf_system": {
+        "@odata.id": "/redfish/v1/NetworkDevices/SW_15/ietf_system"
+    },
+
+	"Links": {
+        "Chassis": [
+            {
+                "@odata.id": "/redfish/v1/Chassis/SwitchChassis_15"
+            }
+        ],
+        "ManagedBy": [
+            {
+                "@odata.id": "/redfish/v1/Managers/SWMgr_1"
+            }
+        ],
+        "ComputerSystem": [
+            {
+                "@odata.id": "/redfish/v1/Systems/CS_15"
+            }
+        ]
+	},
+
+    "Actions": {
+        "#NetworkDevice.Reset": {
+            "target": "/redfish/v1/NetworkDevices/SW_15/Actions/NetworkDevice.Reset",
+	        "@Redfish.ActionInfo": "/redfish/v1/NetworkDevices/SW_15/ResetActionInfo"
+        }
+    }
+}
