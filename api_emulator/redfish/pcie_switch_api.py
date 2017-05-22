@@ -9,7 +9,7 @@ import g
 
 import sys, traceback
 from flask import Flask, request, make_response, render_template
-from flask.ext.restful import reqparse, Api, Resource
+from flask_restful import reqparse, Api, Resource
 
 from .templates.pcie_switch import get_PCIeSwitch_template
 from .pcie_port_api import PCIePortsAPI, PCIePortAPI

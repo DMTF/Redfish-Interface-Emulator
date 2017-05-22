@@ -24,6 +24,7 @@ from .redfish.event import Event
 
 from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
+from .redfish.Statistics_api import StatisticsAPI
 
 class ResourceManager(object):
     """
@@ -61,6 +62,7 @@ class ResourceManager(object):
         self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Systems = load_static('Systems', 'redfish', mode, rest_base, self.resource_dictionary)
         self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
+        self.NetworkDevices = load_static('NetworkDevices', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Load dynamic resources (flask-restful method)
         #
@@ -73,6 +75,9 @@ class ResourceManager(object):
 
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
+
+        # Demo HACK - make 'statistics' resource in rfc7223 YANG a dynamic resource
+        g.api.add_resource(StatisticsAPI, '/redfish/v1/NetworkDevices/SW_15/ietf_interfaces/interfaces_state/eth1/statistics/', resource_class_kwargs={'{sw_id}': "SW_15", '{if_state_id}': "eth1"})
 
         # Load dynamic resources (flask method).
         # Note: The methods are defined later in this file
@@ -88,6 +93,7 @@ class ResourceManager(object):
         self.EventSubscriptions = Subscriptions(rest_base)
         self.resource_dictionary.add_resource('EventService', self.EventService)
         self.resource_dictionary.add_resource('EventService/Subscriptions', self.EventSubscriptions)
+
 
         # Properties for used resources
         self.used_memory = 0
@@ -108,7 +114,7 @@ class ResourceManager(object):
     @property
     def configuration(self):
         """
-        Configuration property
+        Configuration property - Service Root
         """
         config = {
             '@odata.context': self.rest_base + '$metadata#ServiceRoot',
@@ -126,7 +132,8 @@ class ResourceManager(object):
                 'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
                 'EventService': {'@odata.id': self.rest_base + 'EventService'},
                 'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems':{'@odata.id':self.rest_base+'Systems'}
+                'Systems':{'@odata.id':self.rest_base+'Systems'},
+                'NetworkDevices':{'@odata.id':self.rest_base+'NetworkDevices'}
              }
         }
 
