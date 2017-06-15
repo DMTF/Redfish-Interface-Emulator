@@ -17,14 +17,18 @@ from .resource_dictionary import ResourceDictionary
 from .static_loader import load_static
 from .redfish.computer_system import ComputerSystem
 from .redfish.computer_systems import ComputerSystemCollection
-#from .redfish.chassis import ChassisCollection
 from .exceptions import CreatePooledNodeError, RemovePooledNodeError, EventSubscriptionError
 from .redfish.event_service import EventService, Subscriptions
 from .redfish.event import Event
 
 from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
+from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 
+# This resource manager source uses both the Flask and the Flask-restful mechanisms to adding dynamic resources.
+# The Flask-restful is the recommended mechanism. (The lingering Flask mechanism should eventually be migrated).
+# The EgResource* files show how to add dynamic resource via the Flask-restful mechanism.
+#
 class ResourceManager(object):
     """
     ResourceManager Class
@@ -64,17 +68,30 @@ class ResourceManager(object):
 
         # Load dynamic resources (flask-restful method)
         #
-        # Note: Corresponding resource should be commented out, above (if one exists)
-        # - populate with a single chassis with Id=Test2
+        # Note: The resource specified in the URL is checked for here, first.  If not found, then the search will
+        # search the static resources (i.e. mockup).
+        #
+        # Add example resources.
+        # - The first line adds an example dynamic collection resource.
+        # - The second line makes any example singleton resource dynamic.
+        # - The third line creates an instance of the example singleton resource.  The create code should
+        #   create and attach any subordinate resources.
+        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
+        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>')
+        config = CreateEgResource()
+        out = config.put('Resource2')
+
+        # Add the dynamic resources for ChassisCollection and each Chassis
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
-        g.api.add_resource(ChassisAPI,   '/redfish/v1/Chassis/<string:ident>')
+        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>')
 #        config = CreateChassis()
 #        out = config.put('Chassis2')
 
+        # Add the dynamic resources for PCIeSwitchesCollection and each PCIeSwitch
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
-        # Load dynamic resources (flask method).
+        # Load dynamic resources (flask method - recommeneded).
         # Note: The methods are defined later in this file
         #
         # Create computer system
@@ -88,6 +105,7 @@ class ResourceManager(object):
         self.EventSubscriptions = Subscriptions(rest_base)
         self.resource_dictionary.add_resource('EventService', self.EventService)
         self.resource_dictionary.add_resource('EventService/Subscriptions', self.EventSubscriptions)
+
 
         # Properties for used resources
         self.used_memory = 0
@@ -108,7 +126,7 @@ class ResourceManager(object):
     @property
     def configuration(self):
         """
-        Configuration property
+        Configuration property - Service Root
         """
         config = {
             '@odata.context': self.rest_base + '$metadata#ServiceRoot',
@@ -120,6 +138,7 @@ class ResourceManager(object):
             'UUID': self.uuid,
             'Links': {
                 'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
+                'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
                 'Managers': {'@odata.id': self.rest_base + 'Managers'},
                 'TaskService': {'@odata.id': self.rest_base + 'TaskService'},
                 'SessionService': {'@odata.id': self.rest_base + 'SessionService'},

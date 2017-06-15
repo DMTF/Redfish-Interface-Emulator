@@ -8,7 +8,7 @@ import g
 
 import sys, traceback
 from flask import Flask, request, make_response, render_template
-from flask.ext.restful import reqparse, Api, Resource
+from flask_restful import reqparse, Api, Resource
 
 from .templates.power import get_power_template
 

@@ -5,7 +5,7 @@
 # Declares global variables
 
 from flask import Flask
-from flask.ext.restful import Api
+from flask_restful import Api
 
 # Base URI. Will get overwritten in emulator.py
 rest_base = 'base'
