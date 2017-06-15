@@ -1,6 +1,6 @@
 {
     "SPEC": "Redfish",
-    "MODE": "Cloud",
+    "MODE": "Local",
     "HTTPS": "Disable",
     "TRAYS": [
         "./Resources/Systems/1/index.json"    ]

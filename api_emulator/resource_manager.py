@@ -17,15 +17,18 @@ from .resource_dictionary import ResourceDictionary
 from .static_loader import load_static
 from .redfish.computer_system import ComputerSystem
 from .redfish.computer_systems import ComputerSystemCollection
-#from .redfish.chassis import ChassisCollection
 from .exceptions import CreatePooledNodeError, RemovePooledNodeError, EventSubscriptionError
 from .redfish.event_service import EventService, Subscriptions
 from .redfish.event import Event
 
 from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
-from .redfish.Statistics_api import StatisticsAPI
+from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 
+# This resource manager source uses both the Flask and the Flask-restful mechanisms to adding dynamic resources.
+# The Flask-restful is the recommended mechanism. (The lingering Flask mechanism should eventually be migrated).
+# The EgResource* files show how to add dynamic resource via the Flask-restful mechanism.
+#
 class ResourceManager(object):
     """
     ResourceManager Class
@@ -62,24 +65,33 @@ class ResourceManager(object):
         self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Systems = load_static('Systems', 'redfish', mode, rest_base, self.resource_dictionary)
         self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.NetworkDevices = load_static('NetworkDevices', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Load dynamic resources (flask-restful method)
         #
-        # Note: Corresponding resource should be commented out, above (if one exists)
-        # - populate with a single chassis with Id=Test2
+        # Note: The resource specified in the URL is checked for here, first.  If not found, then the search will
+        # search the static resources (i.e. mockup).
+        #
+        # Add example resources.
+        # - The first line adds an example dynamic collection resource.
+        # - The second line makes any example singleton resource dynamic.
+        # - The third line creates an instance of the example singleton resource.  The create code should
+        #   create and attach any subordinate resources.
+        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
+        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>')
+        config = CreateEgResource()
+        out = config.put('Resource2')
+
+        # Add the dynamic resources for ChassisCollection and each Chassis
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
-        g.api.add_resource(ChassisAPI,   '/redfish/v1/Chassis/<string:ident>')
+        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>')
 #        config = CreateChassis()
 #        out = config.put('Chassis2')
 
+        # Add the dynamic resources for PCIeSwitchesCollection and each PCIeSwitch
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
-        # Demo HACK - make 'statistics' resource in rfc7223 YANG a dynamic resource
-        g.api.add_resource(StatisticsAPI, '/redfish/v1/NetworkDevices/SW_15/ietf_interfaces/interfaces_state/eth1/statistics/', resource_class_kwargs={'{sw_id}': "SW_15", '{if_state_id}': "eth1"})
-
-        # Load dynamic resources (flask method).
+        # Load dynamic resources (flask method - recommeneded).
         # Note: The methods are defined later in this file
         #
         # Create computer system
@@ -126,14 +138,14 @@ class ResourceManager(object):
             'UUID': self.uuid,
             'Links': {
                 'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
+                'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
                 'Managers': {'@odata.id': self.rest_base + 'Managers'},
                 'TaskService': {'@odata.id': self.rest_base + 'TaskService'},
                 'SessionService': {'@odata.id': self.rest_base + 'SessionService'},
                 'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
                 'EventService': {'@odata.id': self.rest_base + 'EventService'},
                 'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems':{'@odata.id':self.rest_base+'Systems'},
-                'NetworkDevices':{'@odata.id':self.rest_base+'NetworkDevices'}
+                'Systems':{'@odata.id':self.rest_base+'Systems'}
              }
         }
 
