@@ -11,20 +11,17 @@ import argparse
 import traceback
 import xml.etree.ElementTree as ET
 
-#import g
+import g
 
 # Flask Imports
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-import g
-
 # Emulator Imports
-from api_emulator import __version__
+from api_emulator.version import __version__
 from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
-from api_emulator.resource_dictionary import ResourceDictionary 
-from api_emulator import __version__
+from api_emulator.resource_dictionary import ResourceDictionary
 
 # Trays to load into the resource manager
 TRAYS = None
@@ -162,7 +159,7 @@ class RedfishAPI(Resource):
             resp = error_response('Attribute Does Not Exist', 404)
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
+            resp = INTERNAL_ERROR_Get
         return resp
 
     def delete(self, path):
@@ -255,6 +252,7 @@ class RedfishAPI(Resource):
         except (IndexError, AttributeError, TypeError, AssertionError, KeyError) as e:
             traceback.print_exc()
             raise PathError("Resource not found: " + str(e.message))
+        print (config)
         return config
 
 #
@@ -320,35 +318,20 @@ def main():
 
     HTTPS = config['HTTPS']
     MODE = config['MODE']
+    argparser = argparse.ArgumentParser(
+    description='Redfish Manageability API Emulator - Version: ' + __version__,
+    epilog='Developed by Intel')
+
     if(MODE=='Cloud'):
-
-        argparser = argparse.ArgumentParser(
-        description='Redfish Manageability API Emulator - Version: ' + __version__,
-        epilog='Developed by Intel')
-        argparser.add_argument('-port', type=int, default=port,
-                           help='Port to run the emulator on. Default define by Foundry')
-        argparser.add_argument('-debug', action='store_true', default=False,
-                           help='Run the emulator in debug mode. Note that if you'
-                                ' run in debug mode, then the emulator will only'
-                                'be ran locally.')
-        args = argparser.parse_args()
-
+        argparser.add_argument('-port', type=int, default=port, help='Port to run the emulator on. Port defined by Foundry')
     elif(MODE=='Local'):
+        argparser.add_argument('-port', type=int, default=5000, help='Port to run the emulator on. Default is 5000')
 
-
-        print (__version__)
-        argparser = argparse.ArgumentParser(
-        description='Redfish Manageability API Emulator - Version: ' + __version__,
-        epilog='Developed by Intel')
-
-        argparser.add_argument('-port', type=int, default=5000,
-                           help='Port to run the emulator on. Default is 5000')
-        argparser.add_argument('-debug', action='store_true', default=False,
+    argparser.add_argument('-debug', action='store_true', default=False,
                            help='Run the emulator in debug mode. Note that if you'
                                 ' run in debug mode, then the emulator will only'
                                 'be ran locally.')
-
-        args = argparser.parse_args()
+    args = argparser.parse_args()
 
     try:
         startup()
@@ -368,7 +351,7 @@ def main():
         g.app.run(**kwargs)
 
 if __name__ == '__main__':
-    
+
     main()
 else:
     startup()
