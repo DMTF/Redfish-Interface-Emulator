@@ -9,6 +9,8 @@ import json
 import urllib3
 from uuid import uuid4
 from threading import Thread
+import logging
+
 
 import g
 from . import utils
@@ -45,6 +47,8 @@ class ResourceManager(object):
                         resource manager
         """
 
+        logging.basicConfig(level=logging.INFO)
+
         self.rest_base = rest_base
 
         self.mode=mode
@@ -74,12 +78,19 @@ class ResourceManager(object):
         # Add example resources.
         # - The first line adds an example dynamic collection resource.
         # - The second line makes any example singleton resource dynamic.
-        # - The third line creates an instance of the example singleton resource.  The create code should
-        #   create and attach any subordinate resources.
+        # - The next two lines create an instance of the example singleton resource and defines its ID.
+        #
+        # Regarding the api.add_resource() method, it has two keyword arguments: resource_class_args and resource_class_kwargs.
+        # Their values will be forwarded and passed into your Resource implementation’s constructor.
+        #
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
-        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>')
-        config = CreateEgResource()
-        out = config.put('Resource2')
+        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': "rest_base"} )
+        config = CreateEgResource( )
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource2"})
+        out = config.put("Resource2")
+        config = CreateEgResource( )
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource5"})
+        out = config.put("Resource5")
 
         # Add the dynamic resources for ChassisCollection and each Chassis
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
@@ -91,7 +102,7 @@ class ResourceManager(object):
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
-        # Load dynamic resources (flask method - recommeneded).
+        # Load dynamic resources (flask method - not recommended).
         # Note: The methods are defined later in this file
         #
         # Create computer system
