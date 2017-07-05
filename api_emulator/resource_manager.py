@@ -23,6 +23,7 @@ from .exceptions import CreatePooledNodeError, RemovePooledNodeError, EventSubsc
 from .redfish.event_service import EventService, Subscriptions
 from .redfish.event import Event
 
+from .redfish.EventService_api import EventServiceAPI, CreateEventService
 from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
@@ -58,10 +59,9 @@ class ResourceManager(object):
         self.time = self.modified
         self.cs_puid_count = 0
 
-        # Loads each resource into dictionary from the mockup
+        # Loads the static resource into the dictionary
+        #   Note: EventService is commented out, since is has been code as a dynamic resource
         self.resource_dictionary = ResourceDictionary()
-
-        # Load Event and Chassis as dynamic resources
         self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
         #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
@@ -72,33 +72,48 @@ class ResourceManager(object):
 
         # Load dynamic resources (flask-restful method)
         #
-        # Note: The resource specified in the URL is checked for here, first.  If not found, then the search will
-        # search the static resources (i.e. mockup).
+        # Note: When a resource is accessed, it presence is first checked here and then the static dictionary.
         #
-        # Add example resources.
-        # - The first line adds an example dynamic collection resource.
-        # - The second line makes any example singleton resource dynamic.
-        # - The next two lines create an instance of the example singleton resource and defines its ID.
+
+        # Add dynamic resource for EventService
+        #   Then create the instance
+        g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService/', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
+        config = CreateEventService()
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"EventService"})
+        out = config.put("EventService")
+
+        # Add dynamic resources for ChassisCollection and each Chassis singleton
+        #   The commented lines prepopulates an instance of a Chassis singleton
+        g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
+        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>')
+#        config = CreateChassis()
+#        out = config.put('Chassis2')
+
+        # Add dynamic resources for example collection resource and each example singleton
+        # - The first line adds the collection resource, as dynamic
+        # - The second line adds each singleton resource, as dynamic
+        # - The next two lines create an instance of the singleton resource and specifies its ID.
         #
-        # Regarding the api.add_resource() method, it has two keyword arguments: resource_class_args and resource_class_kwargs.
-        # Their values will be forwarded and passed into your Resource implementation’s constructor.
+        # Note: The api.add_resource() method has two keyword arguments: resource_class_args and resource_class_kwargs.
+        # Their values will be passed into the constructor (e.g. init) for resource's implementation.
         #
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
         g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': "rest_base"} )
         config = CreateEgResource( )
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource2"})
         out = config.put("Resource2")
-        config = CreateEgResource( )
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource5"})
-        out = config.put("Resource5")
+# The following works if the EgResource does not have a subordiante collection resource.
+#
+# The following doesn't work if EgResource auto-populated a subordinate collection resource.
+#   There appears to be a bug in flask, in which is doesn't declare a new namespace for Resource5,
+#   so a second instance of the subordinate collection resource for another primary resouce instance
+#   is not possible
+#   "AssertionError: View function mapping is overwriting an existing endpoint function"
+#        config = CreateEgResource( )
+#        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource5"})
+#        out = config.put("Resource5")
 
-        # Add the dynamic resources for ChassisCollection and each Chassis
-        g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
-        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>')
-#        config = CreateChassis()
-#        out = config.put('Chassis2')
-
-        # Add the dynamic resources for PCIeSwitchesCollection and each PCIeSwitch
+        # Add dynamic resources for PCIeSwitchesCollection and each PCIeSwitch singleton
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
@@ -112,10 +127,10 @@ class ResourceManager(object):
         self.resource_dictionary.add_resource('Systems', self.Systems)
 
         # Event Service
-        self.EventService = EventService(rest_base)
-        self.EventSubscriptions = Subscriptions(rest_base)
-        self.resource_dictionary.add_resource('EventService', self.EventService)
-        self.resource_dictionary.add_resource('EventService/Subscriptions', self.EventSubscriptions)
+#        self.EventService = EventService(rest_base)
+#        self.EventSubscriptions = Subscriptions(rest_base)
+#        self.resource_dictionary.add_resource('EventService', self.EventService)
+#        self.resource_dictionary.add_resource('EventService/Subscriptions', self.EventSubscriptions)
 
 
         # Properties for used resources

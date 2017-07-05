@@ -282,12 +282,15 @@ def index():
 #
 g.api.add_resource(RedfishAPI, '/redfish/v1/', '/redfish/v1/<path:path>/')
 
-
-
+#
+# Startup method -- Reads in the configuration file
+#   TRAYS = Specifies the directory from which the resource pools are created.
+#   SPEC =  The emulator may support multiple specifications or revisions of a specification.
+#           This flag specifies the specification/version to which to conform
+#   MODE =  Specifies whether the emulator is running locally as a standalone or remotely on a Cloud Foundry instance.
+#   HTTPS = Specifies whether the emulator supports "http" or "https"
+#
 def startup():
-    """
-    Startup method -- Reads in the configuration file
-    """
     global CONFIG
     global TRAYS
     global SPEC
@@ -305,14 +308,19 @@ def startup():
 
     init_resource_manager()
 
-
+#
+# Main method
+#
+# Determines execution configuration by reading the configuration file and interogating the command
+#   line options
+#
+# Passes control to startup()
+#
 def main():
-    """
-    Main Method
-    """
     global app
     global MODE
 
+    # Open the emulator configuration file
     with open(CONFIG, 'r') as f:
         config = json.load(f)
 

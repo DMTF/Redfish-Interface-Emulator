@@ -6,7 +6,7 @@
 import copy
 import strgen
 
-_EG_RESOURCE_TEMPLATE = \
+_TEMPLATE = \
     {
         "@odata.context": "{rb}$metadata#EgResource.EgResource",
         "@odata.type": "#EgResource.v1_0_0.EgResource",
@@ -57,7 +57,7 @@ def get_EgResource_instance2(wildcards):
     msg='This {key1} contains custom {key2}'.format(**dict)
 
     """
-    c = copy.deepcopy(_EG_RESOURCE_TEMPLATE)
+    c = copy.deepcopy(_TEMPLATE)
 
     c['@odata.context'] = c['@odata.context'].format(**wildcards)
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
