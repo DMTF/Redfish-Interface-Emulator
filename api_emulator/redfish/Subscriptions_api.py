@@ -16,32 +16,31 @@ import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.eg_resource import get_EgResource_instance2
-
-from .eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
+from .templates.Subscription import get_Subscription_instance
 
 members = []
 member_ids = []
 foo = 'false'
 INTERNAL_ERROR = 500
 
-#EgResource API
-class EgResourceAPI(Resource):
+#Subscription API
+class SubscriptionAPI(Resource):
     # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
     #
     # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
     def __init__(self, **kwargs):
         logging.basicConfig(level=logging.INFO)
-        logging.info('EgResourceAPI init called')
+        logging.info('SubscriptionAPI init called')
         try:
             global config
             global wildcards
-            config=get_EgResource_instance2(wildcards)
+#            wildcards = kwargs
+            config=get_Subscription_instance(wildcards)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('EgResourceAPI init exit')
+        logging.info('SubscriptionAPI init exit')
 
     # HTTP GET
     def get(self,ident):
@@ -64,37 +63,24 @@ class EgResourceAPI(Resource):
     # - Attach the APIs of subordinate resources (do this only once)
     # - Finally, create an instance of the subordiante resources
     def post(self,ident):
-#        logging.info('EgResourceAPI put called')
-        print('EgResourceAPI put called')
+#        logging.info('SubscriptionAPI put called')
+        print('SubscriptionAPI put called')
         try:
             global config
-            config=get_EgResource_instance2({'rb': g.rest_base, 'eg_id': ident})
+            global wildcard
+            config=get_Subscription_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
-            global foo
-            # Attach URIs for subordiante resources
-            if  (foo == 'false'):
-                # Add APIs for subordinate resourcs
-                collectionpath = g.rest_base + "EgResources/" + ident + "/EgSubResources"
-                logging.info('collectionpath = ' + collectionpath)
-                g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-                singletonpath = collectionpath + "/<string:ident>"
-                logging.info('singletonpath = ' + singletonpath)
-                g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-                foo = 'true'
-            # Create an instance of subordinate resources
-            #cfg = CreateSubordinateRes()
-            #out = cfg.put(ident)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('EgResourceAPI put exit')
+        logging.info('SubscriptionAPI put exit')
         return resp
 
     # HTTP PATCH
     def patch(self, ident):
-        logging.info('EgResourceAPI patch called')
+        logging.info('SubscriptionAPI patch called')
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
@@ -117,7 +103,7 @@ class EgResourceAPI(Resource):
 
     # HTTP DELETE
     def delete(self,ident):
-        # logging.info('EgResourceAPI delete called')
+        # logging.info('SubscriptionAPI delete called')
         try:
             idx = 0
             for cfg in members:
@@ -133,15 +119,15 @@ class EgResourceAPI(Resource):
         return resp
 
 
-# EgResource Collection API
-class EgResourceCollectionAPI(Resource):
+# Subscription Collection API
+class SubscriptionCollectionAPI(Resource):
     def __init__(self):
         self.rb = g.rest_base
         self.config = {
-            '@odata.context': self.rb + '$metadata#EgResourceCollection',
-            '@odata.id': self.rb + 'EgResourceCollection',
-            '@odata.type': '#EgResourceCollection.1.0.0.EgResourceCollection',
-            'Name': 'EgResource Collection',
+            '@odata.context': self.rb + '$metadata#SubscriptionCollection.SubscriptionCollection',
+            '@odata.id': self.rb + 'SubscriptionCollection',
+            '@odata.type': '#SubscriptionCollection.1.0.0.SubscriptionCollection',
+            'Name': 'Subscription Collection',
             'Links': {}
         }
         self.config['Links']['Member@odata.count'] = len(member_ids)
@@ -159,7 +145,7 @@ class EgResourceCollectionAPI(Resource):
     # Todo - Fix so the config can be passed in the data.
     def post(self):
         try:
-            g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>')
+            g.api.add_resource(SubscriptionAPI, '/redfish/v1/EventService/Subscriptions/<string:ident>')
             resp=self.config,200
         except Exception:
             traceback.print_exc()
@@ -167,7 +153,7 @@ class EgResourceCollectionAPI(Resource):
         return resp
 
 
-# CreateEgResource
+# CreateSubscription
 #
 # Called internally to create a instances of a resource.  If the resource has subordinate resources,
 # those subordinate resource(s)  should be created automatically.
@@ -184,34 +170,26 @@ class EgResourceCollectionAPI(Resource):
 #   The call to 'init' stores the path wildcards. The wildcards are used when subsequent calls instanctiate
 #   resources to modify the resource template.
 #
-class CreateEgResource(Resource):
+class CreateSubscription(Resource):
     def __init__(self, **kwargs):
-        logging.info('CreateEgResource init called')
+        logging.info('CreateSubscription init called')
         logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
             logging.debug(wildcards, wildcards.keys())
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
     def put(self,ident):
-        logging.info('CreateEgResource put called')
+        logging.info('CreateSubscription put called')
         try:
             global config
             global wildcards
-            config=get_EgResource_instance2(wildcards)
+            config=get_Subscription_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
-            # attach subordinate resources
-            collectionpath = g.rest_base + "EgResources/" + ident + "/EgSubResources"
-            logging.info('collectionpath = ' + collectionpath)
-            g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-            singletonpath = collectionpath + "/<string:ident>"
-            logging.debug('singletonpath = ' + singletonpath)
-            g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateEgResource init exit')
+        logging.info('CreateSubscription init exit')
         return resp
