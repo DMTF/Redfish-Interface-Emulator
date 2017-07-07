@@ -30,7 +30,9 @@ INTERNAL_ERROR = 500
 class EgSubResourceAPI(Resource):
     # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
     #
-    # __init__ should store the wildcards and pass the wildcards to te get_<resource>_instance(). 
+    # The call to attach the API, flask.add_resource(), establishes the contents of kwargs. All subsequent HTTP calls go through __init__.
+    #   So __init__ stores kwargs in the wildcards variable and the wildcards is used in the other HTTP code.
+    # 
     def __init__(self, **kwargs):
         logging.info('EgSubResourceAPI init called')
         logging.debug(kwargs)

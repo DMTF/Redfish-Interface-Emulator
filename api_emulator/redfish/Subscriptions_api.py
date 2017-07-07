@@ -20,23 +20,21 @@ from .templates.Subscription import get_Subscription_instance
 
 members = []
 member_ids = []
-foo = 'false'
 INTERNAL_ERROR = 500
 
 #Subscription API
 class SubscriptionAPI(Resource):
     # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
     #
-    # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
+    # The call to attach the API, flask.add_resource(), establishes the contents of kwargs. All subsequent HTTP calls go through __init__.
+    #   So __init__ stores kwargs in the wildcards variable and the wildcards is used in the other HTTP code.
+    #
     def __init__(self, **kwargs):
-        logging.basicConfig(level=logging.INFO)
         logging.info('SubscriptionAPI init called')
         try:
             global config
             global wildcards
-#            wildcards = kwargs
-            config=get_Subscription_instance(wildcards)
-            resp = config, 200
+            wildcards = kwargs
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -63,11 +61,12 @@ class SubscriptionAPI(Resource):
     # - Attach the APIs of subordinate resources (do this only once)
     # - Finally, create an instance of the subordiante resources
     def post(self,ident):
-#        logging.info('SubscriptionAPI put called')
-        print('SubscriptionAPI put called')
+        logging.info('SubscriptionAPI POST called')
         try:
             global config
-            global wildcard
+            global wildcards
+            wildcards['id']= ident
+            logging.debug(wildcards)
             config=get_Subscription_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
@@ -75,7 +74,7 @@ class SubscriptionAPI(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('SubscriptionAPI put exit')
+        logging.info('SubscriptionAPI POST exit')
         return resp
 
     # HTTP PATCH
