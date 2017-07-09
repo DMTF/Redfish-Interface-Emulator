@@ -68,18 +68,17 @@ _TEMPLATE = \
     "Links": {
         "ManagerForServers": [
             {
-                "@odata.id": "{rb}Systems/1"
+                "@odata.id": "{rb}Systems/{linkSystem}"
             }
         ],
         "ManagerForChassis": [
             {
-                "@odata.id": "{rb}Chassis/1"
+                "@odata.id": "{rb}Chassis/{linkChassis}"
             }
         ],
         "ManagerInChassis": {
-            "@odata.id": "{rb}Chassis/1"
-        },
-        "Oem": {}
+            "@odata.id": "{rb}Chassis/{linkInChassis}"
+        }
     },
     "Actions": {
         "#Manager.Reset": {

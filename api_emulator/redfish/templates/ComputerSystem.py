@@ -100,12 +100,12 @@ _TEMPLATE = \
     "Links": {
         "Chassis": [
             {
-                "@odata.id": "{rb}Chassis/1"
+                "@odata.id": "{rb}Chassis/{linkChassis}"
             }
         ],
         "ManagedBy": [
             {
-                "@odata.id": "{rb}Managers/1"
+                "@odata.id": "{rb}Managers/{linkMgr}"
             }
         ],
         "Endpoints": [

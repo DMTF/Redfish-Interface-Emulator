@@ -9,7 +9,7 @@ import strgen
 
 _TEMPLATE = \
     {
-        "@odata.context": "{rb}$metadata#Chassis/Links/Members/$entity",
+        "@odata.context": "{rb}$metadata#Chassis.Chassis",
         "@odata.id": "{rb}Chassis/{id}",
         "@odata.type": "#Chassis.v1_0_0.Chassis",
         "Id": "{id}",
@@ -35,12 +35,12 @@ _TEMPLATE = \
         "Links": {
             "ComputerSystems": [
                 {
-                    "@odata.id": "{rb}Systems/"
+                    "@odata.id": "{rb}Systems/{linkSystem}"
                 }
             ],
             "ManagedBy": [
                 {
-                    "@odata.id": "{rb}Managers/1"
+                    "@odata.id": "{rb}Managers/{linkMgr}"
                 }
             ],
          },
