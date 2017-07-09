@@ -89,7 +89,7 @@ class ResourceManager(object):
         self.time = self.modified
         self.cs_puid_count = 0
 
-        # Loads the static resource into the dictionary
+        # Load the static resources into the dictionary
         self.resource_dictionary = ResourceDictionary()
         self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
@@ -98,7 +98,7 @@ class ResourceManager(object):
         #self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
         #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
 
-        # Add API for dynamic resource
+        # Attach APIs for dynamic resources
 
         # EventService (singleton)
         g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService/', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
