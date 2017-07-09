@@ -6,7 +6,7 @@
 
 import copy
 
-_POWER_TEMPLATE = \
+_TEMPLATE = \
     {
     "@odata.context": "{rb}$metadata#Chassis/Links/Members/{ch_id}/Links/Power/$entity",
     "@odata.id": "{rb}Chassis/{ch_id}/Power",
@@ -150,7 +150,7 @@ _POWER_TEMPLATE = \
 }
 
 
-def get_power_template(rest_base, ident):
+def get_power_instance(wildcards):
     """
     Returns a formatted template
 
@@ -158,24 +158,23 @@ def get_power_template(rest_base, ident):
         rest_base - Base URL of the RESTful interface
         ident     - Identifier of the chassis
     """
-    c = copy.deepcopy(_POWER_TEMPLATE)
+    c = copy.deepcopy(_TEMPLATE)
 
-    #c['Modified'] = timestamp()
-    c['@odata.context'] = c['@odata.context'].format(rb=rest_base, ch_id=ident)
-    c['@odata.id'] = c['@odata.id'].format(rb=rest_base, ch_id=ident)
-    c['PowerControl'][0]['@odata.id']=c['PowerControl'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerControl'][0]['RelatedItem'][0]['@odata.id']=c['PowerControl'][0]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerControl'][0]['RelatedItem'][1]['@odata.id']=c['PowerControl'][0]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][0]['@odata.id']=c['Voltages'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][0]['RelatedItem'][0]['@odata.id']=c['Voltages'][0]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][0]['RelatedItem'][1]['@odata.id']=c['Voltages'][0]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][1]['@odata.id']=c['Voltages'][1]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][1]['RelatedItem'][0]['@odata.id']=c['Voltages'][1]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['Voltages'][1]['RelatedItem'][1]['@odata.id']=c['Voltages'][1]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerSupplies'][0]['@odata.id']=c['PowerSupplies'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerSupplies'][0]['RelatedItem'][0]['@odata.id']=c['PowerSupplies'][0]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerSupplies'][1]['@odata.id']=c['PowerSupplies'][1]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerSupplies'][1]['RelatedItem'][0]['@odata.id']=c['PowerSupplies'][1]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ident)
-    c['PowerSupplies'][2]['@odata.id']=c['PowerSupplies'][2]['@odata.id'].format(rb=rest_base,ch_id=ident)
+    c['@odata.context'] = c['@odata.context'].format(**wildcards)
+    c['@odata.id'] = c['@odata.id'].format(**wildcards)
+    c['PowerControl'][0]['@odata.id']=c['PowerControl'][0]['@odata.id'].format(**wildcards)
+    c['PowerControl'][0]['RelatedItem'][0]['@odata.id']=c['PowerControl'][0]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['PowerControl'][0]['RelatedItem'][1]['@odata.id']=c['PowerControl'][0]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['Voltages'][0]['@odata.id']=c['Voltages'][0]['@odata.id'].format(**wildcards)
+    c['Voltages'][0]['RelatedItem'][0]['@odata.id']=c['Voltages'][0]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Voltages'][0]['RelatedItem'][1]['@odata.id']=c['Voltages'][0]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['Voltages'][1]['@odata.id']=c['Voltages'][1]['@odata.id'].format(**wildcards)
+    c['Voltages'][1]['RelatedItem'][0]['@odata.id']=c['Voltages'][1]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Voltages'][1]['RelatedItem'][1]['@odata.id']=c['Voltages'][1]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['PowerSupplies'][0]['@odata.id']=c['PowerSupplies'][0]['@odata.id'].format(**wildcards)
+    c['PowerSupplies'][0]['RelatedItem'][0]['@odata.id']=c['PowerSupplies'][0]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['PowerSupplies'][1]['@odata.id']=c['PowerSupplies'][1]['@odata.id'].format(**wildcards)
+    c['PowerSupplies'][1]['RelatedItem'][0]['@odata.id']=c['PowerSupplies'][1]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['PowerSupplies'][2]['@odata.id']=c['PowerSupplies'][2]['@odata.id'].format(**wildcards)
 
     return c

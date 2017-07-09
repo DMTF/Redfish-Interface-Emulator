@@ -199,6 +199,7 @@ class CreateEgResource(Resource):
         try:
             global config
             global wildcards
+            wildcards['id'] = ident
             config=get_EgResource_instance2(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})

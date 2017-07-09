@@ -5,12 +5,13 @@
 # Singleton API: GET, PATCH
 
 import g
-
+import copy
+import logging
 import sys, traceback
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.thermal import get_thermal_template
+from .templates.thermal import get_thermal_instance
 
 # config is instantiated by CreateThermal()
 config = {}
@@ -20,11 +21,11 @@ INTERNAL_ERROR = 500
 class ThermalAPI(Resource):
     # Can't initialize the resource since the URI variables are not in the argument list.
     # Need the variables to set the Odata.id properties
-    def __init__(self):
-        print ('ThermalAPI init called')
+    def __init__(self, **kwargs):
+        logging.info('ThermalAPI init called')
 
     # HTTP GET
-    def get(self,ch_id):
+    def get(self):
         try:
             global config
             resp = config, 200
@@ -34,10 +35,9 @@ class ThermalAPI(Resource):
         return resp
 
     # HTTP PATCH
-    def patch(self, ch_id):
-        print ('ThermalAPI patch called')
+    def patch(self):
+        logging.info('ThermalAPI patch called')
         raw_dict = request.get_json(force=True)
-        print (raw_dict)
         try:
             global config
             print (config)
@@ -52,28 +52,32 @@ class ThermalAPI(Resource):
         return resp
 
     # HTTP PUT
-    def put(self,ch_id):
+    def put(self):
          return 'PUT is not a valid command', 202
 
     # HTTP DELETE
-    def delete(self,ch_id):
+    def delete(self):
          return 'DELETE is not a valid command', 202
 
 # Used to create a resource instance internally
-class CreateThermal(object):
-    def __init__(self):
-        print ('CreateThermal init called')
+class CreateThermal(Resource):
+    def __init__(self, **kwargs):
+        logging.info('CreateThermal init called')
+        if 'resource_class_kwargs' in kwargs:
+            global wildcards
+            wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
+            logging.debug(wildcards, wildcards.keys())
 
     # PUT
     # - Create the resource (since URI variables are avaiable)
     def put(self,ch_id):
-        print ('CreateThermal put called')
+        logging.info('CreateThermal put called')
         try:
             global config
-            config=get_thermal_template(g.rest_base,ch_id)
+            global wildcards
+            config=get_thermal_instance(wildcards)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        print ('CreateThermal put exit')
         return resp

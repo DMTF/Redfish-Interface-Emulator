@@ -24,14 +24,40 @@ from .redfish.event_service import EventService, Subscriptions
 from .redfish.event import Event
 
 from .redfish.EventService_api import EventServiceAPI, CreateEventService
-from .redfish.chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
+from .redfish.Chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
+from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSystemAPI, CreateComputerSystem
+from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 
-# This resource manager source uses both the Flask and the Flask-restful mechanisms to adding dynamic resources.
-# The Flask-restful is the recommended mechanism. (The lingering Flask mechanism should eventually be migrated).
-# The EgResource* files show how to add dynamic resource via the Flask-restful mechanism.
+# The __init__ method sets up the static and dynamic resources.
 #
+# When a resource is accessed, the resource is sought in the following order:
+#       1. Dynamic resource for specific URI
+#       2. Default dynamic resource
+#       3. Static resource dictionary
+#
+# This structure allows specific resources to be implemented as dynamic while leaving the remainder
+#   of the URI path as static resources.
+#
+# The static resource are loaded from the ./redfish/static directory.  This directory is just a copy
+#   of the one of the ./mockups directories.
+#
+# For dynamic resources are attached using the Flask-restful mechanism, not the Flask mechanism.
+#   - This involves associating an API class to a resoure endpoint.  A collection resource requires the
+#       association of the collection resource and the member resource(s)
+#   - Once the API is added, explicit calls can be made to populated one or more singleton resources
+#   - The EgResource* provides an example of adding a dynamic resource.
+#
+# Note: There is one additional change that needs to be made in order to create multiple instances of a
+#   resource.  The resource endpoint for the second instance collides which the first because flask
+#   doesn't will reuse the endpont name for the subordinate resources.  This results in an assertion failure
+#       "AssertionError: View function mapping is overwriting an existing endpoint function"
+#
+#   To fix, a unique endpoint names need to be formed and passed during the call to api_add_resource()
+#       api.add_resource(Todo,  '/todo/<int:todo_id>', endpoint='todo_ep')
+#
+
 class ResourceManager(object):
     """
     ResourceManager Class
@@ -46,9 +72,13 @@ class ResourceManager(object):
             spec      - Which spec to use, Redfish or Chinook
             trays     - (Optional) List of trays to initially load into the
                         resource manager
+        When a resource is accessed, the resource is sought in the following order
+        1. Dynamic resource for specific URI
+        2. Static resource dictionary
         """
 
-        logging.basicConfig(level=logging.INFO)
+#        logging.basicConfig(level=logging.INFO)
+#        logging.basicConfig(level=logging.DEBUG)
 
         self.rest_base = rest_base
 
@@ -60,78 +90,57 @@ class ResourceManager(object):
         self.cs_puid_count = 0
 
         # Loads the static resource into the dictionary
-        #   Note: EventService is commented out, since is has been code as a dynamic resource
         self.resource_dictionary = ResourceDictionary()
         self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
-        #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
         self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.Systems = load_static('Systems', 'redfish', mode, rest_base, self.resource_dictionary)
         self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
+        #self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
+        #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
 
-        # Load dynamic resources (flask-restful method)
-        #
-        # Note: When a resource is accessed, it presence is first checked here and then the static dictionary.
-        #
+        # Add API for dynamic resource
 
-        # Add dynamic resource for EventService
-        #   Then create the instance
+        # EventService (singleton)
         g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService/', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
         config = CreateEventService()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"EventService"})
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
         out = config.put("EventService")
 
-        # Add dynamic resources for ChassisCollection and each Chassis singleton
-        #   The commented lines prepopulates an instance of a Chassis singleton
+        # Chassis Collection
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
-        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>')
-#        config = CreateChassis()
-#        out = config.put('Chassis2')
+        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
+        config = CreateChassis()
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base} )
+        out = config.put("Chassis2")
 
-        # Add dynamic resources for example collection resource and each example singleton
-        # - The first line adds the collection resource, as dynamic
-        # - The second line adds each singleton resource, as dynamic
-        # - The next two lines create an instance of the singleton resource and specifies its ID.
-        #
-        # Note: The api.add_resource() method has two keyword arguments: resource_class_args and resource_class_kwargs.
-        # Their values will be passed into the constructor (e.g. init) for resource's implementation.
-        #
-        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
-        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': "rest_base"} )
-        config = CreateEgResource( )
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource2"})
-        out = config.put("Resource2")
-# The following works if the EgResource does not have a subordiante collection resource.
-#
-# The following doesn't work if EgResource auto-populated a subordinate collection resource.
-#   There appears to be a bug in flask, in which is doesn't declare a new namespace for Resource5,
-#   so a second instance of the subordinate collection resource for another primary resouce instance
-#   is not possible
-#   "AssertionError: View function mapping is overwriting an existing endpoint function"
-#        config = CreateEgResource( )
-#        out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'id':"Resource5"})
-#        out = config.put("Resource5")
+        # System Collection
+        g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems/')
+        g.api.add_resource(ComputerSystemAPI,           '/redfish/v1/Systems/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
+        config = CreateComputerSystem()
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
+        out = config.put("CS_5")
 
-        # Add dynamic resources for PCIeSwitchesCollection and each PCIeSwitch singleton
+        # Manager Collection
+        g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers/')
+        g.api.add_resource(ManagerAPI,           '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
+        config = CreateManager()
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
+        out = config.put("BMC")
+
+        # PCIe Switch Collection
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
-        # Load dynamic resources (flask method - not recommended).
-        # Note: The methods are defined later in this file
-        #
-        # Create computer system
+        # Example Resource Collection
+        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
+        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
+        config = CreateEgResource( )
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
+        out = config.put("Resource2")
+
+        # TODO - Need to move these routines into ./redfish/ComputerSystem_api.py
         self.create_method = self._create_redfish
         self.remove_method = self._remove_redfish
-        self.Systems = ComputerSystemCollection(rest_base)
-        self.resource_dictionary.add_resource('Systems', self.Systems)
-
-        # Event Service
-#        self.EventService = EventService(rest_base)
-#        self.EventSubscriptions = Subscriptions(rest_base)
-#        self.resource_dictionary.add_resource('EventService', self.EventService)
-#        self.resource_dictionary.add_resource('EventService/Subscriptions', self.EventSubscriptions)
-
 
         # Properties for used resources
         self.used_memory = 0
@@ -260,7 +269,7 @@ class ResourceManager(object):
         except IndexError:
             raise RemovePooledNodeError(
                 'No pooled node with CS_PUID: {0}, exists'.format(cs_puid))
-
+'''
     def remove_pooled_node(self, cs_puid):
         """
         Delete the specified pooled node and free its resources.
@@ -361,4 +370,4 @@ class EventWorker(Thread):
             urllib2.urlopen(request, json.dumps(self.event.configuration), 15)
         except Exception:
             pass
-
+'''
