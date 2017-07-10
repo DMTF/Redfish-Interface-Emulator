@@ -17,6 +17,8 @@ from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
 from .templates.ComputerSystem import get_ComputerSystem_instance
+from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
+from .ComputerSystem.ResetAction_api import ResetAction_API
 
 members = []
 member_ids = []
@@ -201,6 +203,12 @@ class CreateComputerSystem(Resource):
             config=get_ComputerSystem_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
+
+            path = g.rest_base + "Systems/" + ident + "/ResetActionInfo"
+            g.api.add_resource(ResetActionInfo_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            path = g.rest_base + "Systems/" + ident + "/Actions/ComputerSystem.Reset"
+            g.api.add_resource(ResetAction_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+
             '''
             # attach subordinate resources
             collectionpath = g.rest_base + "ComputerSystems/" + ident + "/EgSubResources"
