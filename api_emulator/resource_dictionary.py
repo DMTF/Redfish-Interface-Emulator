@@ -5,12 +5,14 @@
 # Resource Dictionary
 
 # Variable to store resource dictionary
+import logging
+
 resdict = {}
 
 class ResourceDictionary(object):
 
     def __init__(self):
-        print('Init ResourceDictionary.')
+        logging.info('Init ResourceDictionary.')
 
 
     def get_resource(self, path):

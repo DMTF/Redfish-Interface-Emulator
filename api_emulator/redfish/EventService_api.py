@@ -26,7 +26,7 @@ INTERNAL_ERROR = 500
 # EventService API
 class EventServiceAPI(Resource):
     def __init__(self, **kwargs):
-        print ('EventServiceAPI init called')
+        logging.info('EventServiceAPI init called')
         try:
             global config
             config=get_EventService_instance(kwargs)
@@ -37,7 +37,7 @@ class EventServiceAPI(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        print ('CreateEventService put exit')
+        logging.info('CreateEventService put exit')
 
     # HTTP GET
     def get(self):
@@ -65,20 +65,20 @@ class EventServiceAPI(Resource):
 # Used to create a resource instance internally
 class CreateEventService(Resource):
     def __init__(self, **kwargs):
-        print ('CreateEventService init called')
-        logging.info(kwargs)
-        logging.info(kwargs.keys())
-        logging.info('resource_class_kwargs in kwargs')
+        logging.info('CreateEventService init called')
+        logging.debug(kwargs)
+        logging.debug(kwargs.keys())
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
             logging.debug(wildcards, wildcards.keys())
 
     def put(self,ident):
-        print ('CreateEventService put called')
+        logging.info('CreateEventService put called')
         try:
             global config
             global wildcards
+            wildcards['id'] = ident
             config=get_EventService_instance(wildcards)
             g.api.add_resource(SubscriptionCollectionAPI,   '/redfish/v1/EventService/Subscriptions')
             g.api.add_resource(SubscriptionAPI,             '/redfish/v1/EventService/Subscriptions/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
@@ -90,5 +90,5 @@ class CreateEventService(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        print ('CreateEventService put exit')
+        logging.info('CreateEventService put exit')
         return resp

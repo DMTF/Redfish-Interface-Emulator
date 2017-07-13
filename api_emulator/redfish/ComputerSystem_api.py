@@ -2,7 +2,7 @@
 # Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# Chassis Collection Resource and Singleton Resource
+# Example Collection Resource and Singleton Resource
 """
 Collection API  GET, POST
 Singleton  API  GET, POST, PATCH, DELETE
@@ -16,34 +16,29 @@ import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.Chassis import get_Chassis_instance
-from .thermal_api import ThermalAPI, CreateThermal
-from .power_api import PowerAPI, CreatePower
-
+from .templates.ComputerSystem import get_ComputerSystem_instance
+from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
+from .ComputerSystem.ResetAction_api import ResetAction_API
 
 members = []
 member_ids = []
 foo = 'false'
 INTERNAL_ERROR = 500
 
-#Chassis API
-class ChassisAPI(Resource):
+#ComputerSystem API
+class ComputerSystemAPI(Resource):
     # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
     #
     # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
     def __init__(self, **kwargs):
         logging.basicConfig(level=logging.INFO)
-        logging.info('ChassisAPI init called')
+        logging.info('ComputerSystemAPI init called')
         try:
             global config
             global wildcards
             wildcards = kwargs
-#            config=get_Chassis_instance(wildcards)
-#            resp = config, 200
         except Exception:
             traceback.print_exc()
-#            resp = INTERNAL_ERROR
-        logging.info('ChassisAPI init exit')
 
     # HTTP GET
     def get(self,ident):
@@ -66,54 +61,40 @@ class ChassisAPI(Resource):
     # - Attach the APIs of subordinate resources (do this only once)
     # - Finally, create an instance of the subordiante resources
     def post(self,ident):
-        logging.info('ChassisAPI PUT called')
+        logging.info('ComputerSystemAPI PUT called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
-            config=get_Chassis_instance(wildcards)
+            config=get_ComputerSystem_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             global foo
-            '''
-            # Attach URIs for subordiante resources
-            if  (foo == 'false'):
-                g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ch_id>/Thermal')
-                g.api.add_resource(PowerAPI,   '/redfish/v1/Chassis/<string:ch_id>/Power')
-                foo = 'true'
-            # Create instances of subordinate resources, then call put operation
-            cfg = CreateThermal()
-            out = cfg.put(ident)
-            cfg = CreatePower()
-            out = cfg.put(ident)
             # Attach URIs for subordiante resources
             '''
             if  (foo == 'false'):
-                # Power subordinate resource
-                path = g.rest_base + "Chassiss/" + ident + "/Power"
-                logging.info('power path = ' + path)
-                g.api.add_resource(PowerAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-                config = CreatePower()
-                out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-                out = config.put("Power")
-                # Thermal subordinate resource
-                path = g.rest_base + "Chassiss/" + ident + "/Thermal"
-                logging.info('thermal path = ' + path)
-                g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-                config = CreateThermal()
-                out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-                out = config.put("Thermal")
+                # Add APIs for subordinate resourcs
+                collectionpath = g.rest_base + "ComputerSystems/" + ident + "/EgSubResources"
+                logging.info('collectionpath = ' + collectionpath)
+                g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
+                singletonpath = collectionpath + "/<string:ident>"
+                logging.info('singletonpath = ' + singletonpath)
+                g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
                 foo = 'true'
+            '''
+            # Create an instance of subordinate resources
+            #cfg = CreateSubordinateRes()
+            #out = cfg.put(ident)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('ChassisAPI put exit')
+        logging.info('ComputerSystemAPI put exit')
         return resp
 
     # HTTP PATCH
     def patch(self, ident):
-        logging.info('ChassisAPI patch called')
+        logging.info('ComputerSystemAPI patch called')
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
@@ -136,7 +117,7 @@ class ChassisAPI(Resource):
 
     # HTTP DELETE
     def delete(self,ident):
-        # logging.info('ChassisAPI delete called')
+        # logging.info('ComputerSystemAPI delete called')
         try:
             idx = 0
             for cfg in members:
@@ -152,15 +133,15 @@ class ChassisAPI(Resource):
         return resp
 
 
-# Chassis Collection API
-class ChassisCollectionAPI(Resource):
+# ComputerSystem Collection API
+class ComputerSystemCollectionAPI(Resource):
     def __init__(self):
         self.rb = g.rest_base
         self.config = {
-            '@odata.context': self.rb + '$metadata#ChassisCollection.ChassisCollection',
-            '@odata.id': self.rb + 'ChassisCollection',
-            '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
-            'Name': 'Chassis Collection',
+            '@odata.context': self.rb + '$metadata#ComputerSystemCollection.ComputerSystemCollection',
+            '@odata.id': self.rb + 'ComputerSystemCollection',
+            '@odata.type': '#ComputerSystemCollection.1.0.0.ComputerSystemCollection',
+            'Name': 'ComputerSystem Collection',
             'Links': {}
         }
         self.config['Links']['Member@odata.count'] = len(member_ids)
@@ -178,7 +159,7 @@ class ChassisCollectionAPI(Resource):
     # Todo - Fix so the config can be passed in the data.
     def post(self):
         try:
-            g.api.add_resource(ChassisAPI, '/redfish/v1/Chassiss/<string:ident>')
+            g.api.add_resource(ComputerSystemAPI, '/redfish/v1/ComputerSystems/<string:ident>')
             resp=self.config,200
         except Exception:
             traceback.print_exc()
@@ -186,13 +167,13 @@ class ChassisCollectionAPI(Resource):
         return resp
 
 
-# CreateChassis
+# CreateComputerSystem
 #
 # Called internally to create a instances of a resource.  If the resource has subordinate resources,
 # those subordinate resource(s)  should be created automatically.
 #
 # This routine can also be used to pre-populate emulator with resource instances.  For example, a couple of
-# Chassis and a Chassis (see examples in resource_manager.py)
+# Chassis and a ComputerSystem (see examples in resource_manager.py)
 #
 # Note: this may not the optimal way to pre-populate the emulator, since the resource_manager.py files needs
 # to be editted.  A better method is just hack up a copy of usertest.py which performs a POST for each resource
@@ -203,9 +184,9 @@ class ChassisCollectionAPI(Resource):
 #   The call to 'init' stores the path wildcards. The wildcards are used when subsequent calls instanctiate
 #   resources to modify the resource template.
 #
-class CreateChassis(Resource):
+class CreateComputerSystem(Resource):
     def __init__(self, **kwargs):
-        logging.info('CreateChassis init called')
+        logging.info('CreateComputerSystem init called')
         logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
@@ -214,32 +195,32 @@ class CreateChassis(Resource):
 
     # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
     def put(self,ident):
-        logging.info('CreateChassis put called')
+        logging.info('CreateComputerSystem put called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
-            config=get_Chassis_instance(wildcards)
+            config=get_ComputerSystem_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
-            # Power subordinate resource
-            path = g.rest_base + "Chassis/" + ident + "/Power"
-            logging.info('power path = ' + path)
-            g.api.add_resource(PowerAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-            config = CreatePower()
-            out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-            out = config.put("Power")
-            # Thermal subordinate resource
-            path = g.rest_base + "Chassis/" + ident + "/Thermal"
-            logging.info('thermal path = ' + path)
-            g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-            config = CreateThermal()
-            out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-            out = config.put("Thermal")
 
+            path = g.rest_base + "Systems/" + ident + "/ResetActionInfo"
+            g.api.add_resource(ResetActionInfo_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            path = g.rest_base + "Systems/" + ident + "/Actions/ComputerSystem.Reset"
+            g.api.add_resource(ResetAction_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+
+            '''
+            # attach subordinate resources
+            collectionpath = g.rest_base + "ComputerSystems/" + ident + "/EgSubResources"
+            logging.info('collectionpath = ' + collectionpath)
+            g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
+            singletonpath = collectionpath + "/<string:ident>"
+            logging.debug('singletonpath = ' + singletonpath)
+            g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
+            '''
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateChassis init exit')
+        logging.info('CreateComputerSystem init exit')
         return resp

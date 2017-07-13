@@ -7,9 +7,9 @@
 import copy
 import strgen
 
-_CHASSIS_TEMPLATE = \
+_TEMPLATE = \
     {
-        "@odata.context": "{rb}$metadata#Chassis/Links/Members/$entity",
+        "@odata.context": "{rb}$metadata#Chassis.Chassis",
         "@odata.id": "{rb}Chassis/{id}",
         "@odata.type": "#Chassis.v1_0_0.Chassis",
         "Id": "{id}",
@@ -35,19 +35,19 @@ _CHASSIS_TEMPLATE = \
         "Links": {
             "ComputerSystems": [
                 {
-                    "@odata.id": "{rb}Systems/"
+                    "@odata.id": "{rb}Systems/{linkSystem}"
                 }
             ],
             "ManagedBy": [
                 {
-                    "@odata.id": "{rb}Managers/1"
+                    "@odata.id": "{rb}Managers/{linkMgr}"
                 }
             ],
          },
     }
 
 
-def get_Chassis_template(rest_base, ident):
+def get_Chassis_instance(wildcards):
     """
     Formats the template
 
@@ -55,15 +55,15 @@ def get_Chassis_template(rest_base, ident):
         rest_base - Base URL for the RESTful interface
         indent    - ID of the chassis
     """
-    c = copy.deepcopy(_CHASSIS_TEMPLATE)
+    c = copy.deepcopy(_TEMPLATE)
 
-    c['@odata.context'] = c['@odata.context'].format(rb=rest_base)
-    c['@odata.id'] = c['@odata.id'].format(rb=rest_base, id=ident)
-    c['Id'] = c['Id'].format(id=ident)
-    c['Thermal']['@odata.id'] = c['Thermal']['@odata.id'].format(rb=rest_base, id=ident)
-    c['Power']['@odata.id'] = c['Power']['@odata.id'].format(rb=rest_base, id=ident)
-    c['Links']['ManagedBy'][0]['@odata.id'] = c['Links']['ManagedBy'][0]['@odata.id'].format(rb=rest_base, id=ident)
-    c['Links']['ComputerSystems'][0]['@odata.id']=c['Links']['ComputerSystems'][0]['@odata.id'].format(rb=rest_base)
+    c['@odata.context'] = c['@odata.context'].format(**wildcards)
+    c['@odata.id'] = c['@odata.id'].format(**wildcards)
+    c['Id'] = c['Id'].format(**wildcards)
+    c['Thermal']['@odata.id'] = c['Thermal']['@odata.id'].format(**wildcards)
+    c['Power']['@odata.id'] = c['Power']['@odata.id'].format(**wildcards)
+    c['Links']['ManagedBy'][0]['@odata.id'] = c['Links']['ManagedBy'][0]['@odata.id'].format(**wildcards)
+    c['Links']['ComputerSystems'][0]['@odata.id']=c['Links']['ComputerSystems'][0]['@odata.id'].format(**wildcards)
 
     c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
 

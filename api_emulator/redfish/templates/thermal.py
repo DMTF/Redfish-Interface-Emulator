@@ -2,11 +2,11 @@
 # Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# get_thermal_template()
+# get_thermal_instance()
 
 import copy
 
-_THERMAL_TEMPLATE = \
+_TEMPLATE = \
     {
         "@odata.context": "{rb}$metadata#Chassis/Links/Members/{ch_id}/Links/Thermal/$entity",
         "@odata.id": "{rb}Chassis/{ch_id}/Thermal",
@@ -160,7 +160,7 @@ _THERMAL_TEMPLATE = \
     }
 
 
-def get_thermal_template(rest_base, ch_id):
+def get_thermal_instance(wildcards):
     """
     Returns a formatted template
 
@@ -168,27 +168,27 @@ def get_thermal_template(rest_base, ch_id):
         rest_base - Base URL of the RESTful interface
         ident     - Identifier of the chassis
     """
-    c = copy.deepcopy(_THERMAL_TEMPLATE)
+    c = copy.deepcopy(_TEMPLATE)
 
-    c['@odata.context'] = c['@odata.context'].format(rb=rest_base, ch_id=ch_id)
-    c['@odata.id'] = c['@odata.id'].format(rb=rest_base, ch_id=ch_id)
-    c['Redundancy'][0]['@odata.id']=c['Redundancy'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][0]['@odata.id']=c['Fans'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][1]['@odata.id']=c['Fans'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][0]['@odata.id']=c['Temperatures'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][0]['RelatedItem'][0]['@odata.id']=c['Temperatures'][0]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][1]['@odata.id']=c['Temperatures'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][1]['RelatedItem'][0]['@odata.id']=c['Temperatures'][1]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][2]['@odata.id']=c['Temperatures'][2]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][2]['RelatedItem'][0]['@odata.id']=c['Temperatures'][2]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Temperatures'][2]['RelatedItem'][1]['@odata.id']=c['Temperatures'][2]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][0]['Redundancy'][0]['@odata.id']=c['Fans'][0]['Redundancy'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][0]['RelatedItem'][0]['@odata.id']=c['Fans'][0]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][0]['RelatedItem'][1]['@odata.id']=c['Fans'][0]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][1]['Redundancy'][0]['@odata.id']=c['Fans'][1]['Redundancy'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][1]['RelatedItem'][0]['@odata.id']=c['Fans'][1]['RelatedItem'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Fans'][1]['RelatedItem'][1]['@odata.id']=c['Fans'][1]['RelatedItem'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Redundancy'][0]['RedundancySet'][0]['@odata.id']=c['Redundancy'][0]['RedundancySet'][0]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
-    c['Redundancy'][0]['RedundancySet'][1]['@odata.id']=c['Redundancy'][0]['RedundancySet'][1]['@odata.id'].format(rb=rest_base,ch_id=ch_id)
+    c['@odata.context'] = c['@odata.context'].format(**wildcards)
+    c['@odata.id'] = c['@odata.id'].format(**wildcards)
+    c['Redundancy'][0]['@odata.id']=c['Redundancy'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][0]['@odata.id']=c['Fans'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][1]['@odata.id']=c['Fans'][1]['@odata.id'].format(**wildcards)
+    c['Temperatures'][0]['@odata.id']=c['Temperatures'][0]['@odata.id'].format(**wildcards)
+    c['Temperatures'][0]['RelatedItem'][0]['@odata.id']=c['Temperatures'][0]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Temperatures'][1]['@odata.id']=c['Temperatures'][1]['@odata.id'].format(**wildcards)
+    c['Temperatures'][1]['RelatedItem'][0]['@odata.id']=c['Temperatures'][1]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Temperatures'][2]['@odata.id']=c['Temperatures'][2]['@odata.id'].format(**wildcards)
+    c['Temperatures'][2]['RelatedItem'][0]['@odata.id']=c['Temperatures'][2]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Temperatures'][2]['RelatedItem'][1]['@odata.id']=c['Temperatures'][2]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['Fans'][0]['Redundancy'][0]['@odata.id']=c['Fans'][0]['Redundancy'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][0]['RelatedItem'][0]['@odata.id']=c['Fans'][0]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][0]['RelatedItem'][1]['@odata.id']=c['Fans'][0]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['Fans'][1]['Redundancy'][0]['@odata.id']=c['Fans'][1]['Redundancy'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][1]['RelatedItem'][0]['@odata.id']=c['Fans'][1]['RelatedItem'][0]['@odata.id'].format(**wildcards)
+    c['Fans'][1]['RelatedItem'][1]['@odata.id']=c['Fans'][1]['RelatedItem'][1]['@odata.id'].format(**wildcards)
+    c['Redundancy'][0]['RedundancySet'][0]['@odata.id']=c['Redundancy'][0]['RedundancySet'][0]['@odata.id'].format(**wildcards)
+    c['Redundancy'][0]['RedundancySet'][1]['@odata.id']=c['Redundancy'][0]['RedundancySet'][1]['@odata.id'].format(**wildcards)
 
     return c
