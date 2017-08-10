@@ -205,9 +205,15 @@ class CreateComputerSystem(Resource):
             member_ids.append({'@odata.id': config['@odata.id']})
 
             path = g.rest_base + "Systems/" + ident + "/ResetActionInfo"
-            g.api.add_resource(ResetActionInfo_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            try:
+                g.api.add_resource(ResetActionInfo_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            except:
+                pass
             path = g.rest_base + "Systems/" + ident + "/Actions/ComputerSystem.Reset"
-            g.api.add_resource(ResetAction_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            try:
+                g.api.add_resource(ResetAction_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
+            except:
+                pass
 
             '''
             # attach subordinate resources

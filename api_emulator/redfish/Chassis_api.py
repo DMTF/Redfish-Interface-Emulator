@@ -225,14 +225,20 @@ class CreateChassis(Resource):
             # Power subordinate resource
             path = g.rest_base + "Chassis/" + ident + "/Power"
             logging.info('power path = ' + path)
-            g.api.add_resource(PowerAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+            try:
+                g.api.add_resource(PowerAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+            except:
+                pass
             config = CreatePower()
             out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
             out = config.put("Power")
             # Thermal subordinate resource
             path = g.rest_base + "Chassis/" + ident + "/Thermal"
             logging.info('thermal path = ' + path)
-            g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+            try:
+                g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+            except:
+                pass
             config = CreateThermal()
             out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
             out = config.put("Thermal")
