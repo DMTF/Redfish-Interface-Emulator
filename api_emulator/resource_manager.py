@@ -4,21 +4,31 @@
 
 # Resource Manager Module
 
+import os
+import json
+import urllib3
 from uuid import uuid4
+from threading import Thread
+import logging
+
 
 import g
 from . import utils
-from .exceptions import CreatePooledNodeError, RemovePooledNodeError
+from .resource_dictionary import ResourceDictionary
+
+from .static_loader import load_static
+from .redfish.computer_system import ComputerSystem
+from .redfish.computer_systems import ComputerSystemCollection
+from .exceptions import CreatePooledNodeError, RemovePooledNodeError, EventSubscriptionError
+from .redfish.event_service import EventService, Subscriptions
+from .redfish.event import Event
+
+from .redfish.EventService_api import EventServiceAPI, CreateEventService
 from .redfish.Chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
 from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSystemAPI, CreateComputerSystem
-from .redfish.EventService_api import EventServiceAPI, CreateEventService
 from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
-from .redfish.computer_system import ComputerSystem
-from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
-from .resource_dictionary import ResourceDictionary
-from .static_loader import load_static
-
+from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 
 # The __init__ method sets up the static and dynamic resources.
 #

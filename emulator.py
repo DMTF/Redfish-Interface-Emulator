@@ -280,6 +280,11 @@ def reset():
 def index():
     return render_template('index.html')
 
+@g.app.route('/browse.html')
+def browse():
+    return render_template('browse.html')
+
+
 #
 # If any other RESTful request, send to RedfishAPI object for processing. Note: <path:path> specifies any path
 #

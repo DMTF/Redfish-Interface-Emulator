@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OData Explorer</title>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <style>
+        pre {
+            color: green;
+            padding: 0;
+            border: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<button onclick="load('/redfish/v1')">reload</button>
+<p id="jsonpath" style="color:blue;font-family:monospace">/redfish/v1/</p>
+<div id="jsondata"></div>
+<script type="text/javascript">
+    load('/redfish/v1');
+    function load(url) {
+        $('#jsonpath').text(url);
+        $.get(url,display);
+    }
+
+    function display(data,status) {
+        $('#jsondata').text('');
+        var txt=JSON.stringify(data,null,4).split('\n')
+        for (var line in txt) {
+            var line_i=$('<pre onclick=process(event)></pre>').text(txt[line])
+            $('#jsondata').append(line_i);
+        }
+    }
+
+    function process(event) {
+        var the_text=event.target.innerText;
+        if (the_text.includes('"@odata.id"')) {
+            var path=the_text.split('"')[3];
+            $('#jsonpath').text(path);
+            $('#jsondata').text('');
+            $.get(path,display);
+        }
+}
+</script>
+</body>
+</html>
