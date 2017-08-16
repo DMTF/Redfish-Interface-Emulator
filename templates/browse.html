@@ -28,7 +28,9 @@
         $('#jsondata').text('');
         var txt=JSON.stringify(data,null,4).split('\n')
         for (var line in txt) {
-            var line_i=$('<pre onclick=process(event)></pre>').text(txt[line])
+            var line_i=$('<pre onclick=process(event)></pre>').text(txt[line]);
+            if (txt[line].includes('"@odata.id"'))
+                line_i.css('border','1px solid blue').css('cursor','pointer');
             $('#jsondata').append(line_i);
         }
     }
