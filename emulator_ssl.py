@@ -31,7 +31,7 @@ from api_emulator import __version__
 from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary 
-from api_emulator.account_sevice import AccountService
+from api_emulator.account_service import AccountService
 
 #Restful authentication
 auth = HTTPBasicAuth()
