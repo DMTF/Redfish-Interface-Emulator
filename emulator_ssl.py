@@ -20,6 +20,8 @@ import json
 import argparse
 import traceback
 
+import g
+
 # Flask Imports
 from flask import Flask, request, make_response, render_template, jsonify
 from flask_restful import reqparse, Api, Resource
@@ -56,6 +58,7 @@ CONFIG = 'emulator-config.json'
 
 # Base URL of the RESTful interface
 REST_BASE = '/redfish/v1/'
+g.rest_base = REST_BASE
 
 # Creating the ResourceManager
 resource_manager = None
