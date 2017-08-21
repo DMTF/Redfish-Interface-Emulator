@@ -5,6 +5,7 @@
 # Example Resoruce Template
 import copy
 import strgen
+from api_emulator.utils import replace_recurse
 
 _TEMPLATE = \
     {
@@ -27,42 +28,17 @@ _TEMPLATE = \
         }
     }
 
-# not used
-def get_EgResource_instance(rest_base, ident):
+def get_EgResource_instance(wildcards):
     """
-    Formats the template
+    Creates an instace of TEMPLATE and replace wildcards as specfied.  Also
+    set any unique values.
 
     Arguments:
-        rest_base - Base URL for the RESTful interface
-        indent    - ID of the resource
-    """
-    c = copy.deepcopy(_EG_RESOURCE_TEMPLATE)
-
-    c['@odata.context'] = c['@odata.context'].format(rb=rest_base)
-    c['@odata.id'] = c['@odata.id'].format(rb=rest_base, id=ident)
-    c['Id'] = c['Id'].format(id=ident)
-
-    c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
-
-    return c
-
-def get_EgResource_instance2(wildcards):
-    """
-    Formats the template
-
-    Arguments:
-        wildcard - A dictionary of wildcards strings and their repalcement values
-
-    dict={"key1":"string","key2":"placeholders"}
-    msg='This {key1} contains custom {key2}'.format(**dict)
-
+        wildcard - A dictionary of wildcards strings and their replacement values
     """
     c = copy.deepcopy(_TEMPLATE)
-
-    c['@odata.context'] = c['@odata.context'].format(**wildcards)
-    c['@odata.id'] = c['@odata.id'].format(**wildcards)
-    c['Id'] = c['Id'].format(**wildcards)
-    c['SubResources']['@odata.id'] = c['SubResources']['@odata.id'].format(**wildcards)
+    replace_recurse(c, wildcards)
+    # print ("fini c: ", c)
 
     c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
 

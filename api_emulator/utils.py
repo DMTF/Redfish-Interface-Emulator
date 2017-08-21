@@ -36,7 +36,7 @@ def process_id(odata_id, base_dir, rest_base):
 
 def check_initialized(func):
     """
-    Wrapper function to check if the initialized member variable
+r    Wrapper function to check if the initialized member variable
     has been set to True in a class.
     """
     @wraps(func)
@@ -46,3 +46,20 @@ def check_initialized(func):
             raise RuntimeError('Object has already been initialized')
         return func(*args, **kwargs)
     return wrapper
+
+def replace_recurse(c, wildcards ):
+    # print("recurse c: ", c)
+    for k, v in c.items():
+        if isinstance(v, dict):
+            replace_recurse(c[k], wildcards)
+        elif isinstance(v, list):
+            for index, item in enumerate(v):
+                # print("list : ", index, "; ", item)
+                replace_recurse(item, wildcards)
+            # print("list: ", c)
+        else:
+            # print("key/value : ", k, "; ", v)
+            # print("c[k] : ", c[k])
+            c[k] = c[k].format(**wildcards)
+            # print("c[k]2: ", c[k])
+

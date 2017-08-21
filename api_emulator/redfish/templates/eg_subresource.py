@@ -25,6 +25,7 @@ _TEMPLATE = \
     }
 
 # not used
+'''
 def get_EgSubResource_instance(rest_base, ident):
     """
     Formats the template
@@ -42,19 +43,18 @@ def get_EgSubResource_instance(rest_base, ident):
     c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
 
     return c
-
-def get_EgSubResource_instance2(wildcards):
+'''
+def get_EgSubResource_instance(wildcards):
     """
-    Formats the template
+    Creates an instace of TEMPLATE and replace wildcards as specfied.  Also
+    set any unique values.
 
     Arguments:
-        wildcard - A dictionary of wildcards strings and their repalcement values
+        wildcard - A dictionary of wildcards strings and their replacement values
     """
     c = copy.deepcopy(_TEMPLATE)
-
-    c['@odata.context'] = c['@odata.context'].format(**wildcards)
-    c['@odata.id'] = c['@odata.id'].format(**wildcards)
-    c['Id'] = c['Id'].format(**wildcards)
+    replace_recurse(c, wildcards)
+    # print ("fini c: ", c)
 
     c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
 

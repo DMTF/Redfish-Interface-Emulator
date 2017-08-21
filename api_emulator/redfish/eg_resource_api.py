@@ -16,7 +16,7 @@ import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.eg_resource import get_EgResource_instance2
+from .templates.eg_resource import get_EgResource_instance
 
 from .eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
 
@@ -36,7 +36,7 @@ class EgResourceAPI(Resource):
         try:
             global config
             global wildcards
-            config=get_EgResource_instance2(wildcards)
+            config=get_EgResource_instance(wildcards)
             resp = config, 200
         except Exception:
             traceback.print_exc()
@@ -68,7 +68,7 @@ class EgResourceAPI(Resource):
         print('EgResourceAPI put called')
         try:
             global config
-            config=get_EgResource_instance2({'rb': g.rest_base, 'eg_id': ident})
+            config=get_EgResource_instance({'rb': g.rest_base, 'eg_id': ident})
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             global foo
@@ -200,7 +200,7 @@ class CreateEgResource(Resource):
             global config
             global wildcards
             wildcards['id'] = ident
-            config=get_EgResource_instance2(wildcards)
+            config=get_EgResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             # attach subordinate resources

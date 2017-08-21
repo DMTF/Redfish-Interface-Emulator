@@ -18,7 +18,7 @@ import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.eg_subresource import get_EgSubResource_instance2
+from .templates.eg_subresource import get_EgSubResource_instance
 
 
 members = []
@@ -70,7 +70,7 @@ class EgSubResourceAPI(Resource):
             global config
             global wildcards
             wildcards['id']= ident
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             resp = config, 200
@@ -154,7 +154,7 @@ class EgSubResourceCollectionAPI(Resource):
         try:
             global wildcards
             wildcards['id']= 'Test2'
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             resp=self.config,200
@@ -196,7 +196,7 @@ class CreateEgSubResource(Resource):
         try:
             global config
             global wildcards
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             resp = config, 200
