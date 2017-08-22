@@ -101,38 +101,38 @@ class ResourceManager(object):
         # Attach APIs for dynamic resources
 
         # EventService (singleton)
-        g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService/', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
+        g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
         config = CreateEventService()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
         out = config.put("EventService")
 
         # Chassis Collection
-        g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis/')
+        g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis')
         g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
         config = CreateChassis()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_5", 'linkMgr': "BMC"} )
         out = config.put("Chassis2")
 
         # System Collection
-        g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems/')
+        g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
         g.api.add_resource(ComputerSystemAPI,           '/redfish/v1/Systems/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
         config = CreateComputerSystem()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkChassis': "Chassis2", 'linkMgr': "BMC"})
         out = config.put("CS_5")
 
         # Manager Collection
-        g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers/')
+        g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')
         g.api.add_resource(ManagerAPI,           '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
         config = CreateManager()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_5", 'linkChassis': "Chassis2", 'linkInChassis': "Chassis2"})
         out = config.put("BMC")
 
         # PCIe Switch Collection
-        g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches/')
+        g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches')
         g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
 
         # Example Resource Collection
-        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources/')
+        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
         g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
         config = CreateEgResource( )
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
