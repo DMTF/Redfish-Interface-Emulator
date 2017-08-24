@@ -20,7 +20,7 @@ class AccountService(object):
             return False
 
     def getPassword(self, username):
-        if self._accounts.has_key(username):
+        if username in self._accounts:
             return self._accounts[username]
         else:
             return None

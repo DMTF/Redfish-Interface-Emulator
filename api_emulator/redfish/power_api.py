@@ -25,7 +25,7 @@ class PowerAPI(Resource):
         logging.info('PowerAPI init called')
         try:
             global config
-            config=get_Power_instance(kwargs)
+            config=get_power_instance(kwargs)
             resp = config, 200
         except Exception:
             traceback.print_exc()
