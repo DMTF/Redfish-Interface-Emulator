@@ -27,7 +27,6 @@ orig_path = 'default'
 
 def write_program_header(outfile, base_program_name):
     """ Writes a program header """
-    outfile.write('#!/usr/bin/env python3\n')
     outfile.write('# Copyright Notice:\n')
     outfile.write('# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.\n')
     outfile.write('# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md\n')
@@ -89,7 +88,7 @@ def write_singleton_api(outfile, base_program_name):
     outfile.write("\t\t\tmember_ids.append({'@odata.id': config['@odata.id']})\n")
     outfile.write("\t\t\tglobal foo\n")
     outfile.write("\t\t\tif  (foo == 'false'):\n")
-    outfile.write("\t\t\t\t# code from adding subordinate resources\n")
+    outfile.write("\t\t\t\t# TODO - add code for subordinate resources\n")
     outfile.write("\t\t\t\tfoo = 'true'\n")
     outfile.write("\t\t\tresp = config, 200\n")
     outfile.write("\t\texcept Exception:\n")
@@ -175,9 +174,36 @@ def write_collection_api(outfile, base_program_name):
 
 def write_create_call(outfile, base_program_name):
     ''' Write the create_<class>() function '''
-    argument_string = "Class create{0}(Resource):\n".format(base_program_name)
+    argument_string = "class Create{0}(Resource):\n".format(base_program_name)
     outfile.write(argument_string)
-    outfile.write('    # TODO insert the code here')
+    outfile.write("\tdef __init__(self, **kwargs):\n")
+    argument_string = "\t\tlogging.info('CreateChassis init called')\n".format(base_program_name)
+    outfile.write(argument_string)
+    outfile.write("\t\tif 'resource_class_kwargs' in kwargs:\n")
+    outfile.write("\t\t\tglobal wildcards\n")
+    outfile.write("\t\t\twildcards = copy.deepcopy(kwargs['resource_class_kwargs'])\n")
+    outfile.write("\t\t\tlogging.debug(wildcards, wildcards.keys())\n")
+    outfile.write("\n")
+
+    outfile.write("\tdef put(self,ident):\n")
+    argument_string = "\t\tlogging.info('CreateChassis put called')\n".format(base_program_name)
+    outfile.write(argument_string)
+    outfile.write("\t\ttry:\n")
+    outfile.write("\t\t\tglobal config\n")
+    outfile.write("\t\t\tglobal wildcards\n")
+    outfile.write("\t\t\twildcards['id'] = ident\n")
+    argument_string = "\t\t\tconfig=get_Chassis_instance(wildcards)\n".format(base_program_name)
+    outfile.write(argument_string)
+    outfile.write("\t\t\tmembers.append(config)\n")
+    outfile.write("\t\t\tmember_ids.append({'@odata.id': config['@odata.id']})\n")
+    outfile.write("\t\t\t# TODO - add code for subordinate resources\n")
+    outfile.write("\t\t\tresp = config, 200\n")
+    outfile.write("\t\texcept Exception:\n")
+    outfile.write("\t\t\ttraceback.print_exc()\n")
+    outfile.write("\t\t\tresp = INTERNAL_ERROR\n")
+    argument_string = "\t\tlogging.info('CreateChassis init exit')\n".format(base_program_name)
+    outfile.write(argument_string)
+    outfile.write("\t\treturn resp\n")
     return
 
 def write_program(outfile, base_program_name):
