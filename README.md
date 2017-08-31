@@ -58,14 +58,32 @@ If the new mockup has additional resources off the ServiceRoot, then small modif
 ### Creating dynamic resources ###
 Resources can be incremental recasted as dynamic, so one can straddle static vs dynamic emulation.  The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.  An example for the Chassis resource is included in the source code.
 
-1. Create a ./api\_emulator/Redfish/template/chassis.py file
+1. Create an API file (e.g. Chassis\_api.py)
+	* The file is placed in the ./api\_emulator/Redfish directory
+	* The file contain the behavior of each HTTP command, of interest
+	* The file contains the API for both the singleton resource and the collection resource (if collection exists)
+2. Create a template file (e.g. Chassis.py)
+	* The file is placed in ./api\_emulator/Redfish/template directory
 	* The file should contain the same properties as the mockup file for the resource
-2. Create a ./api\_emulator/Redfish/chassis\_api.py file
-	* There is a single file for both the collection resource and the singleton resources
-	* Code the behavior for each HTTP command of interest
 3. Edit ./api\_emulator/resource\_emulator.py file
 	* Comment out the line which loads the static mockup for the Chassis resource
 	* Add the line to add the resource API defined in chassis_api.py
+
+Code generators for the steps #1 (API file) and #2 (template file) exists in the ./codegen directory.
+
+* Generate API file
+	* The following command generates an API file
+	* The HTTP commands implemented are GET, PATCH, POST and DELETE
+	* If the resource has subordinate resources that need to be instantiated when this resource is instantiated, that code will need to be manually added.
+* 
+		codegen_api Chassis <outputdir>
+
+* Generate template file
+	* The following command generates a template file
+	* The file uses a index.json file located in the current working directory to drive the creation of the template. (TODO - add the filename as a command line parameter)
+	* The file contains a dictionary with the names of Redfish collections and there corresponding wildcard.  This dictionary should be update the keep in sync with Redfish modeling. 
+* 
+		codegen_template Chassis <outputdir>
 
 ### Testing the Emulator
 The command to test the emulator can executed against the emulator running locally or hosted in the cloud.
