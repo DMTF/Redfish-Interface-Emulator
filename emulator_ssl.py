@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #
 # Copyright (c) 2016 Intel Corporation. All Rights Reserved.
 #
