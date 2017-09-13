@@ -2,14 +2,26 @@
 # Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# Example Subresource Collection Resource and Singleton Resource
-"""
-These API's are attached by the resource to which these resources are subordinate
+# Example Subresource Collection Resource or Singleton Resource API file
+#
+# Replace the string "EgSubResource" with the proper resource
+# names and adjust the code as necessary for the HTTP commands.
+#
+# This API file goes in the api_emulator/redfish directory, and must
+# be paired with an appropriate SubResource template file in the
+# api_emulator/redfish/templates directory. The resource_manager.py
+# file in the api_emulator directory can then be edited to use these
+# files to make the resource dynamic.
 
-Collection API  GET, POST
-Singleton  API  GET, POST, PATCH, DELETE
-
 """
+These APIs get attached to subordinate Collection Resources or
+subordinate Singleton Resources. They are attached by the resource
+to which they are subordinate.
+
+Collection API:  GET, POST
+Singleton  API:  GET, POST, PATCH, DELETE
+"""
+
 import g
 
 import sys, traceback
@@ -18,7 +30,8 @@ import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .templates.eg_subresource import get_EgSubResource_instance2
+# SubResource imports
+from .templates.eg_subresource import get_EgSubResource_instance
 
 
 members = []
@@ -26,13 +39,20 @@ member_ids = []
 foo = 'false'
 INTERNAL_ERROR = 500
 
-# API for EgSubResource
+
+# EgSubResource API
+
 class EgSubResourceAPI(Resource):
-    # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
+
+    # kwargs is used to pass in the wildcards values to be replaced
+    # when the instance is created via get_<resource>_instance().
     #
-    # The call to attach the API, flask.add_resource(), establishes the contents of kwargs. All subsequent HTTP calls go through __init__.
-    #   So __init__ stores kwargs in the wildcards variable and the wildcards is used in the other HTTP code.
-    # 
+    # The call to attach the API establishes the contents of kwargs.
+    # All subsequent HTTP calls go through __init__.
+    #
+    # __init__ stores kwargs in the wildcards variable which is used
+    # to pass the wildcards to the HTTP code.
+
     def __init__(self, **kwargs):
         logging.info('EgSubResourceAPI init called')
         logging.debug(kwargs)
@@ -60,17 +80,16 @@ class EgSubResourceAPI(Resource):
         return resp
 
     # HTTP POST
-    # - Create the resource (since URI variables are avaiable)
+    # - Create the resource using the available URI variables
     # - Update the members and members.id lists
-    # - Attach the APIs of subordinate resources (do this only once)
-    # - Finally, create an instance of the subordiante resources
+
     def post(self,ident):
         logging.info('EgSubResourceAPI POST called')
         try:
             global config
             global wildcards
             wildcards['id']= ident
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             resp = config, 200
@@ -82,7 +101,7 @@ class EgSubResourceAPI(Resource):
 
     # HTTP PATCH
     def patch(self, ident):
-        logging.info('EgSubResourceAPI patch called')
+        logging.info('EgSubResourceAPI PATCH called')
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
@@ -104,8 +123,8 @@ class EgSubResourceAPI(Resource):
 
 
     # HTTP DELETE
-    def delete(self,ident):
-        # logging.info('EgSubResourceAPI delete called')
+    def delete(self, ident):
+        # logging.info('EgSubResourceAPI DELETE called')
         try:
             idx = 0
             for cfg in members:
@@ -121,10 +140,11 @@ class EgSubResourceAPI(Resource):
         return resp
 
 
-# API for EgSubResource Collection
+# EgSubResourceCollection API
+
 class EgSubResourceCollectionAPI(Resource):
     def __init__(self, **kwargs):
-        logging.info('EgSubResourceCollection init called')
+        logging.info('EgSubResourceCollectionAPI init called')
         logging.debug(kwargs)
         odatapath = kwargs['path']
         self.config = {
@@ -137,7 +157,9 @@ class EgSubResourceCollectionAPI(Resource):
         self.config['Links']['Member@odata.count'] = len(member_ids)
         self.config['Links']['Members'] = member_ids
 
+
     # HTTP GET
+
     def get(self):
         logging.info('EgSubResourceCollectionAPI GET called')
         try:
@@ -147,17 +169,19 @@ class EgSubResourceCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
+
     # HTTP POST
     # Todo - 'id' should be obtained from the request data.
+
     def post(self):
         logging.info('EgSubResourceCollectionAPI POST called')
         try:
             global wildcards
             wildcards['id']= 'Test2'
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
-            resp=self.config,200
+            resp=self.config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -166,21 +190,25 @@ class EgSubResourceCollectionAPI(Resource):
 
 # CreateEgSubResource
 #
-# Called internally to create a instances of a resource.  If the resource has subordinate resources,
-# those subordinate resource(s)  should be created automatically.
+# Called internally to create instances of a subresource. If the
+# resource has subordinate resources, those subordinate resource(s)
+# are created automatically.
 #
-# This routine can also be used to pre-populate emulator with resource instances.  For example, a couple of
-# Chassis and a ComputerSystem (see examples in resource_manager.py)
+# This routine can also be used to pre-populate the emulator with
+# resource instances, such as a Chassis and a ComputerSystem. (See
+# examples in resource_manager.py.)
 #
-# Note: this may not the optimal way to pre-populate the emulator, since the resource_manager.py files needs
-# to be editted.  A better method is just hack up a copy of usertest.py which performs a POST for each resource
-# instance desired (e.g. populate.py).  Then one could have a multiple 'populate' files and the emulator doesn't
-# need to change.
+# Note: This is not the optimal way to pre-populate the emulator,
+# because the resource_manager.py file must be edited. A better way
+# would be to create a program file (e.g. populate.py) which performs
+# a POST for each resource instance desired. Multiple such 'populate'
+# files could then be used without making changes to the emulator.
 # 
-# Note: In 'init', the first time through, kwargs may not have any values, so we need to check.
-#   The call to 'init' stores the path wildcards. The wildcards are used when subsequent calls instanctiate
-#   resources to modify the resource template.
-#
+# Note: In 'init', the first time through, kwargs may not have any
+# values, so we need to check. The call to 'init' stores the path
+# wildcards. The wildcards are used to modify the resource template
+# when subsequent calls are made to instantiate resources.
+
 class CreateEgSubResource(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateEgSubResource init called')
@@ -190,18 +218,19 @@ class CreateEgSubResource(Resource):
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
             logging.debug(wildcards, wildcards.keys())
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
+    # Attach APIs for subordinate resource(s). Attach the APIs for
+    # a resource collection and its singletons.
     def put(self,ident):
-        logging.info('CreateEgSubResource put called')
+        logging.info('CreateEgSubResource PUT called')
         try:
             global config
             global wildcards
-            config=get_EgSubResource_instance2(wildcards)
+            config=get_EgSubResource_instance(wildcards)
             members.append(config)
             member_ids.append({'@odata.id': config['@odata.id']})
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateEgSubResource init exit')
+        logging.info('CreateEgSubResource PUT exit')
         return resp

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #
 # Copyright (c) 2016 Intel Corporation. All Rights Reserved.
 #
@@ -19,19 +20,20 @@ import os
 import json
 import argparse
 import traceback
-import xml.etree.ElementTree as ET
+
+import g
 
 # Flask Imports
 from flask import Flask, request, make_response, render_template, jsonify
-from flask.ext.restful import reqparse, Api, Resource
+from flask_restful import reqparse, Api, Resource
 from flask_httpauth import HTTPBasicAuth
 
 # Emulator Imports
-from api_emulator import __version__
+from api_emulator.version import __version__
 from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary 
-from api_emulator.account_sevice import AccountService
+from api_emulator.account_service import AccountService
 
 #Restful authentication
 auth = HTTPBasicAuth()
@@ -57,6 +59,7 @@ CONFIG = 'emulator-config.json'
 
 # Base URL of the RESTful interface
 REST_BASE = '/redfish/v1/'
+g.rest_base = REST_BASE
 
 # Creating the ResourceManager
 resource_manager = None
@@ -155,7 +158,7 @@ class RedfishAPI(Resource):
                 resp = self.actions[action](action, cs_puid)
             except KeyError as e:
                 traceback.print_exc()
-                resp = error_response('Unknown action: {0}'.format(e.message), 400)
+                resp = error_response('Unknown action: {0}'.format(e), 400)
             except Exception:
                 traceback.print_exc()
                 resp = INTERNAL_ERROR
@@ -166,7 +169,7 @@ class RedfishAPI(Resource):
                 resp = self.actions[action](action)
             except KeyError as e:
                 traceback.print_exc()
-                resp = error_response('Unknown action: {0}'.format(e.message), 400)
+                resp = error_response('Unknown action: {0}'.format(e), 400)
             except Exception:
                 traceback.print_exc()
                 resp = INTERNAL_ERROR
@@ -174,9 +177,9 @@ class RedfishAPI(Resource):
             resp = '', 404
         return resp
 
-        """
-        Either return ServiceRoot or let resource manager handel
-        """
+    """
+    Either return ServiceRoot or let resource manager handel
+    """
     def get(self, path=None):
         try:               
             if path is not None:
@@ -209,7 +212,7 @@ class RedfishAPI(Resource):
         except (AssertionError, ValueError):
             resp = error_response('Unknown DELETE request - this is only for pooled nodes', 404)
         except RemovePooledNodeError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(str(e), 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -228,9 +231,9 @@ class RedfishAPI(Resource):
                 config = resource_manager._create_redfish(request.json, action)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(str(e), 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(str(e), 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -245,9 +248,9 @@ class RedfishAPI(Resource):
             config = resource_manager.update_system(request.json, idx)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(str(e), 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(str(e), 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -262,9 +265,9 @@ class RedfishAPI(Resource):
             config = resource_manager.add_event_subscription(request.json)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(str(e), 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(str(e), 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -350,52 +353,36 @@ def main():
 
     with open(CONFIG, 'r') as f:
         config = json.load(f)
-    
+
+    argparser = argparse.ArgumentParser(
+        description='Redfish Manageability API Emulator - Version: ' + __version__,
+        epilog='Developed by Intel')
+
     MODE = config['MODE']
     if(MODE=='Cloud'):
-        
-        argparser = argparse.ArgumentParser(
-        version=__version__,
-        description='Redfish Manageability API Emulator - Version: ' + __version__,
-        epilog='Developed by Intel')
         argparser.add_argument('-port', type=int, default=port,
                            help='Port to run the emulator on. Default define by Foundry')
-        argparser.add_argument('-debug', action='store_true', default=False,
-                           help='Run the emulator in debug mode. Note that if you'
-                                ' run in debug mode, then the emulator will only'
-                                'be ran locally.')
-        args = argparser.parse_args()
-        
     elif(MODE=='Local'):
-        argparser = argparse.ArgumentParser(
-        version=__version__,
-        description='Redfish Manageability API Emulator - Version: ' + __version__,
-        epilog='Developed by Intel')
-    
         argparser.add_argument('-port', type=int, default=5000,
                            help='Port to run the emulator on. Default is 5000')
-        argparser.add_argument('-debug', action='store_true', default=False,
+
+    argparser.add_argument('-debug', action='store_true', default=False,
                            help='Run the emulator in debug mode. Note that if you'
-                                ' run in debug mode, then the emulator will only'
-                                'be ran locally.')
-
-    
-        args = argparser.parse_args()
-
-    
-        
+                           ' run in debug mode, then the emulator will only'
+                           'be ran locally.')
+    args = argparser.parse_args()
 
     try:
         startup()
     except ConfigurationError as e:
-        print 'Error Loading Trays:', e.message
+        print('Error Loading Trays: {}'.format(e))
     else:
         context = ('server.crt', 'server.key')
         kwargs = {'debug': args.debug, 'port': args.port, 'ssl_context' : context}
         if not args.debug:
             kwargs['host'] = '0.0.0.0'
 
-        print ' * Running in', SPEC, 'mode'
+        print(' * Running in', SPEC, 'mode')
         app.run(**kwargs)
 
 if __name__ == '__main__':

@@ -2,10 +2,11 @@
 # Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# get_Chassis_Template()
+# get_Chassis_instance()
 
 import copy
 import strgen
+from api_emulator.utils import replace_recurse
 
 _TEMPLATE = \
     {
@@ -49,22 +50,9 @@ _TEMPLATE = \
 
 def get_Chassis_instance(wildcards):
     """
-    Formats the template
-
-    Arguments:
-        rest_base - Base URL for the RESTful interface
-        indent    - ID of the chassis
+    Creates an instace of TEMPLATE and replace wildcards as specfied
     """
     c = copy.deepcopy(_TEMPLATE)
-
-    c['@odata.context'] = c['@odata.context'].format(**wildcards)
-    c['@odata.id'] = c['@odata.id'].format(**wildcards)
-    c['Id'] = c['Id'].format(**wildcards)
-    c['Thermal']['@odata.id'] = c['Thermal']['@odata.id'].format(**wildcards)
-    c['Power']['@odata.id'] = c['Power']['@odata.id'].format(**wildcards)
-    c['Links']['ManagedBy'][0]['@odata.id'] = c['Links']['ManagedBy'][0]['@odata.id'].format(**wildcards)
-    c['Links']['ComputerSystems'][0]['@odata.id']=c['Links']['ComputerSystems'][0]['@odata.id'].format(**wildcards)
-
-    c['SerialNumber'] = strgen.StringGenerator('[A-Z]{3}[0-9]{10}').render()
-
+    replace_recurse(c, wildcards)
+    # print ("fini c: ", c)
     return c
