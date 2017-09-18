@@ -28,6 +28,10 @@ from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSys
 from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
+from .redfish.power_api import PowerAPI
+from .redfish.thermal_api import ThermalAPI
+from .redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
+from .redfish.ComputerSystem.ResetAction_api import ResetAction_API
 
 # The __init__ method sets up the static and dynamic resources.
 #
@@ -110,11 +114,15 @@ class ResourceManager(object):
         # Chassis Collection
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis')
         g.api.add_resource(ChassisAPI, '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ident>/Thermal', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(PowerAPI, '/redfish/v1/Chassis/<string:ident>/Power', resource_class_kwargs={'rb': g.rest_base})
+
 
         # System Collection
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
-        g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',
-                           resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ResetActionInfo_API, '/redfish/v1/Systems/<string:ident>/ResetActionInfo',resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ResetAction_API, '/redfish/v1/Systems/<string:ident>/Actions/ComputerSystem.Reset',resource_class_kwargs={'rb': g.rest_base})
 
         # Manager Collection
         g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')

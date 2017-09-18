@@ -12,18 +12,20 @@ from flask_restful import reqparse, Api, Resource
 
 from .ResetActionInfo_template import get_ResetActionInfo_instance
 
-config = {}
+members = {}
+
 INTERNAL_ERROR = 500
+
 
 class ResetActionInfo_API(Resource):
     # kwargs is use to pass in the wildcards values to replace when the instance is created.
     def __init__(self, **kwargs):
         print ('ResetActionInfoAPI init called')
-        print (kwargs)
-#        sw_id = kwargs['{sw_id}']
+        wildcards=kwargs['resource_class_kwargs']
+        # sw_id = kwargs['{sw_id}']
         try:
-            global config
-            config=get_ResetActionInfo_instance(kwargs)
+            config = get_ResetActionInfo_instance(wildcards)
+            members[wildcards['sys_id']] = config
             resp = config, 200
         except Exception:
             traceback.print_exc()
@@ -44,8 +46,8 @@ class ResetActionInfo_API(Resource):
 
     # HTTP PUT
     def put(self):
-         return 'PUT is not a valid command', 202
+        return 'PUT is not a valid command', 202
 
     # HTTP DELETE
     def delete(self):
-         return 'DELETE is not a valid command', 202
+        return 'DELETE is not a valid command', 202

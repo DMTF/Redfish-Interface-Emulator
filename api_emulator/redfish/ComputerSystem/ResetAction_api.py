@@ -14,7 +14,8 @@ import sys, traceback
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 from subprocess import check_output
-config = {}
+
+members={}
 INTERNAL_ERROR = 500
 
 class ResetAction_API(Resource):

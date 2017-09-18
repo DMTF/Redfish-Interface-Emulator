@@ -12,6 +12,9 @@ import json
 import argparse
 import traceback
 import xml.etree.ElementTree as ET
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 import g
 
