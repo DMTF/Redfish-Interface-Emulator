@@ -20,8 +20,7 @@ from .templates.Manager import get_Manager_instance
 
 #from .eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
 
-members = []
-member_ids = []
+members = {}
 foo = 'false'
 INTERNAL_ERROR = 500
 
@@ -49,11 +48,8 @@ class ManagerAPI(Resource):
         try:
             # Find the entry with the correct value for Id
             resp = 404
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    config = cfg
-                    resp = config, 200
-                    break
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -191,11 +187,11 @@ class ManagerCollectionAPI(Resource):
 class CreateManager(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateManager init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs)#, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)#, wildcards.keys())
 
     # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
     def put(self,ident):
@@ -205,8 +201,7 @@ class CreateManager(Resource):
             global wildcards
             wildcards['id'] = ident
             config=get_Manager_instance(wildcards)
-            members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
+            members[ident]=config
             '''
             # attach subordinate resources
             collectionpath = g.rest_base + "Managers/" + ident + "/EgSubResources"

@@ -71,7 +71,7 @@ class CreateEventService(Resource):
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)
 
     def put(self,ident):
         logging.info('CreateEventService put called')

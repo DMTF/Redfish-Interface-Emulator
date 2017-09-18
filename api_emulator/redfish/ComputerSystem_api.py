@@ -20,8 +20,7 @@ from .templates.ComputerSystem import get_ComputerSystem_instance
 from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .ComputerSystem.ResetAction_api import ResetAction_API
 
-members = []
-member_ids = []
+members = {}
 foo = 'false'
 INTERNAL_ERROR = 500
 
@@ -45,11 +44,8 @@ class ComputerSystemAPI(Resource):
         try:
             # Find the entry with the correct value for Id
             resp = 404
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    config = cfg
-                    resp = config, 200
-                    break
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -67,8 +63,7 @@ class ComputerSystemAPI(Resource):
             global wildcards
             wildcards['id'] = ident
             config=get_ComputerSystem_instance(wildcards)
-            members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
+            members[ident]=config
             global foo
             # Attach URIs for subordiante resources
             '''
@@ -99,10 +94,7 @@ class ComputerSystemAPI(Resource):
         logging.info(raw_dict)
         try:
             # Find the entry with the correct value for Id
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-            config = cfg
+            config = members[ident]
             logging.info(config)
             for key, value in raw_dict.items():
                 logging.info('Update ' + key + ' to ' + value)
@@ -119,13 +111,7 @@ class ComputerSystemAPI(Resource):
     def delete(self,ident):
         # logging.info('ComputerSystemAPI delete called')
         try:
-            idx = 0
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-                idx += 1
-            members.pop(idx)
-            member_ids.pop(idx)
+            del(members[ident])
             resp = 200
         except Exception:
             traceback.print_exc()
@@ -159,7 +145,8 @@ class ComputerSystemCollectionAPI(Resource):
     # Todo - Fix so the config can be passed in the data.
     def post(self):
         try:
-            g.api.add_resource(ComputerSystemAPI, '/redfish/v1/ComputerSystems/<string:ident>')
+            logging.debug(request.get_json())
+            raise Exception('Not implemented')
             resp=self.config,200
         except Exception:
             traceback.print_exc()
@@ -187,11 +174,11 @@ class ComputerSystemCollectionAPI(Resource):
 class CreateComputerSystem(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateComputerSystem init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs)#, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)#, wildcards.keys())
 
     # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
     def put(self,ident):
@@ -200,20 +187,12 @@ class CreateComputerSystem(Resource):
             global config
             global wildcards
             wildcards['id'] = ident
+            wildcards['sys_id'] = ident
             config=get_ComputerSystem_instance(wildcards)
-            members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
+            members[ident]=config
 
-            path = g.rest_base + "Systems/" + ident + "/ResetActionInfo"
-            try:
-                g.api.add_resource(ResetActionInfo_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
-            except:
-                pass
-            path = g.rest_base + "Systems/" + ident + "/Actions/ComputerSystem.Reset"
-            try:
-                g.api.add_resource(ResetAction_API, path, resource_class_kwargs={'rb': g.rest_base, 'sys_id': ident})
-            except:
-                pass
+            ResetAction_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
+            ResetActionInfo_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
 
             '''
             # attach subordinate resources

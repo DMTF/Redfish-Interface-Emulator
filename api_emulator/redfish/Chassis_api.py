@@ -21,8 +21,8 @@ from .thermal_api import ThermalAPI, CreateThermal
 from .power_api import PowerAPI, CreatePower
 
 
-members = []
-member_ids = []
+members = {}
+
 foo = 'false'
 INTERNAL_ERROR = 500
 
@@ -35,7 +35,6 @@ class ChassisAPI(Resource):
         logging.basicConfig(level=logging.INFO)
         logging.info('ChassisAPI init called')
         try:
-            global config
             global wildcards
             wildcards = kwargs
 #            config=get_Chassis_instance(wildcards)
@@ -50,11 +49,8 @@ class ChassisAPI(Resource):
         try:
             # Find the entry with the correct value for Id
             resp = 404
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    config = cfg
-                    resp = config, 200
-                    break
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -206,11 +202,11 @@ class ChassisCollectionAPI(Resource):
 class CreateChassis(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateChassis init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs)#, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)#, wildcards.keys())
 
     # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
     def put(self,ident):
@@ -220,28 +216,10 @@ class CreateChassis(Resource):
             global wildcards
             wildcards['id'] = ident
             config=get_Chassis_instance(wildcards)
-            members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
+            members[ident]=config
             # Power subordinate resource
-            path = g.rest_base + "Chassis/" + ident + "/Power"
-            logging.info('power path = ' + path)
-            try:
-                g.api.add_resource(PowerAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-            except:
-                pass
-            config = CreatePower()
-            out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-            out = config.put("Power")
-            # Thermal subordinate resource
-            path = g.rest_base + "Chassis/" + ident + "/Thermal"
-            logging.info('thermal path = ' + path)
-            try:
-                g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-            except:
-                pass
-            config = CreateThermal()
-            out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-            out = config.put("Thermal")
+            CreatePower(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident}).put(ident)
+            CreateThermal(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident}).put(ident)
 
             resp = config, 200
         except Exception:

@@ -14,7 +14,7 @@ from flask_restful import reqparse, Api, Resource
 from .templates.thermal import get_thermal_instance
 
 # config is instantiated by CreateThermal()
-config = {}
+members={}
 INTERNAL_ERROR = 500
 
 #Thermal API
@@ -25,10 +25,12 @@ class ThermalAPI(Resource):
         logging.info('ThermalAPI init called')
 
     # HTTP GET
-    def get(self):
+    def get(self,ident):
         try:
-            global config
-            resp = config, 200
+            # Find the entry with the correct value for Id
+            resp = 404
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -40,11 +42,9 @@ class ThermalAPI(Resource):
         raw_dict = request.get_json(force=True)
         try:
             global config
-            print (config)
             for key, value in raw_dict.items():
                 print ('Update ' + key + ' to ' + value)
                 config[key] = value
-            print (config)
             resp = config, 200
         except Exception:
             traceback.print_exc()
@@ -66,16 +66,16 @@ class CreateThermal(Resource):
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)#, wildcards.keys())
 
     # PUT
     # - Create the resource (since URI variables are avaiable)
     def put(self,ch_id):
         logging.info('CreateThermal put called')
         try:
-            global config
             global wildcards
             config=get_thermal_instance(wildcards)
+            members[ch_id]=config
             resp = config, 200
         except Exception:
             traceback.print_exc()

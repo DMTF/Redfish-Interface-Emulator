@@ -229,11 +229,11 @@ class EgResourceCollectionAPI(Resource):
 class CreateEgResource(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateEgResource init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs) #, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)#, wildcards.keys())
 
     # Attach APIs for subordinate resource(s). Attach the APIs for
     # a resource collection and its singletons.
