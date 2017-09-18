@@ -11,7 +11,6 @@ from uuid import uuid4
 from threading import Thread
 import logging
 
-
 import g
 from . import utils
 from .resource_dictionary import ResourceDictionary
@@ -33,7 +32,7 @@ from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, Cre
 # The __init__ method sets up the static and dynamic resources.
 #
 # When a resource is accessed, the resource is sought in the following order:
-#       1. Dynamic resource for specific URI
+# 1. Dynamic resource for specific URI
 #       2. Default dynamic resource
 #       3. Static resource dictionary
 #
@@ -65,7 +64,8 @@ class ResourceManager(object):
     Load static resources and dynamic resources
     Defines ServiceRoot
     """
-    def __init__(self, rest_base, spec,mode,trays=None):
+
+    def __init__(self, rest_base, spec, mode, trays=None):
         """
         Arguments:
             rest_base - Base URL for the REST interface
@@ -77,12 +77,12 @@ class ResourceManager(object):
         2. Static resource dictionary
         """
 
-#        logging.basicConfig(level=logging.INFO)
-#        logging.basicConfig(level=logging.DEBUG)
+        #        logging.basicConfig(level=logging.INFO)
+        #        logging.basicConfig(level=logging.DEBUG)
 
         self.rest_base = rest_base
 
-        self.mode=mode
+        self.mode = mode
         self.spec = spec
         self.modified = utils.timestamp()
         self.uuid = str(uuid4())
@@ -101,42 +101,50 @@ class ResourceManager(object):
         # Attach APIs for dynamic resources
 
         # EventService (singleton)
-        g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService', resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
+        g.api.add_resource(EventServiceAPI, '/redfish/v1/EventService',
+                           resource_class_kwargs={'rb': g.rest_base, 'id': "EventService"})
         config = CreateEventService()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
         out = config.put("EventService")
 
         # Chassis Collection
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis')
-        g.api.add_resource(ChassisAPI,           '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
-        config = CreateChassis()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_5", 'linkMgr': "BMC"} )
-        out = config.put("Chassis2")
+        g.api.add_resource(ChassisAPI, '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
         # System Collection
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
-        g.api.add_resource(ComputerSystemAPI,           '/redfish/v1/Systems/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
-        config = CreateComputerSystem()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkChassis': "Chassis2", 'linkMgr': "BMC"})
-        out = config.put("CS_5")
+        g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',
+                           resource_class_kwargs={'rb': g.rest_base})
 
         # Manager Collection
         g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')
-        g.api.add_resource(ManagerAPI,           '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
-        config = CreateManager()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_5", 'linkChassis': "Chassis2", 'linkInChassis': "Chassis2"})
-        out = config.put("BMC")
+        g.api.add_resource(ManagerAPI, '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
         # PCIe Switch Collection
         g.api.add_resource(PCIeSwitchesAPI, '/redfish/v1/PCIeSwitches')
-        g.api.add_resource(PCIeSwitchAPI,   '/redfish/v1/PCIeSwitches/<string:ident>')
+        g.api.add_resource(PCIeSwitchAPI, '/redfish/v1/PCIeSwitches/<string:ident>')
 
         # Example Resource Collection
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
-        g.api.add_resource(EgResourceAPI,           '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': g.rest_base} )
-        config = CreateEgResource( )
+        g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>',
+                           resource_class_kwargs={'rb': g.rest_base})
+        config = CreateEgResource()
         out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
         out = config.put("Resource2")
+
+        #populate with some example infrastructure
+        for i in xrange(10):
+            chassis = 'Chassis-{0}'.format(i + 1)
+            compSys = 'System-{0}'.format(i + 1)
+            bmc = 'BMC-{0}'.format(i + 1)
+            CreateChassis(resource_class_kwargs={
+                'rb': g.rest_base, 'linkSystem': compSys, 'linkMgr': bmc}).put(chassis)
+            CreateComputerSystem(resource_class_kwargs={
+                'rb': g.rest_base, 'linkChassis': chassis, 'linkMgr': bmc}).put(compSys)
+            CreateManager(resource_class_kwargs={
+                'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
+
+
 
         # TODO - Need to move these routines into ./redfish/ComputerSystem_api.py
         self.create_method = self._create_redfish
@@ -180,8 +188,8 @@ class ResourceManager(object):
                 'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
                 'EventService': {'@odata.id': self.rest_base + 'EventService'},
                 'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems':{'@odata.id':self.rest_base+'Systems'}
-             }
+                'Systems': {'@odata.id': self.rest_base + 'Systems'}
+            }
         }
 
         return config
@@ -269,6 +277,8 @@ class ResourceManager(object):
         except IndexError:
             raise RemovePooledNodeError(
                 'No pooled node with CS_PUID: {0}, exists'.format(cs_puid))
+
+
 '''
     def remove_pooled_node(self, cs_puid):
         """
