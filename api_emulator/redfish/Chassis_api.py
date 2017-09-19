@@ -170,13 +170,22 @@ class ChassisCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
+    def verify(self,config):
+        #TODO: implement a method to verify that the POST'ed data is valid
+        return True,{}
+
     # The POST command should be for adding multiple instances. For now, just add one.
-    # Todo - Fix so the config can be passed in the data.
     def post(self):
         try:
-            g.api.add_resource(ChassisAPI, '/redfish/v1/Chassiss/<string:ident>')
-            resp=self.config,200
-        except Exception:
+            config=request.get_json(force=True)
+            ok,msg=self.verify(config)
+            if ok:
+                members[config['Id']]=config
+                resp=config,201
+            else:
+                resp=msg,400
+        except Exception,e:
+            logging.error(e)
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
@@ -217,9 +226,6 @@ class CreateChassis(Resource):
             wildcards['id'] = ident
             config=get_Chassis_instance(wildcards)
             members[ident]=config
-            # Power subordinate resource
-            CreatePower(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident}).put(ident)
-            CreateThermal(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident}).put(ident)
 
             resp = config, 200
         except Exception:

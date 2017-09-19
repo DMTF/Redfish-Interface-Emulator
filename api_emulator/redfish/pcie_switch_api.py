@@ -36,7 +36,7 @@ class PCIeSwitchAPI(Resource):
             config = cfg
             resp = config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -58,7 +58,7 @@ class PCIeSwitchAPI(Resource):
             g.api.add_resource(PCIePortAPI,  '/redfish/v1/PCIeSwitches/<string:sw_id>/Ports/<string:ident>')
             resp = config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -84,7 +84,7 @@ class PCIeSwitchAPI(Resource):
             print (config)
             resp = config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -104,7 +104,7 @@ class PCIeSwitchAPI(Resource):
             member_ids.pop(idx)
             resp = 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -129,7 +129,7 @@ class PCIeSwitchesAPI(Resource):
         try:
             resp = self.config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -142,7 +142,7 @@ class PCIeSwitchesAPI(Resource):
             g.api.add_resource(PCIeSwitchAPI, '/redfish/v1/PCIeSwitches/<string:ident>')
             resp=self.config,200
         except PathError:
-            resp = error_response('Attribute Does Not Exist', 404)
+            resp = make_response('Attribute Does Not Exist', 404)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
