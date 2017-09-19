@@ -20,8 +20,9 @@ INTERNAL_ERROR = 500
 class ResetActionInfo_API(Resource):
     # kwargs is use to pass in the wildcards values to replace when the instance is created.
     def __init__(self, **kwargs):
-        print ('ResetActionInfoAPI init called')
-        wildcards=kwargs['resource_class_kwargs']
+        wildcards=kwargs.get('resource_class_kwargs',{})
+        if not wildcards:
+            return
         # sw_id = kwargs['{sw_id}']
         try:
             config = get_ResetActionInfo_instance(wildcards)
@@ -30,13 +31,13 @@ class ResetActionInfo_API(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        print ('init exit')
 
     # HTTP GET
-    def get(self):
+    def get(self,ident):
         try:
-            global config
-            resp = config, 200
+            resp = 404
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR

@@ -130,8 +130,8 @@ class ComputerSystemCollectionAPI(Resource):
             'Name': 'ComputerSystem Collection',
             'Links': {}
         }
-        self.config['Links']['Member@odata.count'] = len(member_ids)
-        self.config['Links']['Members'] = member_ids
+        self.config['Links']['Member@odata.count'] = len(members)
+        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for x in members.values()]
 
     def get(self):
         try:

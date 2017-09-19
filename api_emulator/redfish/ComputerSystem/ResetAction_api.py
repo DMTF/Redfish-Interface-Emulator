@@ -21,30 +21,23 @@ INTERNAL_ERROR = 500
 class ResetAction_API(Resource):
     # kwargs is use to pass in the wildcards values to replace when the instance is created.
     def __init__(self, **kwargs):
-        print ('ResetActionAPI init called')
-        print ('init exit')
-
+        pass
     # HTTP POST
-    def post(self):
-        print ('POST ActionInfoReset called')
-#        cli= "ssh cumulus@10.223.197.159 sudo reboot"
-#        clioutput = subprocess.call(cli, shell=True)
-#        print (clioutput)
-        print ('Reboot in progress')
+    def post(self,ident):
         return 'POST request completed', 200
 
     # HTTP GET
-    def get(self):
+    def get(self,ident):
        return 'GET is not supported', 405, {'Allow': 'POST'}
 
     # HTTP PATCH
-    def patch(self):
+    def patch(self,ident):
          return 'PATCH is not supported', 405, {'Allow': 'POST'}
 
     # HTTP PUT
-    def put(self):
+    def put(self,ident):
          return 'PUT is not supported', 405, {'Allow': 'POST'}
 
     # HTTP DELETE
-    def delete(self):
+    def delete(self,ident):
          return 'DELETE is not supported', 405, {'Allow': 'POST'}
