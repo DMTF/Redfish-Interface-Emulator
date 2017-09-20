@@ -136,31 +136,9 @@ class ResourceManager(object):
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
         g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>',
                            resource_class_kwargs={'rb': g.rest_base})
-        config = CreateEgResource()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
-        out = config.put("Resource2")
-
-        #populate with some example infrastructure
-        for i in xrange(10):
-            chassis = 'Chassis-{0}'.format(i + 1)
-            compSys = 'System-{0}'.format(i + 1)
-            bmc = 'BMC-{0}'.format(i + 1)
-            #create chassi
-            CreateChassis(resource_class_kwargs={
-                'rb': g.rest_base, 'linkSystem': compSys, 'linkMgr': bmc}).put(chassis)
-            #create chassi subordinate sustems
-            CreatePower(resource_class_kwargs={'rb': g.rest_base,'ch_id': chassis}).put(chassis)
-            CreateThermal(resource_class_kwargs={'rb': g.rest_base,'ch_id': chassis}).put(chassis)
-            #create ComputerSystem
-            CreateComputerSystem(resource_class_kwargs={
-                'rb': g.rest_base, 'linkChassis': chassis, 'linkMgr': bmc}).put(compSys)
-            #subordinates, note that .put does not need to be called here
-            ResetAction_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': compSys})
-            ResetActionInfo_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': compSys})
-            #create manager
-            CreateManager(resource_class_kwargs={
-                'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
-
+#        config = CreateEgResource()
+#        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
+#        out = config.put("Resource2")
 
 
         # TODO - Need to move these routines into ./redfish/ComputerSystem_api.py

@@ -28,6 +28,8 @@ from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary
 
+from infragen.populate import populate
+
 
 # Trays to load into the resource manager
 TRAYS = None
@@ -67,6 +69,7 @@ def init_resource_manager():
     global TRAYS
     global SPEC
     resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+    populate(config.get('CHASSIS',10))
     resource_dictionary = ResourceDictionary()
 
 
