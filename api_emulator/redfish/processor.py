@@ -7,6 +7,7 @@
 from api_emulator.utils import timestamp
 from .templates.processor import format_processor_template
 
+members = []
 
 class Processor(object):
     """

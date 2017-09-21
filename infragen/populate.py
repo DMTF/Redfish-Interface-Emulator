@@ -15,7 +15,7 @@ import g
 def populate(num):
 
     #populate with some example infrastructure
-    for i in xrange(10):
+    for i in xrange(num):
         chassis = 'Chassis-{0}'.format(i + 1)
         compSys = 'System-{0}'.format(i + 1)
         bmc = 'BMC-{0}'.format(i + 1)

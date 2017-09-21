@@ -68,8 +68,7 @@ class ChassisAPI(Resource):
             global wildcards
             wildcards['id'] = ident
             config=get_Chassis_instance(wildcards)
-            members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
+            members[ident]=config
             global foo
             '''
             # Attach URIs for subordiante resources
@@ -134,13 +133,7 @@ class ChassisAPI(Resource):
     def delete(self,ident):
         # logging.info('ChassisAPI delete called')
         try:
-            idx = 0
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-                idx += 1
-            members.pop(idx)
-            member_ids.pop(idx)
+            del(members[ident])
             resp = 200
         except Exception:
             traceback.print_exc()

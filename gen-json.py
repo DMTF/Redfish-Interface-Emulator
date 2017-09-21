@@ -1,9 +1,11 @@
-import requests
+import requests, string, random
 from pprint import pprint as pp
+from uuid import uuid4
 
 url = 'http://redfish.dmtf.org/schemas/Processor.v1_1_0.json'
-# url=raw_input('URL for Schema: ')
-
+url = 'http://redfish.dmtf.org/schemas/ComputerSystem.v1_4_0.json'
+url = 'http://redfish.dmtf.org/schemas/v1/ProcessorCollection.json#/definitions/ProcessorCollection'
+url = 'http://redfish.dmtf.org/schemas/ResourceBlock.v1_0_0.json'
 SCHEMA = requests.get(url).json()
 
 
@@ -17,14 +19,21 @@ def schema_get(root, path):
     except:
         schema = requests.get(path).json()
         if '#' in path:
-            ref='#'+path.split('#')[-1]
-        else: ref=schema.get('$ref','')
+            ref = '#' + path.split('#')[-1]
+        else:
+            ref = schema.get('$ref', '')
         if ref:
             return schema_get(schema, ref)
         return {}, root
 
+
+def randStr(n):
+    alpanumeric = string.ascii_uppercase + string.digits
+    return ''.join([random.choice(alpanumeric) for _ in xrange(n)])
+
+
 def safe_input(prompt):
-    inp=raw_input(prompt)
+    inp = raw_input(prompt)
     try:
         return eval(inp)
     except:
@@ -33,8 +42,8 @@ def safe_input(prompt):
 
 def read_property(schema, root):
     if '$ref' in schema:
-        print 'got ref: %s'%schema['$ref']
-        follow=(raw_input('follow?(y/n)')=='y')
+        print 'got ref: %s' % schema['$ref']
+        follow = (raw_input('follow?(y/n)') == 'y')
         if follow:
             new_schema, new_root = schema_get(root, schema['$ref'])
             if new_schema:
@@ -49,13 +58,16 @@ def read_property(schema, root):
         print 'required: ', schema.get('required', [])
         props = {}
         for item in schema['properties'].items():
-            print 'Input relates to :',schema.get('description', 'no description')
-            if item[0]=='@odata.type':
-                prop=root.get('title')
+            print 'Input relates to :', schema.get('description', 'no description')
+            if item[0] == '@odata.type':
+                prop = root.get('title', safe_input(
+                    '@odata.type is %s, press enter' % root.get('title', 'not found. type one and')))
                 print item[0], prop
-            elif item[0]=='@odata.context':
-                odatatype=root.get('title')
-                prop='/redfish/v1/$metadata{0}.{2}'.format(*odatatype.split('.'))
+            elif item[0] == '@odata.context':
+                odatatype = root.get('title', safe_input(
+                    '@odata.type is %s, press enter' % root.get('title', 'not found. type one and')))
+                split = odatatype.split('.')
+                prop = '/redfish/v1/$metadata{0}.{1}'.format(split[0], split[-1])
                 print item[0], prop
             else:
                 print item[0]
@@ -64,10 +76,16 @@ def read_property(schema, root):
                 props[item[0]] = prop
         return props
     if 'anyOf' in schema:
-        pp(zip(schema['anyOf'],xrange(len(schema['anyOf']))))
-        inp=safe_input('choose id of $ref or press enter for null: ')
-        return read_property(*schema_get(root,schema['anyOf'][inp].values()[0])) \
-            if inp!='' else safe_input('manual input:')
+        pp(zip(xrange(len(schema['anyOf'])), schema['anyOf']))
+        inp = safe_input('choose id of choice or press enter for null: ')
+        if inp != '':
+            choice = schema['anyOf'][inp]
+            if '$ref' in choice:
+                return read_property(*schema_get(root, choice['$ref']))
+            else:
+                return read_property(choice, root)
+        else:
+            return safe_input('manual input:')
     if 'string' in str(schema['type']):
         pp(schema)
         return safe_input('your string input:')
@@ -84,15 +102,17 @@ def read_property(schema, root):
             return safe_input('manual input: ')
     elif 'array' in str(schema['type']):
         pp(schema)
-        raw_input('cant read array yet, just press enter')
-        return None
+        num = safe_input('# of items:')
+        num = 0 if not num else num
+        vals = []
+        for i in xrange(num):
+            print 'item ', i
+            vals.append(read_property(schema['items'], root))
+        return vals
     else:
         print 'catch all:'
         print schema
         return safe_input('your input: ')
-
-
-# def build_data(schema,):
 
 
 pp(read_property(SCHEMA, SCHEMA))
