@@ -2,14 +2,15 @@ import requests, string, random
 from pprint import pprint as pp
 from uuid import uuid4
 
+schema_examples='''
 url = 'http://redfish.dmtf.org/schemas/Processor.v1_1_0.json'
 url = 'http://redfish.dmtf.org/schemas/ComputerSystem.v1_4_0.json'
 url = 'http://redfish.dmtf.org/schemas/v1/ProcessorCollection.json#/definitions/ProcessorCollection'
 url = 'http://redfish.dmtf.org/schemas/ResourceBlock.v1_0_0.json'
-SCHEMA = requests.get(url).json()
+'''
 
 
-def schema_get(root, path):
+def schema_get(root='', path=''):
     try:
         ipath = path.split('/')[1:]
         schema = root
@@ -40,14 +41,14 @@ def safe_input(prompt):
         return inp
 
 
-def read_property(schema, root):
+def read_properties(schema, root):
     if '$ref' in schema:
         print 'got ref: %s' % schema['$ref']
         follow = (raw_input('follow?(y/n)') == 'y')
         if follow:
             new_schema, new_root = schema_get(root, schema['$ref'])
             if new_schema:
-                return read_property(new_schema, new_root)
+                return read_properties(new_schema, new_root)
         else:
             return safe_input('not following, enter your input:')
     if 'properties' in schema:
@@ -71,19 +72,19 @@ def read_property(schema, root):
                 print item[0], prop
             else:
                 print item[0]
-                prop = read_property(item[1], root)
+                prop = read_properties(item[1], root)
             if prop:
                 props[item[0]] = prop
         return props
     if 'anyOf' in schema:
         pp(zip(xrange(len(schema['anyOf'])), schema['anyOf']))
         inp = safe_input('choose id of choice or press enter for null: ')
-        if inp != '':
-            choice = schema['anyOf'][inp]
+        if inp != '' and type(inp) is int:
+            choice = schema['anyOf'][inp if inp<len(schema['anyOf']) else 0]
             if '$ref' in choice:
-                return read_property(*schema_get(root, choice['$ref']))
+                return read_properties(*schema_get(root, choice['$ref']))
             else:
-                return read_property(choice, root)
+                return read_properties(choice, root)
         else:
             return safe_input('manual input:')
     if 'string' in str(schema['type']):
@@ -96,7 +97,7 @@ def read_property(schema, root):
         if 'properties' in schema:
             print schema.get('description', 'No description')
             print 'required: ', schema.get('required', [])
-            return read_property(schema['properties'], root)
+            return read_properties(schema['properties'], root)
         else:
             pp(schema)
             return safe_input('manual input: ')
@@ -107,7 +108,7 @@ def read_property(schema, root):
         vals = []
         for i in xrange(num):
             print 'item ', i
-            vals.append(read_property(schema['items'], root))
+            vals.append(read_properties(schema['items'], root))
         return vals
     else:
         print 'catch all:'
@@ -115,4 +116,10 @@ def read_property(schema, root):
         return safe_input('your input: ')
 
 
-pp(read_property(SCHEMA, SCHEMA))
+if __name__=='__main__':
+    print schema_examples
+    schema_url=safe_input('enter a schema url to generate the json from (see examples above):')
+    schema, root = schema_get(path=schema_url)
+    template=read_properties(schema, root)
+    print '\n\nTemplate:\n'
+    pp(template)

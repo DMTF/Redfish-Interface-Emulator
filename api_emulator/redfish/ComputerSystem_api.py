@@ -19,7 +19,8 @@ from flask_restful import reqparse, Api, Resource
 from .templates.ComputerSystem import get_ComputerSystem_instance
 from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .ComputerSystem.ResetAction_api import ResetAction_API
-
+from .processor import members as processors
+from .memory import members as memory
 members = {}
 foo = 'false'
 INTERNAL_ERROR = 500
@@ -39,13 +40,35 @@ class ComputerSystemAPI(Resource):
         except Exception:
             traceback.print_exc()
 
+    def memory_summary(self,ident):
+
+        totalsysmem=sum([x['CapacityMiB']for x in memory.get(ident,{}).values() if x['MemoryType']=='DRAM'])
+        totalpsysmem=sum([x['CapacityMiB']for x in memory.get(ident,{}).values() if 'NVDIMM' in x['MemoryType']])
+        return {u'Status': {u'Health': 'OK', u'State': 'Enabled'},
+                    u'TotalSystemMemoryGiB': totalsysmem,
+                    u'TotalSystemPersistentMemoryGiB': totalpsysmem}
+
+
+    def processor_summary(self,ident):
+
+        procs=processors.get(ident,{}).values()
+        if not procs:
+            return {}
+        return {u'Status': {u'Health': 'OK', u'State': 'Enabled'},
+                    u'Count': len(procs),
+                    u'Model': procs[0].get('Model','unknown')}
+
+
     # HTTP GET
     def get(self,ident):
         try:
             # Find the entry with the correct value for Id
             resp = 404
             if ident in members:
-                resp = members[ident], 200
+                conf= members[ident]
+                conf['ProcessorSummary']=self.processor_summary(ident)
+                conf['MemorySummary']=self.memory_summary(ident)
+                resp = conf, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
