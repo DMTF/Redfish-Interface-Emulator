@@ -10,10 +10,14 @@ from api_emulator.redfish.ComputerSystem.ResetAction_api import ResetAction_API
 from api_emulator.redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from api_emulator.redfish.processor import CreateProcessor
 from api_emulator.redfish.memory import CreateMemory
+from api_emulator.redfish.simplestorage import CreateSimpleStorage
+from api_emulator.redfish.ethernetinterface import CreateEthernetInterface
+
 import g
 import random
 
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
+
 
 def populate(num):
     # populate with some example infrastructure
@@ -38,11 +42,21 @@ def populate(num):
         CreateMemory(rb=g.rest_base, suffix='System', memory_id='DRAM1', suffix_id=compSys, chassis_id=chassis)
         CreateMemory(rb=g.rest_base, suffix='System', memory_id='NVRAM1', suffix_id=compSys, chassis_id=chassis,
                      capacitymb=65536, devicetype='DDR4', type='NVDIMM_N', operatingmodes='PMEM')
+        CreateSimpleStorage(rb=g.rest_base, suffix='System', suffix_id=compSys, storage_id='controller-1', drives=2,
+                            capacitygb=512, chassis_id=chassis)
+        CreateSimpleStorage(rb=g.rest_base, suffix='System', suffix_id=compSys, storage_id='controller-2', drives=2,
+                            capacitygb=512, chassis_id=chassis)
+        CreateEthernetInterface(rb=g.rest_base, suffix='System', suffix_id=compSys, nic_id='NIC-1',
+                            speedmbps=40000, vlan_id=4095, chassis_id=chassis)
+        CreateEthernetInterface(rb=g.rest_base, suffix='System', suffix_id=compSys, nic_id='NIC-2',
+                            speedmbps=40000, vlan_id=4095, chassis_id=chassis)
         # create manager
         CreateManager(resource_class_kwargs={
             'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
 
         config = CreateResourceBlock()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i} )
-        out = config.put("RB-%d"%i)
-        out = config.post("RB-%d"%i, "processors", "CPU-%d"%i)
+        out = config.__init__(
+            resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d" % i, 'linkChassis': "Chassis-%d" % i,
+                                   'linkZone': "ResourceZone-%d" % i})
+        out = config.put("RB-%d" % i)
+        out = config.post("RB-%d" % i, "processors", "CPU-%d" % i)
