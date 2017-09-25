@@ -14,6 +14,7 @@ import g
 import random
 
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
+from api_emulator.redfish.ResourceBlock_processor import Create_ResourceBlock_Processor
 
 def populate(num):
     # populate with some example infrastructure
@@ -42,7 +43,14 @@ def populate(num):
         CreateManager(resource_class_kwargs={
             'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
 
-        config = CreateResourceBlock()
-        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i} )
-        out = config.put("RB-%d"%i)
-        out = config.post("RB-%d"%i, "processors", "CPU-%d"%i)
+
+        # create ResourceBlock
+        RB = 'RB-{0}'.format(i + 1)
+        config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i})
+        config.put(RB)
+        # create ResourceBlock Processor
+        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+1), suffix_id=RB, chassis_id=chassis)
+        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+1))
+        # Create ResourceBlock Processor
+        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+2), suffix_id=RB, chassis_id=chassis)
+        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+2))

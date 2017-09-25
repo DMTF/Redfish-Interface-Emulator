@@ -22,33 +22,12 @@ _TEMPLATE = \
             "Reserved": "false",
             "CompositionState": "Unused" # Unused or Composed
         },
-    "Processors": [
-            ],
-    "Memory": [
-                {
-                    "@odata.id": "{rb}CompositionService/ResourceBlocks/{id}/Memory/{linkMemory}"
-                }
-            ],
-    "Storage": [
-                {
-                    "@odata.id": "{rb}CompositionService/ResourceBlocks/{id}/Storage/{linkStorage}"
-                }
-            ],
-    "SimpleStorage": [
-                {
-                    "@odata.id": "{rb}CompositionService/ResourceBlocks/{id}/SimpleStorage/{linkSimpleStorage}"
-                }
-            ],
-    "EthernetInterfaces": [
-                {
-                    "@odata.id": "{rb}CompositionService/ResourceBlocks/{id}/EthernetInterfaces/{linkEthernetInterfaces}"
-                }
-            ],
-    "ComputerSystems": [
-                {
-                    "@odata.id": "{rb}CompositionService/ResourceBlocks/{id}/ComputerSystems/{linkSystem}"
-                }
-            ],
+    "Processors": [],
+    "Memory": [],
+    "Storage": [],
+    "SimpleStorage": [],
+    "EthernetInterfaces": [],
+    "ComputerSystems": [],
     "Links": {
             "ComputerSystems": [
                 {
@@ -91,7 +70,7 @@ def get_ResourceBlock_instance(wildcards):
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
     c['Id'] = c['Id'].format(**wildcards)
 
-    # c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
+    #c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
     # c['Memory']['@odata.id'] = c['Memory']['@odata.id'].format(**wildcards)
     # c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)
     # c['NetworkInterfaces']['@odata.id'] = c['NetworkInterfaces']['@odata.id'].format(**wildcards)

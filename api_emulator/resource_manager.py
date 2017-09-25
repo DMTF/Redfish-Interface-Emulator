@@ -39,6 +39,8 @@ from .redfish.memory import Memory,MemoryCollection
 from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
+from .redfish.ResourceBlock_processor import ResourceBlock_Processor#, ResourceBlock_Processors
+
 
 # The __init__ method sets up the static and dynamic resources.
 #
@@ -164,6 +166,8 @@ class ResourceManager(object):
         g.api.add_resource(ResourceBlockCollectionAPI, '/redfish/v1/CompositionService/ResourceBlocks')
         g.api.add_resource(ResourceBlockAPI,           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
+        g.api.add_resource(ResourceBlock_Processor, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Processors/<string:ident2>')
+        #g.api.add_resource(Memory, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Memory/<string:ident2>')
 
         # Composition Service - Resource Zone API
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')

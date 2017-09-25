@@ -105,6 +105,7 @@ class CreateResourceBlock(Resource):
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
             logging.debug(wildcards, wildcards.keys())
 
+
     def put(self,ident):
         logging.info('CreateResourceBlock put called')
         try:
@@ -117,33 +118,22 @@ class CreateResourceBlock(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateResourceBlock init exit')
+        logging.info('CreateResourceBlock put exit')
         return resp
 
-    def post(self,ident,label,parameter):
+    def post(self,rb, ident,label,resource):
         logging.info('CreateResourceBlock post called')
         try:
-            global config
             global wildcards
-            wildcards['linkProcessor'] = parameter
-            if label == "processors":
-                path = g.rest_base + "CompositionService/ResourceBlocks/" + ident + "/Processors/" + parameter
-                logging.info('power path = ' + path)
-                try:
-                    #g.api.add_resource(ResourceBlockProcessorAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-                    pass
-                except:
-                    pass
-                #config = CreateResourceBlockProcessor()
-                out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-                #out = config.put("CPU-2")
-            else:
-                pass
+            if ident in members:
+                parameter = dict()
+                parameter["@odata.id"] = rb + "CompositionService/ResourceBlocks/" + ident +"/" + label + "/" + resource
+                members[ident][label].append(parameter)
 
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateResourceBlock init exit')
+        logging.info('CreateResourceBlock post exit')
         return resp
 
