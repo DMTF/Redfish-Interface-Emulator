@@ -28,10 +28,13 @@ from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSys
 from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
-from .redfish.power_api import PowerAPI,CreatePower
-from .redfish.thermal_api import ThermalAPI,CreateThermal
+from .redfish.power_api import PowerAPI, CreatePower
+from .redfish.thermal_api import ThermalAPI, CreateThermal
 from .redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .redfish.ComputerSystem.ResetAction_api import ResetAction_API
+from .redfish.processor import Processor, Processors
+from .redfish.memory import Memory,MemoryCollection
+
 
 from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
@@ -103,8 +106,8 @@ class ResourceManager(object):
         self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
         self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
         self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
-        #self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
-        #self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
+        # self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
+        # self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Attach APIs for dynamic resources
 
@@ -118,15 +121,25 @@ class ResourceManager(object):
         # Chassis Collection
         g.api.add_resource(ChassisCollectionAPI, '/redfish/v1/Chassis')
         g.api.add_resource(ChassisAPI, '/redfish/v1/Chassis/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
-        g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ident>/Thermal', resource_class_kwargs={'rb': g.rest_base})
-        g.api.add_resource(PowerAPI, '/redfish/v1/Chassis/<string:ident>/Power', resource_class_kwargs={'rb': g.rest_base})
-
+        g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ident>/Thermal',
+                           resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(PowerAPI, '/redfish/v1/Chassis/<string:ident>/Power',
+                           resource_class_kwargs={'rb': g.rest_base})
 
         # System Collection
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
-        g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',resource_class_kwargs={'rb': g.rest_base})
-        g.api.add_resource(ResetActionInfo_API, '/redfish/v1/Systems/<string:ident>/ResetActionInfo',resource_class_kwargs={'rb': g.rest_base})
-        g.api.add_resource(ResetAction_API, '/redfish/v1/Systems/<string:ident>/Actions/ComputerSystem.Reset',resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',
+                           resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(MemoryCollection, '/redfish/v1/Systems/<string:ident>/Memory',
+                           resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
+        g.api.add_resource(Memory, '/redfish/v1/Systems/<string:ident1>/Memory/<string:ident2>')
+        g.api.add_resource(Processors, '/redfish/v1/Systems/<string:ident>/Processors',
+                           resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
+        g.api.add_resource(Processor, '/redfish/v1/Systems/<string:ident1>/Processors/<string:ident2>')
+        g.api.add_resource(ResetActionInfo_API, '/redfish/v1/Systems/<string:ident>/ResetActionInfo',
+                           resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ResetAction_API, '/redfish/v1/Systems/<string:ident>/Actions/ComputerSystem.Reset',
+                           resource_class_kwargs={'rb': g.rest_base})
 
         # Manager Collection
         g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')
@@ -140,9 +153,9 @@ class ResourceManager(object):
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
         g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>',
                            resource_class_kwargs={'rb': g.rest_base})
-#        config = CreateEgResource()
-#        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
-#        out = config.put("Resource2")
+        #        config = CreateEgResource()
+        #        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
+        #        out = config.put("Resource2")
 
         # Composition Service - API
         g.api.add_resource(CompositionServiceAPI, '/redfish/v1/CompositionService', resource_class_kwargs={'rb': g.rest_base, 'id': "CompositionService"})
@@ -174,7 +187,6 @@ class ResourceManager(object):
 
         self.free_storage = []
         self.err_str = 'Insufficient amount of {0} to create pooled node'
-
 
     @property
     def configuration(self):
