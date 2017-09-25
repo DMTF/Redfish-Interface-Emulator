@@ -34,6 +34,8 @@ from .redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .redfish.ComputerSystem.ResetAction_api import ResetAction_API
 from .redfish.processor import Processor, Processors
 from .redfish.memory import Memory,MemoryCollection
+from .redfish.simplestorage import SimpleStorage,SimpleStorageCollection
+from .redfish.ethernetinterface import EthernetInterfaceCollection, EthernetInterface
 
 
 from .redfish.CompositionService_api import CompositionServiceAPI
@@ -132,12 +134,23 @@ class ResourceManager(object):
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
         g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',
                            resource_class_kwargs={'rb': g.rest_base})
+
         g.api.add_resource(MemoryCollection, '/redfish/v1/Systems/<string:ident>/Memory',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
         g.api.add_resource(Memory, '/redfish/v1/Systems/<string:ident1>/Memory/<string:ident2>')
+
         g.api.add_resource(Processors, '/redfish/v1/Systems/<string:ident>/Processors',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
         g.api.add_resource(Processor, '/redfish/v1/Systems/<string:ident1>/Processors/<string:ident2>')
+
+        g.api.add_resource(SimpleStorageCollection, '/redfish/v1/Systems/<string:ident>/SimpleStorage',
+                           resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
+        g.api.add_resource(SimpleStorage, '/redfish/v1/Systems/<string:ident1>/SimpleStorage/<string:ident2>')
+
+        g.api.add_resource(EthernetInterfaceCollection, '/redfish/v1/Systems/<string:ident>/EthernetInterfaces',
+                           resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
+        g.api.add_resource(EthernetInterface, '/redfish/v1/Systems/<string:ident1>/EthernetInterfaces/<string:ident2>')
+
         g.api.add_resource(ResetActionInfo_API, '/redfish/v1/Systems/<string:ident>/ResetActionInfo',
                            resource_class_kwargs={'rb': g.rest_base})
         g.api.add_resource(ResetAction_API, '/redfish/v1/Systems/<string:ident>/Actions/ComputerSystem.Reset',
@@ -173,24 +186,6 @@ class ResourceManager(object):
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
         #g.api.add_resource(ResourceZoneAPI,           '/redfish/v1/CompositionService/ResourceZones/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
-        # TODO - Need to move these routines into ./redfish/ComputerSystem_api.py
-        self.create_method = self._create_redfish
-        self.remove_method = self._remove_redfish
-
-        # Properties for used resources
-        self.used_memory = 0
-        self.used_procs = 0
-        self.used_storage = 0
-        self.used_network = 0
-
-        # Properties for max resources
-        self.max_memory = 4
-        self.max_procs = 2
-        self.max_storage = 120
-        self.max_network = 1
-
-        self.free_storage = []
-        self.err_str = 'Insufficient amount of {0} to create pooled node'
 
     @property
     def configuration(self):
