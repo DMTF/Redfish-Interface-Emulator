@@ -130,10 +130,11 @@ class CreateResourceBlock(Resource):
                 path = g.rest_base + "CompositionService/ResourceBlocks/" + ident + "/Processors/" + parameter
                 logging.info('power path = ' + path)
                 try:
-                    g.api.add_resource(ResourceBlockProcessorAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+                    #g.api.add_resource(ResourceBlockProcessorAPI,   path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
+                    pass
                 except:
                     pass
-                config = CreateResourceBlockProcessor()
+                #config = CreateResourceBlockProcessor()
                 out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
                 #out = config.put("CPU-2")
             else:
