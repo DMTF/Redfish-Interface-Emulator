@@ -33,6 +33,10 @@ from .redfish.thermal_api import ThermalAPI,CreateThermal
 from .redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .redfish.ComputerSystem.ResetAction_api import ResetAction_API
 
+from .redfish.CompositionService_api import CompositionServiceAPI
+from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
+from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
+
 # The __init__ method sets up the static and dynamic resources.
 #
 # When a resource is accessed, the resource is sought in the following order:
@@ -140,6 +144,17 @@ class ResourceManager(object):
 #        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
 #        out = config.put("Resource2")
 
+        # Composition Service - API
+        g.api.add_resource(CompositionServiceAPI, '/redfish/v1/CompositionService', resource_class_kwargs={'rb': g.rest_base, 'id': "CompositionService"})
+
+        # Composition Service - Resource Block API
+        g.api.add_resource(ResourceBlockCollectionAPI, '/redfish/v1/CompositionService/ResourceBlocks')
+        g.api.add_resource(ResourceBlockAPI,           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
+
+
+        # Composition Service - Resource Zone API
+        g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
+        #g.api.add_resource(ResourceZoneAPI,           '/redfish/v1/CompositionService/ResourceZones/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
         # TODO - Need to move these routines into ./redfish/ComputerSystem_api.py
         self.create_method = self._create_redfish

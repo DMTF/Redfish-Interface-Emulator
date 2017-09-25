@@ -105,9 +105,22 @@ class TestRedfishEmulator(unittest.TestCase):
 
         # Parameters for the get requests
         params = [
-            (self.url('Systems/437XR1138R2/'), 'System instance'),
-            (self.url('Systems/437XR1138R2/SimpleStorage/'), 'SimpleStorageCollection'),
-            (self.url('Systems/437XR1138R2/SimpleStorage/1/'), 'SimpleStorage member 1')]
+            #(self.url('Systems/437XR1138R2/'), 'System instance'),
+            #(self.url('Systems/437XR1138R2/SimpleStorage/'), 'SimpleStorageCollection'),
+            #(self.url('Systems/437XR1138R2/SimpleStorage/1/'), 'SimpleStorage member 1')]
+            (self.url('Systems'), 'SystemCollection'),
+            (self.url('Systems/CS_5'), 'System instance'),
+            #(self.url('Systems/CS_5/Processors'), 'Processors'),
+            #(self.url('Systems/CS_5/SimpleStorage/'), 'SimpleStorageCollection'),
+            #(self.url('Systems/CS_5/SimpleStorage/1/'), 'SimpleStorage member 1'),
+            (self.url('Chassis'), 'ChassiCollection'),
+            (self.url('EventService'), 'EventService'),
+            (self.url('CompositionService'), 'CompositionService')]
+#            (self.url('CompositionService/ResourceBlocks'), 'ResourceBlockCollection'),
+#            (self.url('CompositionService/ResourceBlocks/ResourceBlock-1'), 'ResourceBlock member ResourceBlock-1'),
+#            (self.url('CompositionService/ResourceZones'), 'ResourceZoneCollection'),
+#            (self.url('CompositionService/ResourceZones/ResourceZone-1'), 'ResourceZone member ResourceZone-1')]
+
 
         self.do_gets(params, logger)
 

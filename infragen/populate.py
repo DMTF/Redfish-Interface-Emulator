@@ -11,6 +11,7 @@ from api_emulator.redfish.ComputerSystem.ResetActionInfo_api import ResetActionI
 
 import g
 
+from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
 
 def populate(num):
 
@@ -34,3 +35,8 @@ def populate(num):
         #create manager
         CreateManager(resource_class_kwargs={
             'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
+
+        config = CreateResourceBlock()
+        out = config.__init__(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i} )
+        out = config.put("RB-%d"%i)
+        out = config.post("RB-%d"%i, "processors", "CPU-%d"%i)
