@@ -184,7 +184,7 @@ class ResourceManager(object):
 
         # Composition Service - Resource Zone API
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
-        #g.api.add_resource(ResourceZoneAPI,           '/redfish/v1/CompositionService/ResourceZones/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ResourceZoneAPI,           '/redfish/v1/CompositionService/ResourceZones/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
 
     @property

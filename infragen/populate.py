@@ -17,6 +17,7 @@ import g
 import random
 
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
+from api_emulator.redfish.ResourceZone_api import CreateResourceZone
 
 
 def populate(num):
@@ -55,7 +56,7 @@ def populate(num):
             'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
 
 
-        # create ResourceBlock
+        # create Resource Block
         RB = 'RB-{0}'.format(i + 1)
         config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i})
         config.put(RB)
@@ -85,3 +86,11 @@ def populate(num):
                                 speedmbps=40000, vlan_id=4095, chassis_id=chassis)
             config.post(g.rest_base, RB, "EthernetInterfaces", 'EI-%d'%(j+1))
 
+
+        # create Resource Zone
+        RZ = 'RZ-{0}'.format(i + 1)
+        config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i})
+        config.put(RB)
+
+        config = CreateResourceZone(resource_class_kwargs={'rb': g.rest_base, 'linkBlock': "ResourceBlock-%d"%i})
+        config.put(RZ)

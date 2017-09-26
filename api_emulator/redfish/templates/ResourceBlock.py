@@ -50,20 +50,5 @@ def get_ResourceBlock_instance(wildcards):
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
     c['Id'] = c['Id'].format(**wildcards)
 
-    #c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
-    # c['Memory']['@odata.id'] = c['Memory']['@odata.id'].format(**wildcards)
-    # c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)
-    # c['NetworkInterfaces']['@odata.id'] = c['NetworkInterfaces']['@odata.id'].format(**wildcards)
-    # c['SimpleStorage']['@odata.id'] = c['SimpleStorage']['@odata.id'].format(**wildcards)
-    #
-    #c['Links']['ComputerSystems'][0]['@odata.id'] = c['Links']['ComputerSystems'][0]['@odata.id'].format(**wildcards)
-    #c['Links']['Chassis'][0]['@odata.id'] = c['Links']['Chassis'][0]['@odata.id'].format(**wildcards)
-    #c['Links']['ResourceZone'][0]['@odata.id'] = c['Links']['ResourceZone'][0]['@odata.id'].format(**wildcards)
-
-#    c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
-
-    #
-    # c['Actions']['#ComputerSystem.Reset']['target'] = c['Actions']['#ComputerSystem.Reset']['target'].format(**wildcards)
-    # c['Actions']['#ComputerSystem.Reset']['@Redfish.ActionInfo'] = c['Actions']['#ComputerSystem.Reset']['@Redfish.ActionInfo'].format(**wildcards)
 
     return c

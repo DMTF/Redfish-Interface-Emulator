@@ -115,8 +115,6 @@ class CreateResourceZone(Resource):
             wildcards['id'] = ident
             config=get_ResourceZone_instance(wildcards)
             members[ident]=config
-            #members.append(config)
-            #member_ids.append({'@odata.id': config['@odata.id']})
             resp = config, 200
         except Exception:
             traceback.print_exc()
