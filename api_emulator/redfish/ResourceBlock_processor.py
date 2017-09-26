@@ -28,40 +28,12 @@ class ResourceBlock_Processor(Resource):
             return 'not found',404
         return members[ident1][ident2], 200
 
-'''
-class ResourceBlock_Processors(Resource):
-    """
-    Processor.1.0.0.ProcessorCollection
-    """
-
-    def __init__(self, rb, suffix):
-        """
-        Processors Constructor
-        """
-        self.config = {u'@odata.context': '{rb}$metadata#ProcessorCollection.ProcessorCollection'.format(rb=rb),
-                       u'@odata.id': '{rb}{suffix}'.format(rb=rb, suffix=suffix),
-                       u'@odata.type': u'#ProcessorCollection.ProcessorCollection'}
-
-    def get(self, ident):
-        try:
-            if ident not in members:
-                return 404
-            procs = []
-            for p in members.get(ident, {}).values():
-                procs.append({'@odata.id': p['@odata.id']})
-            self.config['@odata.id']='{prefix}/{ident}/Processors'.format(prefix=self.config['@odata.id'],ident=ident)
-            self.config['Members'] = procs
-            self.config['Members@odata.count'] = len(procs)
-            resp = self.config, 200
-        except Exception,e:
-            logging.error(e)
-            resp = 'internal error', INTERNAL_ERROR
-        return resp
-'''
 
 def Create_ResourceBlock_Processor(**kwargs):
+
     suffix_id = kwargs['suffix_id']
-    processor_id = kwargs['processor_id']
+    resource_id = kwargs['processor_id']
     if suffix_id not in members:
         members[suffix_id] = {}
-    members[suffix_id][processor_id] = format_processor_template(**kwargs)
+    members[suffix_id][resource_id] = format_processor_template(**kwargs)
+

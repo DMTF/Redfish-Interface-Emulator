@@ -18,6 +18,9 @@ import random
 
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
 from api_emulator.redfish.ResourceBlock_processor import Create_ResourceBlock_Processor
+from api_emulator.redfish.ResourceBlock_memory import Create_ResourceBlock_Memory
+from api_emulator.redfish.ResourceBlock_SimpleStorage import Create_ResourceBlock_SimpleStorage
+from api_emulator.redfish.ResourceBlock_EthernetInterface import Create_ResourceBlock_EthernetInterface
 
 
 def populate(num):
@@ -60,9 +63,29 @@ def populate(num):
         RB = 'RB-{0}'.format(i + 1)
         config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i})
         config.put(RB)
-        # create ResourceBlock Processor
-        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+1), suffix_id=RB, chassis_id=chassis)
-        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+1))
-        # Create ResourceBlock Processor
-        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+2), suffix_id=RB, chassis_id=chassis)
-        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+2))
+
+        config.post(g.rest_base, RB, "linkSystem", "CS_%d"%i)
+        config.post(g.rest_base, RB, "linkChassis", "Chassis-%d"%i)
+        config.post(g.rest_base, RB, "linkZone", "ResourceZone-%d"%i)
+
+
+        for j in xrange(2):
+            # create ResourceBlock Processor (1)
+            Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+1), suffix_id=RB, chassis_id=chassis)
+            config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(j+1))
+
+            # create ResourceBlock Memory (1)
+            Create_ResourceBlock_Memory(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', memory_id='MEM-%d'%(i+1), suffix_id=RB, chassis_id=chassis)
+            config.post(g.rest_base, RB, "Memory", 'MEM-%d'%(j+1))
+            Create_ResourceBlock_Memory(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', memory_id='MEM-%d'%(i+3), suffix_id=RB, chassis_id=chassis,
+                                        capacitymb=65536, devicetype='DDR4', type='NVDIMM_N', operatingmodes='PMEM')
+            config.post(g.rest_base, RB, "Memory", 'MEM-%d'%(j+2))
+
+            Create_ResourceBlock_SimpleStorage(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', suffix_id=RB, storage_id='SS-%d'%(j+1), drives=2,
+                                capacitygb=512, chassis_id=chassis)
+            config.post(g.rest_base, RB, "SimpleStorage", 'SS-%d'%(j+1))
+
+            Create_ResourceBlock_EthernetInterface(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', suffix_id=RB, nic_id='EI-%d'%(j+1),
+                                speedmbps=40000, vlan_id=4095, chassis_id=chassis)
+            config.post(g.rest_base, RB, "EthernetInterfaces", 'EI-%d'%(j+1))
+
