@@ -99,11 +99,11 @@ class ResourceBlockCollectionAPI(Resource):
 class CreateResourceBlock(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateResourceBlock init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)
 
 
     def put(self,ident):

@@ -22,6 +22,7 @@ from api_emulator.redfish.ResourceZone_api import CreateResourceZone
 
 
 def populate(cfg):
+    cfg=10
     if type(cfg) is int:
         return n_populate(cfg)
     cs_count = 0
@@ -146,3 +147,5 @@ def n_populate(num):
 
         config = CreateResourceZone(resource_class_kwargs={'rb': g.rest_base, 'linkBlock': "ResourceBlock-%d"%i})
         config.put(RZ)
+        config.post(g.rest_base, RZ, "ResourceBlocks", 'RB-%d'%(j+1))
+        config.post(g.rest_base, RZ, "ResourceBlocks", 'RB-%d'%(j+2))

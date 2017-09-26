@@ -101,11 +101,11 @@ class ResourceZoneCollectionAPI(Resource):
 class CreateResourceZone(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateResourceZone init called')
-        logging.debug(kwargs, kwargs.keys(), 'resource_class_kwargs' in kwargs)
+        logging.debug(kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards, wildcards.keys())
+            logging.debug(wildcards)
 
     def put(self,ident):
         logging.info('CreateResourceZone put called')
@@ -120,4 +120,24 @@ class CreateResourceZone(Resource):
             traceback.print_exc()
             resp = INTERNAL_ERROR
         logging.info('CreateResourceZone init exit')
+        return resp
+
+    def post(self,rb, ident,label,resource):
+        logging.info('CreateResourceZone post called')
+        try:
+            global wildcards
+            if ident in members:
+                if label == "ResourceBlocks":
+                    parameter = dict()
+                    parameter["@odata.id"] = rb + "CompositionService/ResourceBlocks/" + resource
+                    members[ident]["Links"]["ResourceBlocks"].append(parameter)
+                else:
+                    traceback.print_exc()
+                    resp = INTERNAL_ERROR
+
+            resp = config, 200
+        except Exception:
+            traceback.print_exc()
+            resp = INTERNAL_ERROR
+        logging.info('CreateResourceZone post exit')
         return resp
