@@ -12,16 +12,13 @@ _TEMPLATE = {u'@odata.context': '{rb}$metadata#SimpleStorage.SimpleStorage',
              u'Devices': [],
              u'Id': '{storage_id}',
              u'Links': {u'Chassis': {'@odata.id': '{rb}Chassis/{chassis_id}'}},
-             u'Name': 'Simple Storage',
+             u'Name': 'Simple Storage Controller',
              u'Status': {'State': {'Health': 'OK', 'State': 'Enabled'}},
-             u'UefiDevicePath': 'Acpi(PNP0A03,0)/Pci(1F|1)/Ata(Primary,Master)/HD(Part3,'
-                                ' Sig000101010111100001111011100101100011100000101101100'
-                                '1000001000100010101111011001110111100111011010100011111'
-                                '0100010101000010111011)'}
+             u'UefiDevicePath': 'ACPI(PnP)/PCI(1,0)/SAS(0x31000004CF13F6BD, SATA)'}
 
 _DEVICE_TEMPLATE = {u'CapacityBytes': 550292684800,
                     u'Manufacturer': 'Generic',
-                    u'Model': 'Generic',
+                    u'Model': 'Generic SATA Disk',
                     u'Name': 'Generic Storage Device',
                     u'Status': {'State': {'Health': 'OK', 'State': 'Enabled'}}}
 

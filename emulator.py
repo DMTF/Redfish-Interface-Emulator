@@ -69,7 +69,7 @@ def init_resource_manager():
     global TRAYS
     global SPEC
     resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
-    populate(config.get('CHASSIS',10))
+    populate(config.get('POPULATE',10))
     resource_dictionary = ResourceDictionary()
 
 

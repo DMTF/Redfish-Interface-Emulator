@@ -134,7 +134,9 @@ def get_ComputerSystem_instance(wildcards):
     c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)
     c['SimpleStorage']['@odata.id'] = c['SimpleStorage']['@odata.id'].format(**wildcards)
 
-    c['Links']['Chassis'][0]['@odata.id'] = c['Links']['Chassis'][0]['@odata.id'].format(**wildcards)
+    chassis=[{'@odata.id':"{rb}Chassis/{linkChassis}".format(rb=wildcards['rb'],linkChassis=x)}
+             for x in wildcards['linkChassis']]
+    c['Links']['Chassis'] = chassis
     c['Links']['ManagedBy'][0]['@odata.id'] = c['Links']['ManagedBy'][0]['@odata.id'].format(**wildcards)
 
     c['Actions']['#ComputerSystem.Reset']['target'] = c['Actions']['#ComputerSystem.Reset']['target'].format(**wildcards)

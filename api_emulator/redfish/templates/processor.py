@@ -40,8 +40,7 @@ def format_processor_template(**kwargs):
     defaults = {'rb': '/redfish/v1/',
                 'suffix': 'Systems',
                 'maxspeedmhz': 2200,
-                'totalcores': 8,
-                'totalthreads': 16}
+                'totalcores': 8}
 
     defaults.update(kwargs)
 
@@ -52,5 +51,5 @@ def format_processor_template(**kwargs):
     c['Links']['Chassis']['@odata.id'] = c['Links']['Chassis']['@odata.id'].format(**defaults)
     c['MaxSpeedMHz'] = defaults['maxspeedmhz']
     c['TotalCores'] = defaults['totalcores']
-    c['TotalThreads'] = defaults['totalthreads']
+    c['TotalThreads'] = defaults.get('totalthreads',2*defaults['totalcores'])
     return c
