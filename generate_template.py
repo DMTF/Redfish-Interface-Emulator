@@ -3,10 +3,10 @@ from pprint import pprint as pp
 from uuid import uuid4
 
 schema_examples='''
-url = 'http://redfish.dmtf.org/schemas/Processor.v1_1_0.json'
-url = 'http://redfish.dmtf.org/schemas/ComputerSystem.v1_4_0.json'
-url = 'http://redfish.dmtf.org/schemas/v1/ProcessorCollection.json#/definitions/ProcessorCollection'
-url = 'http://redfish.dmtf.org/schemas/ResourceBlock.v1_0_0.json'
+http://redfish.dmtf.org/schemas/Processor.v1_1_0.json
+http://redfish.dmtf.org/schemas/ComputerSystem.v1_4_0.json
+http://redfish.dmtf.org/schemas/v1/ProcessorCollection.json#/definitions/ProcessorCollection
+http://redfish.dmtf.org/schemas/ResourceBlock.v1_0_0.json
 '''
 
 

@@ -14,13 +14,63 @@ from api_emulator.redfish.simplestorage import CreateSimpleStorage
 from api_emulator.redfish.ethernetinterface import CreateEthernetInterface
 
 import g
-import random
+from copy import deepcopy
 
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
 from api_emulator.redfish.ResourceBlock_processor import Create_ResourceBlock_Processor
 
 
-def populate(num):
+def populate(cfg):
+    if type(cfg) is int:
+        return n_populate(cfg)
+    cs_count = 0
+    chassis_count = 0
+    for cht in cfg['Chassis']:
+        for i in xrange(cht.get('Count', 1)):
+            chassis_count += 1
+            chassis = cht['Id'].format(chassis_count)
+            bmc = 'BMC-{}'.format(chassis_count)
+            sys_ids = []
+            for cst in cht['Links']['ComputerSystems']:
+                for j in xrange(cst.get('Count', 1)):
+                    cs_count += 1
+                    compSys = cst['Id'].format(cs_count)
+                    sys_ids.append(compSys)
+                    CreateComputerSystem(
+                        resource_class_kwargs={'rb': g.rest_base, 'linkChassis': [chassis], 'linkMgr': bmc}).put(
+                        compSys)
+                    for proc in cst['Processors']:
+                        for k in xrange(proc.get('Count', 1)):
+                            CreateProcessor(rb=g.rest_base, suffix='System', processor_id=proc['Id'].format(k),
+                                            suffix_id=compSys, chassis_id=chassis, totalcores=proc.get('TotalCores', 8),
+                                            maxspeedmhz=proc.get('MaxSpeedMHz', 2200))
+                    for mem in cst['Memory']:
+                        memtype = mem.get('MemoryType', 'DRAM')
+                        opmodes = ['PMEM'] if 'NV' in memtype else ['Volatile']
+                        for k in xrange(mem.get('Count', 1)):
+                            CreateMemory(rb=g.rest_base, suffix='System', memory_id=mem['Id'].format(k),
+                                         suffix_id=compSys, chassis_id=chassis, capacitymb=mem.get('CapacityMiB', 8192),
+                                         type=memtype, operatingmodes=opmodes)
+
+                    for dsk in cst['SimpleStorage']:
+                        for k in xrange(dsk.get('Count', 1)):
+                            capacitygb = dsk['Devices'].get('CapacityBytes', 512 * 1024 ** 3) / 1024 ** 3
+                            drives = dsk['Devices'].get('Count', 1)
+                            CreateSimpleStorage(rb=g.rest_base, suffix='System', storage_id=dsk['Id'].format(k),
+                                                suffix_id=compSys, chassis_id=chassis, capacitygb=capacitygb,
+                                                drives=drives)
+
+                    for eth in cst['EthernetInterfaces']:
+                        for k in xrange(eth.get('Count', 1)):
+                            CreateEthernetInterface(rb=g.rest_base, suffix='System', nic_id=eth['Id'].format(k),
+                                                    suffix_id=compSys, chassis_id=chassis,
+                                                    speedmbps=eth.get('SpeedMbps', 1000))
+
+            CreateChassis(resource_class_kwargs={
+                'rb': g.rest_base, 'linkSystem': sys_ids, 'linkMgr': bmc}).put(chassis)
+
+
+def n_populate(num):
     # populate with some example infrastructure
     for i in xrange(num):
         chassis = 'Chassis-{0}'.format(i + 1)
@@ -28,13 +78,13 @@ def populate(num):
         bmc = 'BMC-{0}'.format(i + 1)
         # create chassi
         CreateChassis(resource_class_kwargs={
-            'rb': g.rest_base, 'linkSystem': compSys, 'linkMgr': bmc}).put(chassis)
+            'rb': g.rest_base, 'linkSystem': [compSys], 'linkMgr': bmc}).put(chassis)
         # create chassi subordinate sustems
         CreatePower(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
         CreateThermal(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
         # create ComputerSystem
         CreateComputerSystem(resource_class_kwargs={
-            'rb': g.rest_base, 'linkChassis': chassis, 'linkMgr': bmc}).put(compSys)
+            'rb': g.rest_base, 'linkChassis': [chassis], 'linkMgr': bmc}).put(compSys)
         # subordinates, note that .put does not need to be called here
         ResetAction_API(resource_class_kwargs={'rb': g.rest_base, 'sys_id': compSys})
         ResetActionInfo_API(resource_class_kwargs={'rb': g.rest_base, 'sys_id': compSys})
@@ -42,27 +92,30 @@ def populate(num):
         CreateProcessor(rb=g.rest_base, suffix='System', processor_id='CPU1', suffix_id=compSys, chassis_id=chassis)
         CreateMemory(rb=g.rest_base, suffix='System', memory_id='DRAM1', suffix_id=compSys, chassis_id=chassis)
         CreateMemory(rb=g.rest_base, suffix='System', memory_id='NVRAM1', suffix_id=compSys, chassis_id=chassis,
-                     capacitymb=65536, devicetype='DDR4', type='NVDIMM_N', operatingmodes='PMEM')
+                     capacitymb=65536, devicetype='DDR4', type='NVDIMM_N', operatingmodes=['PMEM'])
         CreateSimpleStorage(rb=g.rest_base, suffix='System', suffix_id=compSys, storage_id='controller-1', drives=2,
                             capacitygb=512, chassis_id=chassis)
         CreateSimpleStorage(rb=g.rest_base, suffix='System', suffix_id=compSys, storage_id='controller-2', drives=2,
                             capacitygb=512, chassis_id=chassis)
         CreateEthernetInterface(rb=g.rest_base, suffix='System', suffix_id=compSys, nic_id='NIC-1',
-                            speedmbps=40000, vlan_id=4095, chassis_id=chassis)
+                                speedmbps=40000, vlan_id=4095, chassis_id=chassis)
         CreateEthernetInterface(rb=g.rest_base, suffix='System', suffix_id=compSys, nic_id='NIC-2',
-                            speedmbps=40000, vlan_id=4095, chassis_id=chassis)
+                                speedmbps=40000, vlan_id=4095, chassis_id=chassis)
         # create manager
         CreateManager(resource_class_kwargs={
             'rb': g.rest_base, 'linkSystem': compSys, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
 
-
         # create ResourceBlock
         RB = 'RB-{0}'.format(i + 1)
-        config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d"%i, 'linkChassis': "Chassis-%d"%i, 'linkZone': "ResourceZone-%d"%i})
+        config = CreateResourceBlock(
+            resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d" % i, 'linkChassis': "Chassis-%d" % i,
+                                   'linkZone': "ResourceZone-%d" % i})
         config.put(RB)
         # create ResourceBlock Processor
-        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+1), suffix_id=RB, chassis_id=chassis)
-        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+1))
+        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks',
+                                       processor_id='CPU-%d' % (i + 1), suffix_id=RB, chassis_id=chassis)
+        config.post(g.rest_base, RB, "Processors", 'CPU-%d' % (i + 1))
         # Create ResourceBlock Processor
-        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d'%(i+2), suffix_id=RB, chassis_id=chassis)
-        config.post(g.rest_base, RB, "Processors", 'CPU-%d'%(i+2))
+        Create_ResourceBlock_Processor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks',
+                                       processor_id='CPU-%d' % (i + 2), suffix_id=RB, chassis_id=chassis)
+        config.post(g.rest_base, RB, "Processors", 'CPU-%d' % (i + 2))

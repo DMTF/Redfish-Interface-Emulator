@@ -53,6 +53,9 @@ def get_Chassis_instance(wildcards):
     Creates an instace of TEMPLATE and replace wildcards as specfied
     """
     c = copy.deepcopy(_TEMPLATE)
+    compsys=[{"@odata.id": "{rb}Systems/{linkSystem}".format(rb=wildcards['rb'],linkSystem=x)}
+             for x in wildcards['linkSystem']]
+    c['Links']['ComputerSystems']=compsys
     replace_recurse(c, wildcards)
     # print ("fini c: ", c)
     return c
