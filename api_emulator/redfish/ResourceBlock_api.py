@@ -126,9 +126,23 @@ class CreateResourceBlock(Resource):
         try:
             global wildcards
             if ident in members:
-                parameter = dict()
-                parameter["@odata.id"] = rb + "CompositionService/ResourceBlocks/" + ident +"/" + label + "/" + resource
-                members[ident][label].append(parameter)
+
+                if label == "linkSystem":
+                    parameter = dict()
+                    parameter["@odata.id"] = rb + "Systems/" + resource
+                    members[ident]["Links"]["ComputerSystems"].append(parameter)
+                elif label == "linkChassis":
+                    parameter = dict()
+                    parameter["@odata.id"] = rb + "Chassis/" + resource
+                    members[ident]["Links"]["Chassis"].append(parameter)
+                elif label == "linkZone":
+                    parameter = dict()
+                    parameter["@odata.id"] = rb + "CompositionService/ResourceZones/" + resource
+                    members[ident]["Links"]["Zones"].append(parameter)
+                else:
+                    parameter = dict()
+                    parameter["@odata.id"] = rb + "CompositionService/ResourceBlocks/" + ident +"/" + label + "/" + resource
+                    members[ident][label].append(parameter)
 
             resp = config, 200
         except Exception:
