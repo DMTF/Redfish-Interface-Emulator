@@ -41,10 +41,6 @@ from .redfish.ethernetinterface import EthernetInterfaceCollection, EthernetInte
 from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
-from .redfish.ResourceBlock_processor import ResourceBlock_Processor
-from .redfish.ResourceBlock_memory import ResourceBlock_Memory
-from .redfish.ResourceBlock_SimpleStorage import ResourceBlock_SimpleStorage
-from .redfish.ResourceBlock_EthernetInterface import ResourceBlock_EthernetInterface
 
 
 # The __init__ method sets up the static and dynamic resources.
@@ -140,19 +136,23 @@ class ResourceManager(object):
 
         g.api.add_resource(MemoryCollection, '/redfish/v1/Systems/<string:ident>/Memory',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
-        g.api.add_resource(Memory, '/redfish/v1/Systems/<string:ident1>/Memory/<string:ident2>')
+        g.api.add_resource(Memory, '/redfish/v1/Systems/<string:ident1>/Memory/<string:ident2>',
+                           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Memory/<string:ident2>')
 
         g.api.add_resource(Processors, '/redfish/v1/Systems/<string:ident>/Processors',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
-        g.api.add_resource(Processor, '/redfish/v1/Systems/<string:ident1>/Processors/<string:ident2>')
+        g.api.add_resource(Processor, '/redfish/v1/Systems/<string:ident1>/Processors/<string:ident2>',
+                           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Processors/<string:ident2>')
 
         g.api.add_resource(SimpleStorageCollection, '/redfish/v1/Systems/<string:ident>/SimpleStorage',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
-        g.api.add_resource(SimpleStorage, '/redfish/v1/Systems/<string:ident1>/SimpleStorage/<string:ident2>')
+        g.api.add_resource(SimpleStorage, '/redfish/v1/Systems/<string:ident1>/SimpleStorage/<string:ident2>',
+                           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/SimpleStorage/<string:ident2>')
 
         g.api.add_resource(EthernetInterfaceCollection, '/redfish/v1/Systems/<string:ident>/EthernetInterfaces',
                            resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
-        g.api.add_resource(EthernetInterface, '/redfish/v1/Systems/<string:ident1>/EthernetInterfaces/<string:ident2>')
+        g.api.add_resource(EthernetInterface, '/redfish/v1/Systems/<string:ident1>/EthernetInterfaces/<string:ident2>',
+                           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/EthernetInterfaces/<string:ident2>')
 
         g.api.add_resource(ResetActionInfo_API, '/redfish/v1/Systems/<string:ident>/ResetActionInfo',
                            resource_class_kwargs={'rb': g.rest_base})
@@ -181,11 +181,6 @@ class ResourceManager(object):
         # Composition Service - Resource Block API
         g.api.add_resource(ResourceBlockCollectionAPI, '/redfish/v1/CompositionService/ResourceBlocks')
         g.api.add_resource(ResourceBlockAPI,           '/redfish/v1/CompositionService/ResourceBlocks/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
-
-        g.api.add_resource(ResourceBlock_Processor, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Processors/<string:ident2>')
-        g.api.add_resource(ResourceBlock_Memory, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/Memory/<string:ident2>')
-        g.api.add_resource(ResourceBlock_SimpleStorage, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/SimpleStorage/<string:ident2>')
-        g.api.add_resource(ResourceBlock_EthernetInterface, '/redfish/v1/CompositionService/ResourceBlocks/<string:ident1>/EthernetInterfaces/<string:ident2>')
 
         # Composition Service - Resource Zone API
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
