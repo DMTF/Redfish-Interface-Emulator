@@ -50,7 +50,7 @@ def create_resources(template, chassis, suffix, suffix_id):
 
 
 def populate(cfg):
-    #cfg = 10
+    cfg = 10
     if type(cfg) is int:
         return n_populate(cfg)
     cs_count = 0
@@ -136,9 +136,7 @@ def n_populate(num):
         # create Resource Block
 
         RB = 'RB-{0}'.format(i + 1)
-        config = CreateResourceBlock(
-            resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d" % i, 'linkChassis': "Chassis-%d" % i,
-                                   'linkZone': "ResourceZone-%d" % i})
+        config = CreateResourceBlock(resource_class_kwargs={'rb': g.rest_base})
         config.put(RB)
 
         config.post(g.rest_base, RB, "linkSystem", "CS_%d" % i)
@@ -171,13 +169,11 @@ def n_populate(num):
             config.post(g.rest_base, RB, "EthernetInterfaces", 'EI-%d' % (j + 1))
 
         # create Resource Zone
-        RZ = 'RZ-{0}'.format(i + 1)
-        config = CreateResourceBlock(
-            resource_class_kwargs={'rb': g.rest_base, 'linkSystem': "CS_%d" % i, 'linkChassis': "Chassis-%d" % i,
-                                   'linkZone': "ResourceZone-%d" % i})
-        config.put(RB)
 
-        config = CreateResourceZone(resource_class_kwargs={'rb': g.rest_base, 'linkBlock': "ResourceBlock-%d" % i})
+        RZ = 'RZ-{0}'.format(i + 1)
+
+        config = CreateResourceZone(resource_class_kwargs={'rb': g.rest_base})
+
         config.put(RZ)
         config.post(g.rest_base, RZ, "ResourceBlocks", 'RB-%d' % (j + 1))
         config.post(g.rest_base, RZ, "ResourceBlocks", 'RB-%d' % (j + 2))
