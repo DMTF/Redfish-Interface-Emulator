@@ -45,7 +45,7 @@ class ResourceZoneAPI(Resource):
             # Find the entry with the correct value for Id
             resp = 404
             if ident in members:
-                resp = config, 200
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR

@@ -52,10 +52,10 @@ class ResourceBlockAPI(Resource):
             resp = 404
             if ident in members:
                 conf=members[ident]
-                conf['Processors']=[{'@odata.id':x['@odata.id']} for x in processors.get(ident,[]).values()]
-                conf['Memory']=[{'@odata.id':x['@odata.id']} for x in memories.get(ident,[]).values()]
-                conf['SimpleStorage']=[{'@odata.id':x['@odata.id']} for x in simplestorages.get(ident,[]).values()]
-                conf['EthernetInterfaces']=[{'@odata.id':x['@odata.id']} for x in ethernetinterfaces.get(ident,[]).values()]
+                conf['Processors']=[{'@odata.id':x['@odata.id']} for x in processors.get(ident,{}).values()]
+                conf['Memory']=[{'@odata.id':x['@odata.id']} for x in memories.get(ident,{}).values()]
+                conf['SimpleStorage']=[{'@odata.id':x['@odata.id']} for x in simplestorages.get(ident,{}).values()]
+                conf['EthernetInterfaces']=[{'@odata.id':x['@odata.id']} for x in ethernetinterfaces.get(ident,{}).values()]
                 resp = conf, 200
         except Exception:
             traceback.print_exc()
