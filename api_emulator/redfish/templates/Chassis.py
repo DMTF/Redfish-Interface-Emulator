@@ -34,11 +34,8 @@ _TEMPLATE = \
             "@odata.id": "{rb}Chassis/{id}/Power"
         },
         "Links": {
-            "ComputerSystems": [
-                {
-                    "@odata.id": "{rb}Systems/{linkSystem}"
-                }
-            ],
+            "ComputerSystems": [],
+            "ResourceBlocks": [],
             "ManagedBy": [
                 {
                     "@odata.id": "{rb}Managers/{linkMgr}"
@@ -55,7 +52,10 @@ def get_Chassis_instance(wildcards):
     c = copy.deepcopy(_TEMPLATE)
     compsys=[{"@odata.id": "{rb}Systems/{linkSystem}".format(rb=wildcards['rb'],linkSystem=x)}
              for x in wildcards['linkSystem']]
+    rcblocks=[{"@odata.id":"{rb}CompositionService/ResourceBlocks/{linkRB}".format(rb=wildcards['rb'],linkRB=x)}
+             for x in wildcards['linkResourceBlocks']]
     c['Links']['ComputerSystems']=compsys
+    c['Links']['ResourceBlocks']=rcblocks
     replace_recurse(c, wildcards)
     # print ("fini c: ", c)
     return c
