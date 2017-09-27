@@ -17,6 +17,10 @@ from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
 from .templates.ResourceBlock import get_ResourceBlock_instance
+from processor import members as processors
+from memory import members as memories
+from simplestorage import members as simplestorages
+from ethernetinterface import members as ethernetinterfaces
 #from ResourceBlockProcessor_api import *
 
 
@@ -47,7 +51,12 @@ class ResourceBlockAPI(Resource):
             # Find the entry with the correct value for Id
             resp = 404
             if ident in members:
-                resp = members[ident], 200
+                conf=members[ident]
+                conf['Processors']=[{'@odata.id':x['@odata.id']} for x in processors.get(ident,[]).values()]
+                conf['Memory']=[{'@odata.id':x['@odata.id']} for x in memories.get(ident,[]).values()]
+                conf['SimpleStorage']=[{'@odata.id':x['@odata.id']} for x in simplestorages.get(ident,[]).values()]
+                conf['EthernetInterfaces']=[{'@odata.id':x['@odata.id']} for x in ethernetinterfaces.get(ident,[]).values()]
+                resp = conf, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
