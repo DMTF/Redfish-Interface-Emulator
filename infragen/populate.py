@@ -108,6 +108,11 @@ def populate(cfg):
 
             CreateChassis(resource_class_kwargs={
                 'rb': g.rest_base, 'linkSystem': sys_ids, 'linkResourceBlocks':rb_ids, 'linkMgr': bmc}).put(chassis)
+            CreatePower(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
+            CreateThermal(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
+            CreateManager(resource_class_kwargs={
+                'rb': g.rest_base, 'linkSystem': sys_ids, 'linkChassis': chassis, 'linkInChassis': chassis}).put(bmc)
+
     for zone in zones:
         z=CreateResourceZone(resource_class_kwargs={'rb': g.rest_base})
         z.put(zone)

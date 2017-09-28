@@ -111,7 +111,14 @@ def get_Manager_instance(wildcards):
     c['LogServices']['@odata.id'] = c['LogServices']['@odata.id'].format(**wildcards)
     c['VirtualMedia']['@odata.id'] = c['VirtualMedia']['@odata.id'].format(**wildcards)
 
-    c['Links']['ManagerForServers'][0]['@odata.id'] = c['Links']['ManagerForServers'][0]['@odata.id'].format(**wildcards)
+    systems=wildcards['linkSystem']
+    if type(systems) is list:
+        mfs=[{'@odata.id':c['Links']['ManagerForServers'][0]['@odata.id'].format(rb=wildcards['rb'], linkSystem=x)}
+             for x in systems]
+    else:
+        mfs=[{'@odata.id':c['Links']['ManagerForServers'][0]['@odata.id'].format(**wildcards)}]
+
+    c['Links']['ManagerForServers'] = mfs
     c['Links']['ManagerForChassis'][0]['@odata.id'] = c['Links']['ManagerForChassis'][0]['@odata.id'].format(**wildcards)
 
     c['Links']['ManagerInChassis']['@odata.id'] = c['Links']['ManagerInChassis']['@odata.id'].format(**wildcards)

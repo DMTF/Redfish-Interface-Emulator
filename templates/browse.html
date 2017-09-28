@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OData Explorer</title>
+    <title>Redfish Explorer</title>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <style>
         pre {
@@ -14,16 +14,30 @@
     </style>
 </head>
 <body>
-<button onclick="load('/redfish/v1')">reload</button>
-<p id="jsonpath" style="color:blue;font-family:monospace">/redfish/v1/</p>
-<div id="jsondata"></div>
+<div id="jsonpath" style="color:blue;font-family:monospace;font-weight:bold">
+    <span style="border: 1px solid blue; cursor:pointer">/redfish/v1/</span>
+</div>
+<div id="jsondata" style="display: inline-block"></div>
 <script type="text/javascript">
     load('/redfish/v1');
     function load(url) {
-        $('#jsonpath').text(url);
+        showpath(url);
         $.get(url,display);
     }
 
+    function showpath(path) {
+        $('#jsonpath').text('');
+        resturl='/redfish/v1';
+        $('#jsonpath').append('<span style="margin: 1px; border:1px solid blue; cursor:pointer" onclick=load("'+resturl+'")>/redfish/v1</span>');
+        var path=path.split('/');
+        for (var i=3;i<path.length;i++) {
+            resturl=resturl+'/'+path[i];
+           $('#jsonpath').append('<span style="margin: 1px; border:1px solid blue; cursor:pointer" onclick=load("'+resturl+'")>/'+path[i]+'</span>');
+        }
+
+
+
+    }
     function display(data,status) {
         $('#jsondata').text('');
         var txt=JSON.stringify(data,null,4).split('\n')
@@ -39,7 +53,7 @@
         var the_text=event.target.innerText;
         if (the_text.includes('"@odata.id"')) {
             var path=the_text.split('"')[3];
-            $('#jsonpath').text(path);
+            showpath(path);
             $('#jsondata').text('');
             $.get(path,display);
         }
