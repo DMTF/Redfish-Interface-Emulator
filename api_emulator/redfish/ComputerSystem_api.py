@@ -211,10 +211,8 @@ def CreateComposedSystem(req):
         for block in blocks:
             block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
             if block in resource_blocks:
-                #print('Block: ' + block + ' exists')
                 zones = resource_blocks[block]['Links']['Zones']
                 for zone in zones:
-                    #print('Block: ' + block + ' - Zone: ' + zone['@odata.id'].replace(rb + 'CompositionService/ResourceZones/',''))
                     if block in map_zones.keys():
                         map_zones[block].append(zone['@odata.id'].replace(rb + 'CompositionService/ResourceZones/',''))
                     else:
@@ -245,10 +243,6 @@ def CreateComposedSystem(req):
                             status = True
                             break
 
-        print('Map Zones: ' + str(map_zones))
-        print ('Map Zones (keys): ' + str(map_zones.keys()))
-        print('Counter: ' + str(counter))
-        print('Status: ' + str(status))
 
         if status == True:
             if req['Name'] not in members.keys():
@@ -328,7 +322,6 @@ def CreateComposedSystem(req):
                     resource_blocks[block]['CompositionStatus']['CompositionState'] = 'Composed'
                     resource_blocks[block]['Links']['ComputerSystems'].append({'@odata.id': members[req['Name']]['@odata.id']})
 
-                #print members[req['Name']]['Links']['ResourceBlocks']
                 return members[req['Name']]
             else:
                 # System Name already exists
@@ -354,7 +347,6 @@ def DeleteComposedSystem(ident):
                 block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
                 resource_blocks[block]['Links']['ComputerSystems']
                 for index, item in enumerate(resource_blocks[block]['Links']['ComputerSystems']):
-                    print resource_blocks[block]['Links']['ComputerSystems'][index]
                     if resource_blocks[block]['Links']['ComputerSystems'][index]['@odata.id'].replace(rb + 'Systems/','') == ident:
                         del resource_blocks[block]['Links']['ComputerSystems'][index]
                         resource_blocks[block]['CompositionStatus']['CompositionState'] = 'Unused'
@@ -366,8 +358,6 @@ def DeleteComposedSystem(ident):
             # Remove links to Processors, Memory, SimpleStorage, etc
             for device_type in resource_ids.keys():
                     for device in resource_ids[device_type]:
-                        print resource_ids[device_type]
-
                         if device_type == 'Processors':
                             device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
                             del processors[ident][device_back]
@@ -384,7 +374,6 @@ def DeleteComposedSystem(ident):
                             device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
                             del ethernetinterfaces[ident][device_back]
                             if ethernetinterfaces[ident]=={}: del ethernetinterfaces[ident]
-
 
             # Remove Composed System from System list
             del members[ident]
