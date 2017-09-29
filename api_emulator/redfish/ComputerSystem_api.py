@@ -21,6 +21,10 @@ from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
 from .ComputerSystem.ResetAction_api import ResetAction_API
 from .processor import members as processors
 from .memory import members as memory
+from .ethernetinterface import members as ethernetinterfaces
+from .simplestorage import members as simplestorage
+from .ResourceBlock_api import members as resource_blocks
+
 members = {}
 foo = 'false'
 INTERNAL_ERROR = 500
@@ -134,7 +138,8 @@ class ComputerSystemAPI(Resource):
     def delete(self,ident):
         # logging.info('ComputerSystemAPI delete called')
         try:
-            del(members[ident])
+            #del(members[ident])
+            resp = DeleteComposedSystem(ident)
             resp = 200
         except Exception:
             traceback.print_exc()
@@ -166,16 +171,235 @@ class ComputerSystemCollectionAPI(Resource):
 
     # The POST command should be for adding multiple instances. For now, just add one.
     # Todo - Fix so the config can be passed in the data.
+#    def post(self):
+#        try:
+#            logging.debug(request.get_json())
+#            raise Exception('Not implemented')
+#            resp=self.config,200
+#        except Exception:
+#            traceback.print_exc()
+#            resp = INTERNAL_ERROR
+#        return resp
+
     def post(self):
-        try:
-            logging.debug(request.get_json())
-            raise Exception('Not implemented')
-            resp=self.config,200
-        except Exception:
-            traceback.print_exc()
+        resp = INTERNAL_ERROR
+        req = request.get_json()
+
+        if req is not None:
+            composed_system = CreateComposedSystem(req)
+            resp = composed_system, 200
+        else:
             resp = INTERNAL_ERROR
+
         return resp
 
+
+#class ComposedSystem(Resource):
+#    def __init__(self):
+#        pass
+
+def CreateComposedSystem(req):
+        rb = g.rest_base
+        status = False      # if the request can be processed, status will become True
+
+        # Verify Existence of Resource Blocks
+        blocks = req['Links']['ResourceBlocks']
+        map_zones = dict()
+
+        resource_ids={'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
+
+        for block in blocks:
+            block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+            if block in resource_blocks:
+                #print('Block: ' + block + ' exists')
+                zones = resource_blocks[block]['Links']['Zones']
+                for zone in zones:
+                    #print('Block: ' + block + ' - Zone: ' + zone['@odata.id'].replace(rb + 'CompositionService/ResourceZones/',''))
+                    if block in map_zones.keys():
+                        map_zones[block].append(zone['@odata.id'].replace(rb + 'CompositionService/ResourceZones/',''))
+                    else:
+                        map_zones[block] = [zone['@odata.id'].replace(rb + 'CompositionService/ResourceZones/','')]
+
+                for device_type in resource_ids.keys():
+                    for device in resource_blocks[block][device_type]:
+                        resource_ids[device_type].append(device)
+
+            else:
+                # One of the Resource Blocks in the request does not exist
+                resp = INTERNAL_ERROR
+
+        # Verify that they all are under, at least, one Resource Zone
+        for k1 in map_zones.keys():
+            counter = 0
+            for k2 in map_zones.keys():
+                if k1==k2:
+                    break
+                for item in map_zones[k1]:
+                    if item in map_zones[k2]:
+                        counter = counter +1
+                        if counter == len(map_zones.keys()):
+                            break
+                if counter == len(map_zones.keys()):
+                            break
+            if counter == len(map_zones.keys()):
+                            status = True
+                            break
+
+        print('Map Zones: ' + str(map_zones))
+        print ('Map Zones (keys): ' + str(map_zones.keys()))
+        print('Counter: ' + str(counter))
+        print('Status: ' + str(status))
+
+        if status == True:
+            if req['Name'] not in members.keys():
+
+                # Create Composed System
+                new_system = CreateComputerSystem(resource_class_kwargs={'rb': g.rest_base, 'linkChassis': [], 'linkMgr': None})
+                new_system.put(req['Name'])
+
+                # Remove unecessary Links and add ResourceBlocks to Links (this is a bit of a hack though)
+                del members[req['Name']]['Links']['ManagedBy']
+                del members[req['Name']]['Links']['Chassis']
+                del members[req['Name']]['Links']['Oem']
+
+                # This should be done through the CreateComputerSystem
+                members[req['Name']]['SystemType'] = 'Composed'
+
+                members[req['Name']]['Links']['ResourceBlocks']=[]
+
+
+                # Add links to Processors, Memory, SimpleStorage, etc
+                for device_type in resource_ids.keys():
+                    for device in resource_ids[device_type]:
+                        if device_type == 'Processors':
+                            device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            device_back = device
+                            block = device.split('/', 1)[0]
+                            device = device.split('/', 1)[-1]
+                            device = device.split('/', 1)[-1]
+                            try:
+                                processors[req['Name']][device_back] = processors[block][device]
+                            except:
+                                processors[req['Name']] = {}
+                                processors[req['Name']][device_back] = processors[block][device]
+                        elif device_type == 'Memory':
+                            device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            device_back = device
+                            block = device.split('/', 1)[0]
+                            device = device.split('/', 1)[-1]
+                            device = device.split('/', 1)[-1]
+                            try:
+                                memory[req['Name']][device_back] = memory[block][device]
+                            except:
+                                memory[req['Name']] = {}
+                                memory[req['Name']][device_back] = memory[block][device]
+                        elif device_type == 'SimpleStorage':
+                            device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            device_back = device
+                            block = device.split('/', 1)[0]
+                            device = device.split('/', 1)[-1]
+                            device = device.split('/', 1)[-1]
+                            try:
+                                simplestorage[req['Name']][device_back] = simplestorage[block][device]
+                            except:
+                                simplestorage[req['Name']] = {}
+                                simplestorage[req['Name']][device_back] = simplestorage[block][device]
+                        elif device_type == 'EthernetInterfaces':
+                            device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            device_back = device
+                            block = device.split('/', 1)[0]
+                            device = device.split('/', 1)[-1]
+                            device = device.split('/', 1)[-1]
+                            try:
+                                ethernetinterfaces[req['Name']][device_back] = ethernetinterfaces[block][device]
+                            except:
+                                ethernetinterfaces[req['Name']] = {}
+                                ethernetinterfaces[req['Name']][device_back] = ethernetinterfaces[block][device]
+
+
+                # Add ResourceBlocks to Links
+                for block in blocks:
+                    members[req['Name']]['Links']['ResourceBlocks'].append({'@odata.id': block['@odata.id']})
+
+
+                # Update Resource Blocks affected
+                for block in blocks:
+                    block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                    resource_blocks[block]['CompositionStatus']['CompositionState'] = 'Composed'
+                    resource_blocks[block]['Links']['ComputerSystems'].append({'@odata.id': members[req['Name']]['@odata.id']})
+
+                #print members[req['Name']]['Links']['ResourceBlocks']
+                return members[req['Name']]
+            else:
+                # System Name already exists
+                return INTERNAL_ERROR
+
+        else:
+            return INTERNAL_ERROR
+
+        return req
+
+
+def DeleteComposedSystem(ident):
+    rb = g.rest_base
+    resource_ids={'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
+
+    # Verify if the System exists and if is of type - "SystemType": "Composed"
+    if ident in members:
+        if members[ident]['SystemType'] == 'Composed':
+
+            # Remove Links to Composed System and change CompositionState (to 'Unused') in associated Resource Blocks
+
+            for block in members[ident]['Links']['ResourceBlocks']:
+                block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                resource_blocks[block]['Links']['ComputerSystems']
+                for index, item in enumerate(resource_blocks[block]['Links']['ComputerSystems']):
+                    print resource_blocks[block]['Links']['ComputerSystems'][index]
+                    if resource_blocks[block]['Links']['ComputerSystems'][index]['@odata.id'].replace(rb + 'Systems/','') == ident:
+                        del resource_blocks[block]['Links']['ComputerSystems'][index]
+                        resource_blocks[block]['CompositionStatus']['CompositionState'] = 'Unused'
+
+                        for device_type in resource_ids.keys():
+                            for device in resource_blocks[block][device_type]:
+                                resource_ids[device_type].append(device)
+
+            # Remove links to Processors, Memory, SimpleStorage, etc
+            for device_type in resource_ids.keys():
+                    for device in resource_ids[device_type]:
+                        print resource_ids[device_type]
+
+                        if device_type == 'Processors':
+                            device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            del processors[ident][device_back]
+                            if processors[ident]=={}: del processors[ident]
+                        elif device_type == 'Memory':
+                            device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            del memory[ident][device_back]
+                            if memory[ident]=={}: del memory[ident]
+                        elif device_type == 'SimpleStorage':
+                            device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            del simplestorage[ident][device_back]
+                            if simplestorage[ident]=={}: del simplestorage[ident]
+                        elif device_type == 'EthernetInterfaces':
+                            device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
+                            del ethernetinterfaces[ident][device_back]
+                            if ethernetinterfaces[ident]=={}: del ethernetinterfaces[ident]
+
+
+            # Remove Composed System from System list
+            del members[ident]
+            resp = 200
+        else:
+            # It is not a Composed System and therefore cannot be deleted as such"
+            return INTERNAL_ERROR
+    #
+
+    return resp
+
+def UpdateComposedSystem(req):
+    resp = 201
+
+    return resp
 
 # CreateComputerSystem
 #
