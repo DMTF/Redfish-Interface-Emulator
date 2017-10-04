@@ -37,6 +37,7 @@ SPEC = None
 MODE=None
 
 CONFIG = 'emulator-config.json'
+INFRAGEN_CONFIG = 'infragen/populate-config.json'
 
 # Base URL of the RESTful interface
 REST_BASE = '/redfish/v1/'
@@ -62,14 +63,19 @@ if(MODE=='Cloud'):
 
 def init_resource_manager():
     """
-    Initializes the resource manager
+    Initializes the resource manager AND calls INFRAGEN to populate emulator (i.e. with Chassi, CS, Resource Blocks, etc)
     """
     global resource_manager
     global REST_BASE
     global TRAYS
     global SPEC
     resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
-    populate(config.get('POPULATE',10))
+
+    # Calls INFRAGEN and populates emulator according to populate-config.json
+    with open(INFRAGEN_CONFIG, 'r') as f:
+        infragen_config = json.load(f)
+    populate(infragen_config.get('POPULATE',10))
+
     resource_dictionary = ResourceDictionary()
 
 
