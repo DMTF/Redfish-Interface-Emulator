@@ -105,16 +105,43 @@ class TestRedfishEmulator(unittest.TestCase):
 
         # Parameters for the get requests
         params = [
-            (self.url('Systems/437XR1138R2/'), 'System instance'),
-            (self.url('Systems/437XR1138R2/SimpleStorage/'), 'SimpleStorageCollection'),
-            (self.url('Systems/437XR1138R2/SimpleStorage/1/'), 'SimpleStorage member 1')]
+            (self.url('Chassis'), 'ChassiCollection'),
+            (self.url('Chassis/Chassis-1'), 'Chassis instance'),
+
+            (self.url('Systems'), 'SystemCollection'),
+            (self.url('Systems/System-1'), 'Systems instance'),
+            (self.url('Systems/System-1/Processors'), 'ProcessorsCollection'),
+            (self.url('Systems/System-1/Memory'), 'MemoryCollection'),
+            (self.url('Systems/System-1/SimpleStorage'), 'SimpleStorageCollection'),
+            (self.url('Systems/System-1/EthernetInterfaces'), 'EthernetInterfacesCollection'),
+            (self.url('Systems/System-1/Processors/CPU0'), 'Processor member 1'),
+            (self.url('Systems/System-1/Memory/DRAM0'), 'Memory member 1'),
+            (self.url('Systems/System-1/SimpleStorage/SAS-CTRL0'), 'SimpleStorage member 1'),
+            (self.url('Systems/System-1/EthernetInterfaces/NIC-0'), 'EthernetInterface member 1'),
+
+            (self.url('EventService'), 'EventService'),
+
+            (self.url('CompositionService'), 'CompositionService'),
+            (self.url('CompositionService/ResourceBlocks'), 'ResourceBlockCollection'),
+            (self.url('CompositionService/ResourceBlocks/Block-1'), 'ResourceBlock member'),
+            (self.url('CompositionService/ResourceBlocks/Block-1/Processors/CPU0'), 'ResourceBlock Memory member'),
+            (self.url('CompositionService/ResourceBlocks/Block-1/Memory/DRAM0'), 'ResourceBlock Memory member'),
+            (self.url('CompositionService/ResourceBlocks/Block-1/EthernetInterfaces/NIC-0'), 'ResourceBlock EthernetInterfaces member'),
+            (self.url('CompositionService/ResourceZones'), 'ResourceZoneCollection'),
+            (self.url('CompositionService/ResourceZones/Zone-1'), 'ResourceZone member')]
+
 
         self.do_gets(params, logger)
 
+        with open('test-composed.json') as payload:
+            headers = {'Content-Type': 'application/json'}
+            r = requests.post(self.url('Systems'), data=payload, headers=headers)
+            self.do_gets([(self.url('Systems/Composed-1'), 'ComposedSystem member')], logger)
+
         # Testing deleting the system instance (expect to fail with 404)
-        r = requests.delete(self.url('Systems/437XR1138R2/'))
-        self.assert_status(r, 404, logger)
-	logger.info('PASS: Unable to delete system instance')
+        r = requests.delete(self.url('Systems/Composed-1'))
+        self.assert_status(r, 200, logger)
+	    #logger.info('PASS: Unable to delete system instance')
 
 if __name__ == '__main__':
     #main(sys.argv[2:])

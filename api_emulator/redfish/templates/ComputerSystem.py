@@ -91,9 +91,6 @@ _TEMPLATE = \
     "EthernetInterfaces": {
         "@odata.id": "{rb}Systems/{id}/EthernetInterfaces"
     },
-    "NetworkInterfaces": {
-        "@odata.id": "{rb}Systems/{id}/NetworkInterfaces"
-    },
     "SimpleStorage": {
         "@odata.id": "{rb}Systems/{id}/SimpleStorage"
     },
@@ -106,11 +103,6 @@ _TEMPLATE = \
         "ManagedBy": [
             {
                 "@odata.id": "{rb}Managers/{linkMgr}"
-            }
-        ],
-        "Endpoints": [
-            {
-                "@odata.id": "{rb}Fabrics/PCIe/Endpoints/HostRootComplex1"
             }
         ],
         "Oem": {}
@@ -140,12 +132,12 @@ def get_ComputerSystem_instance(wildcards):
     c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
     c['Memory']['@odata.id'] = c['Memory']['@odata.id'].format(**wildcards)
     c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)
-    c['NetworkInterfaces']['@odata.id'] = c['NetworkInterfaces']['@odata.id'].format(**wildcards)
     c['SimpleStorage']['@odata.id'] = c['SimpleStorage']['@odata.id'].format(**wildcards)
 
-    c['Links']['Chassis'][0]['@odata.id'] = c['Links']['Chassis'][0]['@odata.id'].format(**wildcards)
+    chassis=[{'@odata.id':"{rb}Chassis/{linkChassis}".format(rb=wildcards['rb'],linkChassis=x)}
+             for x in wildcards['linkChassis']]
+    c['Links']['Chassis'] = chassis
     c['Links']['ManagedBy'][0]['@odata.id'] = c['Links']['ManagedBy'][0]['@odata.id'].format(**wildcards)
-    c['Links']['Endpoints'][0]['@odata.id'] = c['Links']['Endpoints'][0]['@odata.id'].format(**wildcards)
 
     c['Actions']['#ComputerSystem.Reset']['target'] = c['Actions']['#ComputerSystem.Reset']['target'].format(**wildcards)
     c['Actions']['#ComputerSystem.Reset']['@Redfish.ActionInfo'] = c['Actions']['#ComputerSystem.Reset']['@Redfish.ActionInfo'].format(**wildcards)

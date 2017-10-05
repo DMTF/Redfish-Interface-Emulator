@@ -2,19 +2,19 @@
 # Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# Redfish Processors and Processor Resources. Based on version 1.0.0
+# Redfish Memorys and Memory Resources. Based on version 1.0.0
 
 from flask_restful import Resource
-from .templates.processor import format_processor_template
 import logging
+from .templates.simplestorage import format_storage_template
 
 members = {}
 INTERNAL_ERROR = 500
 
 
-class Processor(Resource):
+class SimpleStorage(Resource):
     """
-    Processor.1.0.0.Processor
+    SimpleStorage.v1_2_0.SimpleStorage
     """
 
     def __init__(self, **kwargs):
@@ -29,18 +29,18 @@ class Processor(Resource):
         return members[ident1][ident2], 200
 
 
-class Processors(Resource):
+class SimpleStorageCollection(Resource):
     """
-    Processor.1.0.0.ProcessorCollection
+    SimpleStorage.v1_2_0.SimpleStorageCollection
     """
 
     def __init__(self, rb, suffix):
         """
-        Processors Constructor
+        SimpleStorageCollection Constructor
         """
-        self.config = {u'@odata.context': '{rb}$metadata#ProcessorCollection.ProcessorCollection'.format(rb=rb),
+        self.config = {u'@odata.context': '{rb}$metadata#SimpleStorageCollection.SimpleStorageCollection'.format(rb=rb),
                        u'@odata.id': '{rb}{suffix}'.format(rb=rb, suffix=suffix),
-                       u'@odata.type': u'#ProcessorCollection.ProcessorCollection'}
+                       u'@odata.type': u'#SimpleStorageCollection.SimpleStorageCollection'}
 
     def get(self, ident):
         try:
@@ -49,7 +49,7 @@ class Processors(Resource):
             procs = []
             for p in members.get(ident, {}).values():
                 procs.append({'@odata.id': p['@odata.id']})
-            self.config['@odata.id']='{prefix}/{ident}/Processors'.format(prefix=self.config['@odata.id'],ident=ident)
+            self.config['@odata.id']='{prefix}/{ident}/SimpleStorage'.format(prefix=self.config['@odata.id'],ident=ident)
             self.config['Members'] = procs
             self.config['Members@odata.count'] = len(procs)
             resp = self.config, 200
@@ -59,9 +59,9 @@ class Processors(Resource):
         return resp
 
 
-def CreateProcessor(**kwargs):
+def CreateSimpleStorage(**kwargs):
     suffix_id = kwargs['suffix_id']
-    processor_id = kwargs['processor_id']
+    storage_id = kwargs['storage_id']
     if suffix_id not in members:
         members[suffix_id] = {}
-    members[suffix_id][processor_id] = format_processor_template(**kwargs)
+    members[suffix_id][storage_id] = format_storage_template(**kwargs)

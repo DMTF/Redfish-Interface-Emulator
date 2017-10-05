@@ -3,47 +3,53 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
 # format_processor_template()
+from copy import deepcopy
 
 PROCESSOR_TEMPLATE = {
-    "@odata.context": "{rb}$metadata#{suffix}/Links/Members/{cs_puid}/Processors/Links/Members/$entity",
-    "@odata.id": "{rb}{suffix}/{cs_puid}/Processors/{id}",
-    "@odata.type": "#Processor.1.0.0.Processor",
-    "Name":"Processor",
-    "Id": None,
-    "Socket": "CPU {socket}",
+    '@odata.context': '{rb}$metadata#Processor.Processor',
+    "@odata.type": "#Processor.1_0_0.Processor",
+    "@odata.id": "{rb}{suffix}/{suffix_id}/Processors/{processor_id}",
+    "Name": "Processor",
+    "Id": "{processor_id}",
     "ProcessorType": "CPU",
     "ProcessorArchitecture": "x86",
     "InstructionSet": "x86-64",
     "Manufacturer": "Intel(R) Corporation",
-    "Model": "Multi-Core Intel(R) Xeon(R) processor 7xxx Series",
-    "ProcessorId":{
-        "VendorId":"GenuineIntel",
-        "IdentificationRegisters":"0x34AC34DC8901274A",
+    "Model": "Multi-Core Intel(R) Xeon(R) processor 7500 Series",
+    "ProcessorId": {
+        "VendorId": "GenuineIntel",
+        "IdentificationRegisters": "0x34AC34DC8901274A",
         "EffectiveFamily": "0x42",
         "EffectiveModel": "0x61",
         "Step": "0x1",
         "MicrocodeInfo": "0x429943"
-  },
+    },
+    'Links': {'Chassis': {'@odata.id': '{rb}Chassis/{chassis_id}'}},
     "MaxSpeedMHz": None,
     "TotalCores": None,
     "TotalThreads": None,
-    "Status": None
+    "Status": {'Health': 'OK', 'State': 'Enabled'}
 }
 
 
-def format_processor_template(rb, suffix, cs_puid, ident, socket, max_mhx,
-                              total_cores, enabled_cores, total_threads,
-                              enabled_threads, status):
+def format_processor_template(**kwargs):
     """
     Format the processor template -- returns the template
     """
-    c = PROCESSOR_TEMPLATE.copy()
-    c['@odata.context'] = c['@odata.context'].format(rb=rb, suffix=suffix, cs_puid=cs_puid)
-    c['@odata.id'] = c['@odata.id'].format(rb=rb, suffix=suffix, cs_puid=cs_puid, id=ident)
-    c['Id'] = str(ident)
-    c['Socket'] = c['Socket'].format(socket=socket)
-    c['MaxSpeedMHz'] = max_mhx
-    c['TotalCores'] = total_cores
-    c['TotalThreads'] = total_threads
-    c['Status'] = status
+    # params:
+    defaults = {'rb': '/redfish/v1/',
+                'suffix': 'Systems',
+                'maxspeedmhz': 2200,
+                'totalcores': 8}
+
+    defaults.update(kwargs)
+
+    c = deepcopy(PROCESSOR_TEMPLATE)
+    c['@odata.context'] = c['@odata.context'].format(**defaults)
+    c['@odata.id'] = c['@odata.id'].format(**defaults)
+    c['Id'] = c['Id'].format(**defaults)
+    c['Links']['Chassis']['@odata.id'] = c['Links']['Chassis']['@odata.id'].format(**defaults)
+    c['MaxSpeedMHz'] = defaults['maxspeedmhz']
+    c['TotalCores'] = defaults['totalcores']
+    c['TotalThreads'] = defaults.get('totalthreads',2*defaults['totalcores'])
     return c

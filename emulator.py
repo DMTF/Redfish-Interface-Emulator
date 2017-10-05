@@ -12,6 +12,9 @@ import json
 import argparse
 import traceback
 import xml.etree.ElementTree as ET
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 import g
 
@@ -25,12 +28,16 @@ from api_emulator.resource_manager import ResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary
 
+from infragen.populate import populate
+
+
 # Trays to load into the resource manager
 TRAYS = None
 SPEC = None
 MODE=None
 
 CONFIG = 'emulator-config.json'
+INFRAGEN_CONFIG = 'infragen/populate-config.json'
 
 # Base URL of the RESTful interface
 REST_BASE = '/redfish/v1/'
@@ -56,13 +63,19 @@ if(MODE=='Cloud'):
 
 def init_resource_manager():
     """
-    Initializes the resource manager
+    Initializes the resource manager AND calls INFRAGEN to populate emulator (i.e. with Chassi, CS, Resource Blocks, etc)
     """
     global resource_manager
     global REST_BASE
     global TRAYS
     global SPEC
     resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+
+    # Calls INFRAGEN and populates emulator according to populate-config.json
+    with open(INFRAGEN_CONFIG, 'r') as f:
+        infragen_config = json.load(f)
+    populate(infragen_config.get('POPULATE',10))
+
     resource_dictionary = ResourceDictionary()
 
 
@@ -278,6 +291,11 @@ def reset():
 @g.app.route('/')
 def index():
     return render_template('index.html')
+
+@g.app.route('/browse.html')
+def browse():
+    return render_template('browse.html')
+
 
 #
 # If any other RESTful request, send to RedfishAPI object for processing. Note: <path:path> specifies any path

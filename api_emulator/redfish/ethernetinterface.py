@@ -2,19 +2,19 @@
 # Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
-# Redfish Processors and Processor Resources. Based on version 1.0.0
+# Redfish Memorys and Memory Resources. Based on version 1.0.0
 
 from flask_restful import Resource
-from .templates.processor import format_processor_template
 import logging
+from .templates.ethernetinterface import format_nic_template
 
 members = {}
 INTERNAL_ERROR = 500
 
 
-class Processor(Resource):
+class EthernetInterface(Resource):
     """
-    Processor.1.0.0.Processor
+    EthernetInterface.v1_3_0.EthernetInterface
     """
 
     def __init__(self, **kwargs):
@@ -29,18 +29,18 @@ class Processor(Resource):
         return members[ident1][ident2], 200
 
 
-class Processors(Resource):
+class EthernetInterfaceCollection(Resource):
     """
-    Processor.1.0.0.ProcessorCollection
+    EthernetInterface.v1_3_0.EthernetInterfaceCollection
     """
 
     def __init__(self, rb, suffix):
         """
-        Processors Constructor
+        EthernetInterfaceCollection Constructor
         """
-        self.config = {u'@odata.context': '{rb}$metadata#ProcessorCollection.ProcessorCollection'.format(rb=rb),
+        self.config = {u'@odata.context': '{rb}$metadata#EthernetInterfaceCollection.EthernetInterfaceCollection'.format(rb=rb),
                        u'@odata.id': '{rb}{suffix}'.format(rb=rb, suffix=suffix),
-                       u'@odata.type': u'#ProcessorCollection.ProcessorCollection'}
+                       u'@odata.type': u'#EthernetInterfaceCollection.EthernetInterfaceCollection'}
 
     def get(self, ident):
         try:
@@ -49,7 +49,7 @@ class Processors(Resource):
             procs = []
             for p in members.get(ident, {}).values():
                 procs.append({'@odata.id': p['@odata.id']})
-            self.config['@odata.id']='{prefix}/{ident}/Processors'.format(prefix=self.config['@odata.id'],ident=ident)
+            self.config['@odata.id']='{prefix}/{ident}/EthernetInterfaces'.format(prefix=self.config['@odata.id'],ident=ident)
             self.config['Members'] = procs
             self.config['Members@odata.count'] = len(procs)
             resp = self.config, 200
@@ -59,9 +59,9 @@ class Processors(Resource):
         return resp
 
 
-def CreateProcessor(**kwargs):
+def CreateEthernetInterface(**kwargs):
     suffix_id = kwargs['suffix_id']
-    processor_id = kwargs['processor_id']
+    nic_id = kwargs['nic_id']
     if suffix_id not in members:
         members[suffix_id] = {}
-    members[suffix_id][processor_id] = format_processor_template(**kwargs)
+    members[suffix_id][nic_id] = format_nic_template(**kwargs)

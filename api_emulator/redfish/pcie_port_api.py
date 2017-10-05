@@ -6,7 +6,7 @@
 # PCIe Port  API  GET, PUT
 
 import g
-
+import traceback
 # Flask Imports
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
@@ -15,6 +15,7 @@ from .templates.pcie_port import get_PCIePort_template
 
 members = []
 member_ids = []
+INTERNAL_ERROR=500
 
 #PCIe Port API
 class PCIePortAPI(Resource):
@@ -27,7 +28,7 @@ class PCIePortAPI(Resource):
             global config
             resp = config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -41,7 +42,7 @@ class PCIePortAPI(Resource):
             member_ids.append({'@odata.id': config['@odata.id']} )
             resp = config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -70,7 +71,7 @@ class PCIePortsAPI(Resource):
             self.config['@odata.id'] = self.rb + 'Switches/' + sw_id + '/PCIePorts'
             resp = self.config, 200
         except OSError:
-            resp = error_response('Resources directory does not exist', 400)
+            resp = make_response('Resources directory does not exist', 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -81,8 +82,8 @@ class PCIePortsAPI(Resource):
         try:
 #            g.api.add_resource(PCIePortAPI, '/redfish/v1/PCIePorts/<string:ident>')
             resp=self.config,200
-        except PathError:
-            resp = error_response('Attribute Does Not Exist', 404)
+        except OSError:
+            resp = make_response('Attribute Does Not Exist', 404)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR

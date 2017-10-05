@@ -14,7 +14,7 @@ from flask_restful import reqparse, Api, Resource
 from .templates.power import get_power_instance
 
 # config is instantiated by CreatePower()
-config = {}
+members={}
 INTERNAL_ERROR = 500
 
 # Power API
@@ -24,18 +24,21 @@ class PowerAPI(Resource):
     def __init__(self, **kwargs):
         logging.info('PowerAPI init called')
         try:
-            global config
-            config=get_power_instance(kwargs)
-            resp = config, 200
+            #global config
+            #config=get_power_instance(kwargs)
+            #resp = config, 200
+            pass
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
 
     # HTTP GET
-    def get(self):
+    def get(self,ident):
         try:
-            global config
-            resp = config, 200
+            # Find the entry with the correct value for Id
+            resp = 404
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -81,9 +84,10 @@ class CreatePower(Resource):
     def put(self,ch_id):
         logging.info('CreatePower put called')
         try:
-            global config
             global wildcards
             config=get_power_instance(wildcards)
+            logging.debug('added config for %s'%ch_id)
+            members[ch_id]=config
             resp = config, 200
         except Exception:
             traceback.print_exc()
