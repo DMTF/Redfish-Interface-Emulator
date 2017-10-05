@@ -20,7 +20,7 @@
 <div id="jsondata" style="display: inline-block"></div>
 <script type="text/javascript">
     regex=/\/redfish\/v1\/CompositionService\/ResourceBlocks\/[a-zA-Z0-9-_]+$/
-    load({data:'/redfish/v1/CompositionService/ResourceZones'});
+    load({data:'/redfish/v1'});
     function load(event) {
         url=event.data;
         showpath(url);
