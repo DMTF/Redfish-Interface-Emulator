@@ -108,3 +108,11 @@ The following is the general command for running unit test.
 
 Once the command completes, inspect the log file which is produced, “test-rsa-emulator.log”.
 
+### Browser feature - http://localhost:5000/browse.html
+Feature added to make it easier to navigate/show the API.
+
+Ability to compose and delete systems (Composition Service) is also included.
+    * Compose: when navigating the browser to /CompositionService/ResourceZones/<ZONE>/, a check box appears next to each Resource Block. The user shall select the Resource Blocks he wants to use to compose a system and then press the button "compose" on the top.
+    * Delete: navigate the browser to /Systems/<SYSTEM>/, if the system is of type "COMPOSED", a "delete" button appears. Just click and the composed system will be deleted.
+
+Screenshots of the browser available in /doc/browser-screenshots.pdf
