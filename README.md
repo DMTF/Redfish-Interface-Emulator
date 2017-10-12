@@ -43,6 +43,7 @@ The emulator reads the emulator_config.json file to configure its behavior.
         "TRAYS": [
             "./Resources/Systems/1/index.json"
         ]
+        "POPULATE": "Emulator"
     }
 
 * The MODE property specifies port to use. If the value is 'Cloud', the port is assigned by
@@ -50,6 +51,7 @@ the cloud foundry. If the value is ‘Local’, the port is assigned the value o
 * The HTTPS property specifies whether HTTP or HTTPS will used by the client
 * The SPEC property specifies whether the computer system is represented as a Redfish ComputerSystem (SPEC = “Redfish”) or another schema.
 * The TRAYS property specifies the path to the resources that will make up the initial resource pools. These simple resource pools are depleted as computer systems are composed. Multiple trays can be specified.
+* The POPULATE property specifies the path to the file used by the INFRAGEN module to populate the Redfish Interface backend. If the file does not exist or if POPULATE is not defined, the emulator will start empty.
 
 ### Copying a mockup ###
 The location for the static mockup is in the directory ./api_emulator/redfish/static.  The emulator comes with a copy of an earlier Redfish mockup.  This can be replaced with any new mockup file.
@@ -85,6 +87,15 @@ Code generators for the steps #1 (API file) and #2 (template file) exists in the
 * 
 		codegen_template Chassis <outputdir>
 
+### INFRAGEN Module
+Python module that can be used to populate the Redfish Interface backend with data (Chassi, Systems, Resource Blocks, Resources Zones, Processors, Memory, etc).
+
+To use the module a JSON file needs to be in place describing the infrastructure (an example is provided in 'infragen/populate-config.json').
+
+Moreover, the POPULATE property needs to be set in emulator-config.json. The POPULATE property specifies the path to the json file. If the file does not exist or if POPULATE is not defined, the emulator will start empty.
+
+As part of INFRAGEN, generate_template.py can be used to help a user with the creation of JSON template according to a specific Redfish schema by guiding the user through the schema and asking for input values. This module runs independently of the populate function and from the emulator itself.
+
 ### Testing the Emulator
 The command to test the emulator can executed against the emulator running locally or hosted in the cloud.
 
@@ -97,3 +108,11 @@ The following is the general command for running unit test.
 
 Once the command completes, inspect the log file which is produced, “test-rsa-emulator.log”.
 
+### Browser feature - http://localhost:5000/browse.html
+Feature added to make it easier to navigate/show the API.
+
+Ability to compose and delete systems (Composition Service) is also included.
+    * Compose: when navigating the browser to /CompositionService/ResourceZones/<ZONE>/, a check box appears next to each Resource Block. The user shall select the Resource Blocks he wants to use to compose a system and then press the button "compose" on the top.
+    * Delete: navigate the browser to /Systems/<SYSTEM>/, if the system is of type "COMPOSED", a "delete" button appears. Just click and the composed system will be deleted.
+
+Screenshots of the browser available in /doc/browser-screenshots.pdf

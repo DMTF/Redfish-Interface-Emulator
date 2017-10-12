@@ -2,5 +2,6 @@
   "SPEC": "Redfish",
   "MODE": "Local",
   "HTTPS": "Disable",
-  "TRAYS": []
+  "TRAYS": [],
+  "POPULATE": "infragen/populate-config.json"
 }

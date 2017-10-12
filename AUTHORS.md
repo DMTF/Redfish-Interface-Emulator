@@ -6,6 +6,8 @@
 
 # Other Key Contributions:
 * George Clement - Intel Corporation
+* João Monteiro Soares - Ericsson AB
+* Fetahi Wuhib - Ericsson AB
 
 append new contributions to the bottom
 

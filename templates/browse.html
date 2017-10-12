@@ -89,10 +89,28 @@
                 }
             } else {
                 var line_i=$('<pre></pre>').text(txt[line]);
+                del_compose=false;
+                if (txt[line].includes('"SystemType": "Composed"')) {
+                    del_compose=true;
+                    id=data['@odata.id'];
+                    dlbtn=$('<button>delete</button>').click(id,do_delcompose);
+                    $('#jsonpath').append(dlbtn);
+                }
             }
             $('#jsondata').append(line_i);
         }
     }
+
+    function do_delcompose(event) {
+        id=event.data;
+        console.log(id);
+        var xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {load({data:'/redfish/v1/Systems'})};
+        xhttp.open('DELETE',id,true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send();
+    }
+
 </script>
 </body>
 </html>
