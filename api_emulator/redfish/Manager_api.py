@@ -118,9 +118,9 @@ class ManagerAPI(Resource):
             if ident in members:
                 del (members[ident])
                 resp = 200
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
-            print e
+            print (e)
             resp = INTERNAL_ERROR
         return resp
 

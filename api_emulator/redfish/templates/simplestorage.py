@@ -41,7 +41,7 @@ def format_storage_template(**kwargs):
     c['Id'] = c['Id'].format(**defaults)
     c['Links']['Chassis']['@odata.id'] = c['Links']['Chassis']['@odata.id'].format(**defaults)
     drives = []
-    for i in xrange(defaults['drives']):
+    for i in range(defaults['drives']):
         drive = deepcopy(_DEVICE_TEMPLATE)
         drive['CapacityBytes'] = defaults['capacitygb'] * 1024 ** 3
         drive['Name'] = 'Disk %d' % i

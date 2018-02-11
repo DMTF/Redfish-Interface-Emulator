@@ -53,7 +53,7 @@ class EthernetInterfaceCollection(Resource):
             self.config['Members'] = procs
             self.config['Members@odata.count'] = len(procs)
             resp = self.config, 200
-        except Exception,e:
+        except Exception as e:
             logging.error(e)
             resp = 'internal error', INTERNAL_ERROR
         return resp

@@ -177,7 +177,7 @@ class ChassisCollectionAPI(Resource):
                 resp=config,201
             else:
                 resp=msg,400
-        except Exception,e:
+        except Exception as e:
             logging.error(e)
             traceback.print_exc()
             resp = INTERNAL_ERROR
