@@ -32,7 +32,7 @@ class ChassisAPI(Resource):
     #
     # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
     def __init__(self, **kwargs):
-        logging.basicConfig(level=logging.INFO)
+#        logging.basicConfig(level=logging.INFO)
         logging.info('ChassisAPI init called')
         try:
             global wildcards

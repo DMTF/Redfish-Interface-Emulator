@@ -54,7 +54,7 @@ class EgResourceAPI(Resource):
     # to pass the wildcards to the get_<resource>_instance() call.
 
     def __init__(self, **kwargs):
-        logging.basicConfig(level=logging.INFO)
+#        logging.basicConfig(level=logging.INFO)
         logging.info('EgResourceAPI init called')
         try:
             global config
