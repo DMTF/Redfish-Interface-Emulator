@@ -3,9 +3,17 @@
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/LICENSE.md
 
 # Declares global variables
+#
+# The canonical way to share information across modules within a single program
+# is to create a special module (often called config or cfg). So this file
+# should be called config.py.  But too late, now.
 
 from flask import Flask
 from flask_restful import Api
+
+# Settings from emulator-config.json
+#
+staticfolders = []
 
 # Base URI. Will get overwritten in emulator.py
 rest_base = 'base'
