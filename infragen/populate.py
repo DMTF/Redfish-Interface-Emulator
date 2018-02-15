@@ -18,12 +18,17 @@ import g
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
 from api_emulator.redfish.ResourceZone_api import CreateResourceZone
 
-
+# In Python 3, xrange() is not supported.  The usage in this file uses the
+# Python 3 interpretation of range()
+#   python 2 to python 3 equivalencies
+#   xrange(10) -> range(10)
+#   range(10)  -> list(range(10)
+#
 def create_resources(template, chassis, suffix, suffix_id):
     resource_ids={'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
     proc_count=mem_count=dsk_count=eth_count=0
     for proc in template['Processors']:
-        for k in xrange(proc.get('Count', 1)):
+        for k in range(proc.get('Count', 1)):
             proc_id=proc['Id'].format(proc_count)
             proc_count+=1
             resource_ids['Processors'].append(proc_id)
@@ -33,7 +38,7 @@ def create_resources(template, chassis, suffix, suffix_id):
     for mem in template['Memory']:
         memtype = mem.get('MemoryType', 'DRAM')
         opmodes = ['PMEM'] if 'NV' in memtype else ['Volatile']
-        for k in xrange(mem.get('Count', 1)):
+        for k in range(mem.get('Count', 1)):
             mem_id=mem['Id'].format(mem_count)
             mem_count+=1
             resource_ids['Memory'].append(mem_id)
@@ -42,7 +47,7 @@ def create_resources(template, chassis, suffix, suffix_id):
                          type=memtype, operatingmodes=opmodes)
 
     for dsk in template['SimpleStorage']:
-        for k in xrange(dsk.get('Count', 1)):
+        for k in range(dsk.get('Count', 1)):
             dsk_id=dsk['Id'].format(dsk_count)
             dsk_count+=1
             resource_ids['SimpleStorage'].append(dsk_id)
@@ -53,7 +58,7 @@ def create_resources(template, chassis, suffix, suffix_id):
                                 drives=drives)
 
     for eth in template['EthernetInterfaces']:
-        for k in xrange(eth.get('Count', 1)):
+        for k in range(eth.get('Count', 1)):
             eth_id=eth['Id'].format(eth_count)
             eth_count+=1
             resource_ids['EthernetInterfaces'].append(eth_id)
@@ -71,14 +76,14 @@ def populate(cfg):
     chassis_count = 0
     zones = {}
     for chassi_template in cfg['Chassis']:
-        for i in xrange(chassi_template.get('Count', 1)):
+        for i in range(chassi_template.get('Count', 1)):
             chassis_count += 1
             chassis = chassi_template['Id'].format(chassis_count)
             bmc = 'BMC-{}'.format(chassis_count)
             sys_ids = []
             rb_ids = []
             for compsys_template in chassi_template['Links'].get('ComputerSystems',[]):
-                for j in xrange(compsys_template.get('Count', 1)):
+                for j in range(compsys_template.get('Count', 1)):
                     cs_count += 1
                     compSys = compsys_template['Id'].format(cs_count)
                     sys_ids.append(compSys)
@@ -88,7 +93,7 @@ def populate(cfg):
                     create_resources(compsys_template, chassis, 'System', compSys)
 
             for rb_template in chassi_template['Links'].get('ResourceBlocks',[]):
-                for j in xrange(rb_template.get('Count', 1)):
+                for j in range(rb_template.get('Count', 1)):
                     rb_count += 1
                     rb_id = rb_template['Id'].format(rb_count)
                     rb_ids.append(rb_id)
@@ -121,7 +126,7 @@ def populate(cfg):
 
 def n_populate(num):
     # populate with some example infrastructure
-    for i in xrange(num):
+    for i in range(num):
         chassis = 'Chassis-{0}'.format(i + 1)
         compSys = 'System-{0}'.format(i + 1)
         bmc = 'BMC-{0}'.format(i + 1)
@@ -164,7 +169,7 @@ def n_populate(num):
         config.post(g.rest_base, RB, "linkChassis", "Chassis-%d" % i)
         config.post(g.rest_base, RB, "linkZone", "ResourceZone-%d" % i)
 
-        for j in xrange(2):
+        for j in range(2):
             # create ResourceBlock Processor (1)
             CreateProcessor(rb=g.rest_base, suffix='CompositionService/ResourceBlocks', processor_id='CPU-%d' % (i + 1),
                             suffix_id=RB, chassis_id=chassis)

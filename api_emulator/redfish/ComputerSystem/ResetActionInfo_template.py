@@ -29,7 +29,7 @@ _TEMPLATE = \
 def get_ResetActionInfo_instance(wildcards):
 
     c = copy.deepcopy(_TEMPLATE)
-    print wildcards
+    print (wildcards)
     c['@odata.context']=c['@odata.context'].format(**wildcards)
     c['@odata.id']=c['@odata.id'].format(**wildcards)
 

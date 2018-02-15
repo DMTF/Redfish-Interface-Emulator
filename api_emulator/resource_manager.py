@@ -10,6 +10,7 @@ import urllib3
 from uuid import uuid4
 from threading import Thread
 import logging
+import copy
 
 import g
 from . import utils
@@ -42,6 +43,7 @@ from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
 
+mockupfolders = []
 
 # The __init__ method sets up the static and dynamic resources.
 #
@@ -63,12 +65,12 @@ from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI
 #   - The EgResource* provides an example of adding a dynamic resource.
 #
 # Note: There is one additional change that needs to be made in order to create multiple instances of a
-#   resource.  The resource endpoint for the second instance collides which the first because flask
-#   doesn't will reuse the endpont name for the subordinate resources.  This results in an assertion failure
+#   resource.  The resource endpoint for the second instance collides with the first because flask
+#   doesn't reuse the endpont name for the subordinate resources.  This results in an assertion failure
 #       "AssertionError: View function mapping is overwriting an existing endpoint function"
 #
-#   To fix, a unique endpoint names need to be formed and passed during the call to api_add_resource()
-#       api.add_resource(Todo,  '/todo/<int:todo_id>', endpoint='todo_ep')
+#   The fix is form a unique endpoint names and pass it during the call to api_add_resource()
+#      e.g. api.add_resource(Todo,  '/todo/<int:todo_id>', endpoint='todo_ep')
 #
 
 class ResourceManager(object):
@@ -91,9 +93,6 @@ class ResourceManager(object):
         2. Static resource dictionary
         """
 
-        #        logging.basicConfig(level=logging.INFO)
-        #        logging.basicConfig(level=logging.DEBUG)
-
         self.rest_base = rest_base
 
         self.mode = mode
@@ -105,12 +104,18 @@ class ResourceManager(object):
 
         # Load the static resources into the dictionary
         self.resource_dictionary = ResourceDictionary()
-        self.AccountService = load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.Registries = load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
-        self.TaskService = load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
-        # self.Managers = load_static('Managers', 'redfish', mode, rest_base, self.resource_dictionary)
-        # self.EventService = load_static('EventService', 'redfish', mode, rest_base, self.resource_dictionary)
+
+        mockupfolders = copy.copy(g.staticfolders)
+        if "Redfish" in mockupfolders:
+            logging.info('Loading Redfish static resources')
+            self.AccountService =   load_static('AccountService', 'redfish', mode, rest_base, self.resource_dictionary)
+            self.Registries =       load_static('Registries', 'redfish', mode, rest_base, self.resource_dictionary)
+            self.SessionService =   load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+            self.TaskService =      load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
+
+#        if "Swordfish" in mockupfolders:
+#            self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+#            self.StorageSystems = load_static('StorageSystems', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Attach APIs for dynamic resources
 
@@ -169,11 +174,7 @@ class ResourceManager(object):
 
         # Example Resource Collection
         g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
-        g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>',
-                           resource_class_kwargs={'rb': g.rest_base})
-        #        config = CreateEgResource()
-        #        out = config.__init__(resource_class_kwargs={'rb': g.rest_base})
-        #        out = config.put("Resource2")
+        g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
         # Composition Service - API
         g.api.add_resource(CompositionServiceAPI, '/redfish/v1/CompositionService', resource_class_kwargs={'rb': g.rest_base, 'id': "CompositionService"})
@@ -299,6 +300,13 @@ class ResourceManager(object):
             raise RemovePooledNodeError(
                 'No pooled node with CS_PUID: {0}, exists'.format(cs_puid))
 
+    def get_resource(self, path):
+        """
+        Call Resource_Dictionary's get_resource
+        """
+        obj = self.resource_dictionary.get_resource(path)
+        return obj
+
 
 '''
     def remove_pooled_node(self, cs_puid):
@@ -311,13 +319,6 @@ class ResourceManager(object):
             cs_puid - CS_PUID of the pooed node to remove
         """
         self.remove_method(cs_puid)
-
-    def get_resource(self, path):
-        """
-        Call Resource_Dictionary's get_resource
-        """
-        obj = self.resource_dictionary.get_resource(path)
-        return obj
 
     def update_cs(self,cs_puid,rs):
         """

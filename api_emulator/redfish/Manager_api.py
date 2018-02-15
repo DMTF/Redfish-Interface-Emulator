@@ -31,7 +31,7 @@ class ManagerAPI(Resource):
     #
     # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
     def __init__(self, **kwargs):
-        logging.basicConfig(level=logging.INFO)
+#        logging.basicConfig(level=logging.INFO)
         logging.debug('ManagerAPI init called')
         try:
             global config
@@ -118,9 +118,9 @@ class ManagerAPI(Resource):
             if ident in members:
                 del (members[ident])
                 resp = 200
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
-            print e
+            print (e)
             resp = INTERNAL_ERROR
         return resp
 

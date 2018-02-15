@@ -13,7 +13,8 @@ import argparse
 import traceback
 import xml.etree.ElementTree as ET
 import logging
-logging.basicConfig(level=logging.DEBUG)
+import copy
+#logging.basicConfig(level=logging.DEBUG)
 
 
 import g
@@ -34,7 +35,8 @@ from infragen.populate import populate
 # Trays to load into the resource manager
 TRAYS = None
 SPEC = None
-MODE=None
+MODE = None
+MOCKUPFOLDERS = None
 
 CONFIG = 'emulator-config.json'
 
@@ -187,6 +189,7 @@ class RedfishAPI(Resource):
             resp = INTERNAL_ERROR_Get
         return resp
 
+
     def delete(self, path):
         """
         Delete pooled node -- ONLY ALLOWS THE DELETION OF A POOLED NODE
@@ -313,57 +316,78 @@ def browse():
 g.api.add_resource(RedfishAPI, '/redfish/v1/', '/redfish/v1/<path:path>/')
 
 #
-# Startup method -- Reads in the configuration file
-#   TRAYS = Specifies the directory from which the resource pools are created.
-#   SPEC =  The emulator may support multiple specifications or revisions of a specification.
-#           This flag specifies the specification/version to which to conform
-#   MODE =  Specifies whether the emulator is running locally as a standalone or remotely on a Cloud Foundry instance.
-#   HTTPS = Specifies whether the emulator supports "http" or "https"
 #
 def startup():
-    global CONFIG
-    global TRAYS
-    global SPEC
-    global MODE
-
-    with open(CONFIG, 'r') as f:
-        config = json.load(f)
-
-    TRAYS = config['TRAYS']
-    SPEC = config['SPEC']
-    MODE = config['MODE']
-
-    assert SPEC == 'Redfish', \
-        'Unknown spec: {0}, must be Redfish'.format(SPEC)
 
     init_resource_manager()
 
 #
 # Main method
 #
-# Determines execution configuration by reading the configuration file and interogating the command
-#   line options
+# Determines execution configuration by reading the configuration file and interogating the command line options
+#   TRAYS = Specifies the directory from which the resource pools are created.
+#   MODE =  Specifies whether the emulator is running locally as a standalone or remotely on a Cloud Foundry instance.
+#   HTTPS = Specifies whether the emulator supports "http" or "https"
+#   SPEC =  The emulator may support multiple specifications or revisions of a specification.
+#           This flag specifies the specification/version to which to conform
+#   MOCKUPFOLDERS = This parameter will supercede SPEC.  Specifies a list of
+#           folder which contain mockup files in ./static.  For example, if the
+#           list contains ["Redfish", "Swordfish"], the files in
+#           ./Redfish/static and ./Swordfish/static will be used.  This
+#           parameter allows multiple mockup folders to co-exist, and the user
+#           can set this parameter to determine which mockups are actually
+#           loaded into the emulator.
 #
 # Passes control to startup()
 #
 def main():
     global app
     global MODE
+    global TRAYS
+    global MOCKUPFOLDERS
+    global SPEC
 
     # Open the emulator configuration file
     with open(CONFIG, 'r') as f:
         config = json.load(f)
 
     HTTPS = config['HTTPS']
+    assert HTTPS.lower() in ['enable', 'disable'], 'Unknown HTTPS setting:' + HTTPS
+
+    try:
+        TRAYS = config['TRAYS']
+    except:
+        pass
+
+    try:
+        MOCKUPFOLDERS = config['MOCKUPFOLDERS']
+        logging.info('Mockup folders')
+        g.staticfolders = copy.copy(MOCKUPFOLDERS)
+        print (g.staticfolders)
+    except:
+        pass
+
+    try:
+        SPEC = config['SPEC']
+        assert SPEC == 'Redfish', 'Unknown spec: {0}, must be Redfish'.format(SPEC)
+#    assert SPEC.lower() in ['redfish', 'chinook'], 'Unknown spec: ' + SPEC
+    except:
+        pass
+
     MODE = config['MODE']
+    assert MODE.lower() in ['local', 'cloud'], 'Unknown mode: ' + MODE
+    if(MODE=='Cloud'):
+        port = int(os.getenv("PORT"))
+
     argparser = argparse.ArgumentParser(
-    description='Redfish Manageability API Emulator - Version: ' + __version__,
+    description='Redfish Manageability Interface Emulator - Version: ' + __version__,
     epilog='Developed by Intel')
 
     if(MODE=='Cloud'):
         argparser.add_argument('-port', type=int, default=port, help='Port to run the emulator on. Port defined by Foundry')
     elif(MODE=='Local'):
         argparser.add_argument('-port', type=int, default=5000, help='Port to run the emulator on. Default is 5000')
+        print (' * Redfish endpoint at localhost:5000')
 
     argparser.add_argument('-debug', action='store_true', default=False,
                            help='Run the emulator in debug mode. Note that if you'
