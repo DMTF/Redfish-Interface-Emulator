@@ -55,7 +55,7 @@ class ComputerSystemAPI(Resource):
 
     def processor_summary(self,ident):
 
-        procs=processors.get(ident,{}).values()
+        procs=list(processors.get(ident,{}).values())
         if not procs:
             return {}
         return {u'Status': {u'Health': 'OK', u'State': 'Enabled'},
