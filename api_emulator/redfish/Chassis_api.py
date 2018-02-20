@@ -153,7 +153,8 @@ class ChassisCollectionAPI(Resource):
             'Links': {}
         }
         self.config['Links']['Member@odata.count'] = len(members)
-        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for x in members.values()]
+        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
+                x in list(members.values())]
 
     def get(self):
         try:
