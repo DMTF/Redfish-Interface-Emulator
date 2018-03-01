@@ -46,8 +46,10 @@ class ComputerSystemAPI(Resource):
 
     def memory_summary(self,ident):
 
-        totalsysmem=sum([x['CapacityMiB']for x in memory.get(ident,{}).values() if x['MemoryType']=='DRAM'])
-        totalpsysmem=sum([x['CapacityMiB']for x in memory.get(ident,{}).values() if 'NVDIMM' in x['MemoryType']])
+        totalsysmem=sum([x['CapacityMiB']for x in
+            list(memory.get(ident,{}).values()) if x['MemoryType']=='DRAM'])
+        totalpsysmem=sum([x['CapacityMiB']for x in
+            list(memory.get(ident,{}).values()) if 'NVDIMM' in x['MemoryType']])
         return {u'Status': {u'Health': 'OK', u'State': 'Enabled'},
                     u'TotalSystemMemoryGiB': totalsysmem,
                     u'TotalSystemPersistentMemoryGiB': totalpsysmem}
@@ -55,7 +57,7 @@ class ComputerSystemAPI(Resource):
 
     def processor_summary(self,ident):
 
-        procs=processors.get(ident,{}).values()
+        procs=list(processors.get(ident,{}).values())
         if not procs:
             return {}
         return {u'Status': {u'Health': 'OK', u'State': 'Enabled'},
@@ -159,7 +161,8 @@ class ComputerSystemCollectionAPI(Resource):
             'Links': {}
         }
         self.config['Links']['Member@odata.count'] = len(members)
-        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for x in members.values()]
+        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
+                x in list(members.values())]
 
     def get(self):
         try:
