@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.1] 2018-03-02
+- Fixed usage of the .values() method to match Python3 expectations
+
 ## [1.0.0] 2018-02-16
 - Added fixes for running with Python 3.5
 - Added browser feature so a human can more easily navigate the service
