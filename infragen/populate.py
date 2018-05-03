@@ -90,7 +90,7 @@ def populate(cfg):
                     CreateComputerSystem(
                         resource_class_kwargs={'rb': g.rest_base, 'linkChassis': [chassis], 'linkMgr': bmc}).put(
                         compSys)
-                    create_resources(compsys_template, chassis, 'System', compSys)
+                    create_resources(compsys_template, chassis, 'Systems', compSys)
 
             for rb_template in chassi_template['Links'].get('ResourceBlocks',[]):
                 for j in range(rb_template.get('Count', 1)):
