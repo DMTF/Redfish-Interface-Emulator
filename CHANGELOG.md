@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.2] 2018-05-04
+- Fixed Systems collection to be called "Systems"
+
 ## [1.0.1] 2018-03-02
 - Fixed usage of the .values() method to match Python3 expectations
 
