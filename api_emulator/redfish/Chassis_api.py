@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Chassis Collection Resource and Singleton Resource
@@ -108,21 +108,17 @@ class ChassisAPI(Resource):
 
     # HTTP PATCH
     def patch(self, ident):
-        logging.info('ChassisAPI patch called')
+        logging.info('ChassisAPI PATCH called')
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
-            # Find the entry with the correct value for Id
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-            config = cfg
-            logging.info(config)
+            # Update specific portions of the identified object
+            logging.info(members[ident])
             for key, value in raw_dict.items():
-                logging.info('Update ' + key + ' to ' + value)
-                config[key] = value
-            logging.info(config)
-            resp = config, 200
+                logging.info('Update ' + key + ' to ' + str(value))
+                members[ident][key] = value
+            logging.info(members[ident])
+            resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
