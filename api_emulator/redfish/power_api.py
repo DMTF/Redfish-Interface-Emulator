@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2016-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Singleton API: GET, PATCH
@@ -45,17 +45,18 @@ class PowerAPI(Resource):
         return resp
 
     # HTTP PATCH
-    def patch(self):
-        logging.info('PowerAPI patch called')
+    def patch(self, ident):
+        logging.info('PowerAPI PATCH called')
         raw_dict = request.get_json(force=True)
+        logging.info(raw_dict)
         try:
-            global config
-            logging.debug(config)
+            # Update specific portions of the identified object
+            logging.info(members[ident])
             for key, value in raw_dict.items():
-                print ('Update ' + key + ' to ' + value)
-                config[key] = value
-            logging.debug(config)
-            resp = config, 200
+                logging.info('Update ' + key + ' to ' + str(value))
+                members[ident][key] = value
+            logging.info(members[ident])
+            resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR

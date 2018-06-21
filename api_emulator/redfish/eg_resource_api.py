@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Example Collection Resource or Singleton Resource API file
@@ -52,9 +52,7 @@ class EgResourceAPI(Resource):
     #
     # __init__ stores kwargs in the wildcards variable which is used
     # to pass the wildcards to the get_<resource>_instance() call.
-
     def __init__(self, **kwargs):
-#        logging.basicConfig(level=logging.INFO)
         logging.info('EgResourceAPI init called')
         try:
             global config
@@ -66,9 +64,7 @@ class EgResourceAPI(Resource):
             resp = INTERNAL_ERROR
         logging.info('EgResourceAPI init exit')
 
-
     # HTTP GET
-
     def get(self,ident):
         try:
             # Find the entry with the correct value for Id
@@ -83,13 +79,11 @@ class EgResourceAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
-
     # HTTP POST
     # - Create the resource using the available URI variables
     # - Update the members and members.id lists
     # - Attach the APIs of subordinate resources (done only once)
     # - Finally, create instances of the subordinate resources
-
     def post(self,ident):
         logging.info('EgResourceAPI POST called')
         print('EgResourceAPI put called')
@@ -101,7 +95,7 @@ class EgResourceAPI(Resource):
             global foo
             # Attach URIs for subordinate resources
             if  (foo == 'false'):
-                # Add APIs for subordinate resourcs
+                # Add APIs for subordinate resources
                 collectionpath = g.rest_base + "EgResources/" + ident + "/EgSubResources"
                 logging.info('collectionpath = ' + collectionpath)
                 g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
@@ -119,33 +113,25 @@ class EgResourceAPI(Resource):
         logging.info('EgResourceAPI POST exit')
         return resp
 
-
     # HTTP PATCH
-
     def patch(self, ident):
         logging.info('EgResourceAPI PATCH called')
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
-            # Find the entry with the correct value for Id
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-            config = cfg
-            logging.info(config)
+            # Update specific portions of the identified object
+            logging.info(members[ident])
             for key, value in raw_dict.items():
-                logging.info('Update ' + key + ' to ' + value)
-                config[key] = value
-            logging.info(config)
-            resp = config, 200
+                logging.info('Update ' + key + ' to ' + str(value))
+                members[ident][key] = value
+            logging.info(members[ident])
+            resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
 
-
     # HTTP DELETE
-
     def delete(self, ident):
         # logging.info('EgResourceAPI DELETE called')
         try:
@@ -178,9 +164,7 @@ class EgResourceCollectionAPI(Resource):
         self.config['Links']['Member@odata.count'] = len(member_ids)
         self.config['Links']['Members'] = member_ids
 
-
     # HTTP GET
-
     def get(self):
         try:
             resp = self.config, 200
@@ -189,12 +173,10 @@ class EgResourceCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
-
     # HTTP POST
     # POST should allow adding multiple instances to a collection.
     # For now, this only adds one instance.
     # Todo - Fix so the config can be passed in as an argument.
-
     def post(self):
         try:
             g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>')
@@ -237,7 +219,6 @@ class CreateEgResource(Resource):
 
     # Attach APIs for subordinate resource(s). Attach the APIs for
     # a resource collection and its singletons.
-
     def put(self,ident):
         logging.info('CreateEgResource PUT called')
         try:

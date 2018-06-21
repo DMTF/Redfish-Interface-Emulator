@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Example Subresource Collection Resource or Singleton Resource API file
@@ -33,7 +33,6 @@ from flask_restful import reqparse, Api, Resource
 # SubResource imports
 from .templates.eg_subresource import get_EgSubResource_instance
 
-
 members = []
 member_ids = []
 foo = 'false'
@@ -52,7 +51,6 @@ class EgSubResourceAPI(Resource):
     #
     # __init__ stores kwargs in the wildcards variable which is used
     # to pass the wildcards to the HTTP code.
-
     def __init__(self, **kwargs):
         logging.info('EgSubResourceAPI init called')
         logging.debug(kwargs)
@@ -82,7 +80,6 @@ class EgSubResourceAPI(Resource):
     # HTTP POST
     # - Create the resource using the available URI variables
     # - Update the members and members.id lists
-
     def post(self,ident):
         logging.info('EgSubResourceAPI POST called')
         try:
@@ -105,22 +102,17 @@ class EgSubResourceAPI(Resource):
         raw_dict = request.get_json(force=True)
         logging.info(raw_dict)
         try:
-            # Find the entry with the correct value for Id
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-            config = cfg
-            logging.info(config)
+            # Update specific portions of the identified object
+            logging.info(members[ident])
             for key, value in raw_dict.items():
-                logging.info('Update ' + key + ' to ' + value)
-                config[key] = value
-            logging.info(config)
-            resp = config, 200
+                logging.info('Update ' + key + ' to ' + str(value))
+                members[ident][key] = value
+            logging.info(members[ident])
+            resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
-
 
     # HTTP DELETE
     def delete(self, ident):
@@ -157,9 +149,7 @@ class EgSubResourceCollectionAPI(Resource):
         self.config['Links']['Member@odata.count'] = len(member_ids)
         self.config['Links']['Members'] = member_ids
 
-
     # HTTP GET
-
     def get(self):
         logging.info('EgSubResourceCollectionAPI GET called')
         try:
@@ -169,10 +159,8 @@ class EgSubResourceCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
-
     # HTTP POST
     # Todo - 'id' should be obtained from the request data.
-
     def post(self):
         logging.info('EgSubResourceCollectionAPI POST called')
         try:
