@@ -14,25 +14,41 @@ This program is a python35 program.
 
 ## Installation and Invocation
 
+The emulator can be executed locally or on a cloud foundry.  The later allows you to create multiple instances of the emulator.
+
+### Required Python packages
+
+The required python packages for an environment are listed in ./packageSets folder.  The package set files provide a list of environment in which the python code has successfully executed. The files can be generated with a "pip freeze' command. The files are in 'environments.txt' format, so they can be used with pip to install the enviroment.
+
+* Package sets names prefixed with Env-Local are for local execution
+* Package sets names prefixed with Env-Cloud are for cloud foundry executions 
+
 ### Standalone
 
-The follow is used to install and execute on a standalone system
+1. Use one of the Env-Local package sets file to install the appropriate python packages
 
-* Copy the entire directory tree onto the system of interest
-* Install the Python packages listed in requirements.txt. The best way to install packages is dependent of your location's firewall and proxy configuration.
-    * Use pip
-    * Place the packages in ./dependencies and execute install.py
-* From this directory, execute the command "python emulator.py"
+	pip install -r [packageSet]
+2. Edit the emulator_config.json file and set 
+
+	"MODE": "Local"
+3. Start the emulator
+	python emulator.py
 
 ### Cloud Foundry
 
-The follow is used to invoke the emulator in a cloud foundry.
+For a cloud foundry, the packages listed in the requirements.txt file will be installed during the invocation.
 
-* Copy the entire directory tree onto the system from which the cloud foundry service is invoked
-* From this directory, execute the command "cf push \<name\>".
-    * The invocation will cause the Cloud Foundry to install the packages form requirements.txt file and then execute the command in the Procfile file.
+1. Verify that the files requirements.txt, runtime.txt, and Profile exists in the directory
 
-### Command Syntax
+2. Edit the emulator_config.json file and set
+
+	"MODE": "Cloud"
+
+3. Push the emulator to the foundry.  The 'foundry-app-name' will determine the URL for the Redfish service.
+
+	cf push [foundry-app-name]
+
+### Emulator app flags
 
 The emulator is invoke with the following command:
 
