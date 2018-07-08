@@ -2,10 +2,10 @@
 # Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
-# Example Collection Resource or Singleton Resource API file
+# EgResource API File
 #
 # Replace the strings "EgResource" and "EgSubResource" with
-# the proper resource names and adjust the code as necessary for the
+# the proper resource name and adjust the code as necessary for the
 # HTTP commands.
 #
 # This API file goes in the api_emulator/redfish directory, and must
@@ -15,8 +15,8 @@
 # files to make the resource dynamic.
 
 """
-These APIs get attached to Collection Resources or Singleton
-Resources.
+These APIs are attached to Collection Resources or Singleton
+Resources by the resource_manager.py file.
 
 Collection API:  GET, POST
 Singleton  API:  GET, POST, PATCH, DELETE
@@ -34,67 +34,63 @@ from flask_restful import reqparse, Api, Resource
 from .templates.eg_resource import get_EgResource_instance
 from .eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
 
-members = []
-member_ids = []
-foo = 'false'
+members = {}
+
+done = 'false'
 INTERNAL_ERROR = 500
 
 
-# EgResource API
-
+# EgResource Singleton API
 class EgResourceAPI(Resource):
 
     # kwargs is used to pass in the wildcards values to be replaced
-    # when the instance is created via get_<resource>_instance().
+    # when an instance is created via get_<resource>_instance().
     #
     # The call to attach the API establishes the contents of kwargs.
     # All subsequent HTTP calls go through __init__.
     #
-    # __init__ stores kwargs in the wildcards variable which is used
-    # to pass the wildcards to the get_<resource>_instance() call.
+    # __init__ stores kwargs in wildcards, which is used to pass
+    # values to the get_<resource>_instance() call.
     def __init__(self, **kwargs):
         logging.info('EgResourceAPI init called')
         try:
-            global config
             global wildcards
-            config=get_EgResource_instance(wildcards)
-            resp = config, 200
+            wildcards = kwargs
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
-        logging.info('EgResourceAPI init exit')
 
     # HTTP GET
-    def get(self,ident):
+    def get(self, ident):
+        logging.info('EgResourceAPI GET called')
         try:
             # Find the entry with the correct value for Id
             resp = 404
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    config = cfg
-                    resp = config, 200
-                    break
+            if ident in members:
+                resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
 
+    # HTTP PUT
+    def put(self, ident):
+        logging.info('EgResourceAPI PUT called')
+        return 'PUT is not a supported command for EgResourceAPI', 405
+
     # HTTP POST
-    # - Create the resource using the available URI variables
-    # - Update the members and members.id lists
-    # - Attach the APIs of subordinate resources (done only once)
-    # - Finally, create instances of the subordinate resources
-    def post(self,ident):
+    # This is an emulator-only POST command that creates new resource
+    # instances from a predefined template. The new instance is given
+    # the identifier "ident", which is taken from the end of the URL.
+    # PATCH commands can then be used to update the new instance.
+    def post(self, ident):
         logging.info('EgResourceAPI POST called')
-        print('EgResourceAPI put called')
         try:
             global config
             config=get_EgResource_instance({'rb': g.rest_base, 'eg_id': ident})
             members.append(config)
-            member_ids.append({'@odata.id': config['@odata.id']})
-            global foo
+            global done
             # Attach URIs for subordinate resources
-            if  (foo == 'false'):
+            if  (done == 'false'):
                 # Add APIs for subordinate resources
                 collectionpath = g.rest_base + "EgResources/" + ident + "/EgSubResources"
                 logging.info('collectionpath = ' + collectionpath)
@@ -102,7 +98,7 @@ class EgResourceAPI(Resource):
                 singletonpath = collectionpath + "/<string:ident>"
                 logging.info('singletonpath = ' + singletonpath)
                 g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-                foo = 'true'
+                done = 'true'
             # Create an instance of subordinate resources
             #cfg = CreateSubordinateRes()
             #out = cfg.put(ident)
@@ -110,21 +106,16 @@ class EgResourceAPI(Resource):
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('EgResourceAPI POST exit')
         return resp
 
     # HTTP PATCH
     def patch(self, ident):
         logging.info('EgResourceAPI PATCH called')
         raw_dict = request.get_json(force=True)
-        logging.info(raw_dict)
         try:
             # Update specific portions of the identified object
-            logging.info(members[ident])
             for key, value in raw_dict.items():
-                logging.info('Update ' + key + ' to ' + str(value))
                 members[ident][key] = value
-            logging.info(members[ident])
             resp = members[ident], 200
         except Exception:
             traceback.print_exc()
@@ -133,16 +124,13 @@ class EgResourceAPI(Resource):
 
     # HTTP DELETE
     def delete(self, ident):
-        # logging.info('EgResourceAPI DELETE called')
+        logging.info('EgResourceAPI DELETE called')
         try:
-            idx = 0
-            for cfg in members:
-                if (ident == cfg["Id"]):
-                    break
-                idx += 1
-            members.pop(idx)
-            member_ids.pop(idx)
-            resp = 200
+            # Find the entry with the correct value for Id
+            resp = 404
+            if ident in members:
+                del(members[ident])
+                resp = 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -150,22 +138,25 @@ class EgResourceAPI(Resource):
 
 
 # EgResource Collection API
-
 class EgResourceCollectionAPI(Resource):
+
     def __init__(self):
+        logging.info('EgResourceCollectionAPI init called')
         self.rb = g.rest_base
         self.config = {
             '@odata.context': self.rb + '$metadata#EgResourceCollection',
-            '@odata.id': self.rb + 'EgResourceCollection',
+            '@odata.id': self.rb + 'EgResources',
             '@odata.type': '#EgResourceCollection.1.0.0.EgResourceCollection',
             'Name': 'EgResource Collection',
             'Links': {}
         }
-        self.config['Links']['Member@odata.count'] = len(member_ids)
-        self.config['Links']['Members'] = member_ids
+        self.config['Links']['Member@odata.count'] = len(members)
+        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
+                x in list(members.values())]
 
     # HTTP GET
     def get(self):
+        logging.info('EgResourceCollectionAPI GET called')
         try:
             resp = self.config, 200
         except Exception:
@@ -173,18 +164,43 @@ class EgResourceCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
+    # HTTP PUT
+    def put(self):
+        logging.info('EgResourceCollectionAPI PUT called')
+        return 'PUT is not a supported command for EgResourceCollectionAPI', 405
+
+    def verify(self, config):
+        # TODO: Implement a method to verify that the POST body is valid
+        return True,{}
+
     # HTTP POST
     # POST should allow adding multiple instances to a collection.
     # For now, this only adds one instance.
-    # Todo - Fix so the config can be passed in as an argument.
+    # TODO: 'id' should be obtained from the request data.
     def post(self):
+        logging.info('EgResourceCollectionAPI POST called')
         try:
-            g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>')
-            resp=self.config, 200
+            config = request.get_json(force=True)
+            ok, msg = self.verify(config)
+            if ok:
+                members[config['Id']] = config
+                resp = config, 201
+            else:
+                resp = msg, 400
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
+
+    # HTTP PATCH
+    def patch(self):
+        logging.info('EgResourceCollectionAPI PATCH called')
+        return 'PATCH is not a supported command for EgResourceCollectionAPI', 405
+
+    # HTTP DELETE
+    def delete(self):
+        logging.info('EgResourceCollectionAPI DELETE called')
+        return 'DELETE is not a supported command for EgResourceCollectionAPI', 405
 
 
 # CreateEgResource
@@ -193,29 +209,17 @@ class EgResourceCollectionAPI(Resource):
 # resource has subordinate resources, those subordinate resource(s)
 # are created automatically.
 #
-# This routine can also be used to pre-populate the emulator with
-# resource instances, such as a Chassis and a ComputerSystem. (See
-# examples in resource_manager.py.)
-#
-# Note: This is not the optimal way to pre-populate the emulator,
-# because the resource_manager.py file must be edited. A better way
-# would be to create a program file (e.g. populate.py) which performs
-# a POST for each resource instance desired. Multiple such 'populate'
-# files could then be used without making changes to the emulator.
-# 
 # Note: In 'init', the first time through, kwargs may not have any
 # values, so we need to check. The call to 'init' stores the path
 # wildcards. The wildcards are used to modify the resource template
 # when subsequent calls are made to instantiate resources.
-
 class CreateEgResource(Resource):
+
     def __init__(self, **kwargs):
         logging.info('CreateEgResource init called')
-        logging.debug(kwargs) #, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards)#, wildcards.keys())
 
     # Attach APIs for subordinate resource(s). Attach the APIs for
     # a resource collection and its singletons.
@@ -233,7 +237,6 @@ class CreateEgResource(Resource):
             logging.info('collectionpath = ' + collectionpath)
             g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
             singletonpath = collectionpath + "/<string:ident>"
-            logging.debug('singletonpath = ' + singletonpath)
             g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
             resp = config, 200
         except Exception:
