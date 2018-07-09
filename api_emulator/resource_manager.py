@@ -226,7 +226,7 @@ class ResourceManager(object):
             'UUID': self.uuid,
             'Links': {
                 'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
-                'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
+                # 'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
                 'Managers': {'@odata.id': self.rest_base + 'Managers'},
                 'TaskService': {'@odata.id': self.rest_base + 'TaskService'},
                 'SessionService': {'@odata.id': self.rest_base + 'SessionService'},
