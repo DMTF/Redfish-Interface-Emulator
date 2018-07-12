@@ -1,8 +1,8 @@
 # Copyright Notice:
-# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2016-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
-# get_EventService_instance()
+# EventService Template File
 
 import copy
 import strgen
@@ -52,7 +52,7 @@ def get_EventService_instance(wildcards):
     Instantiates and formats the template
 
     Arguments:
-        wildcard - A dictionary of wildcards strings and their repalcement values
+        wildcard - A dictionary of wildcards strings and their replacement values
     """
     c = copy.deepcopy(_TEMPLATE)
 
