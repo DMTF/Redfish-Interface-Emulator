@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.5] - 2018-07-16
+- Cleanup of package dependencies
+- Fixed problems with behavior of issuing POST to dynamic collections
+
 ## [1.0.4] - 2018-06-22
 - Fixed handling of PATCH on dynamic resources
 
