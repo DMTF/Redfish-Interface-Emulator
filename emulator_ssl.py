@@ -20,6 +20,7 @@ import os
 import json
 import argparse
 import traceback
+import copy
 
 import g
 
@@ -54,6 +55,7 @@ def unauthorized():
 TRAYS = None
 SPEC = None
 MODE=None
+MOCKUPFOLDERS = None
 
 CONFIG = 'emulator-config.json'
 
@@ -350,6 +352,7 @@ def main():
     """
     global app
     global MODE
+    global MOCKUPFOLDERS
 
     with open(CONFIG, 'r') as f:
         config = json.load(f)
@@ -365,6 +368,9 @@ def main():
     elif(MODE=='Local'):
         argparser.add_argument('-port', type=int, default=5000,
                            help='Port to run the emulator on. Default is 5000')
+
+    MOCKUPFOLDERS = config['MOCKUPFOLDERS']
+    g.staticfolders = copy.copy(MOCKUPFOLDERS)
 
     argparser.add_argument('-debug', action='store_true', default=False,
                            help='Run the emulator in debug mode. Note that if you'
