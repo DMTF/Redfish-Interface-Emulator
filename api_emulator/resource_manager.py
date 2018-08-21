@@ -34,6 +34,7 @@ from .redfish.thermal_api import ThermalAPI, CreateThermal
 from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
 # EgResource imports
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
+from .redfish.eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
 # ComputerSystem imports
 from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSystemAPI, CreateComputerSystem
 from .redfish.processor import Processor, Processors
@@ -158,10 +159,20 @@ class ResourceManager(object):
         g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')
         g.api.add_resource(ManagerAPI, '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
 
-        # EgResource Resources
-        g.api.add_resource(EgResourceCollectionAPI, '/redfish/v1/EgResources')
-        g.api.add_resource(EgResourceAPI, '/redfish/v1/EgResources/<string:ident>',
-                resource_class_kwargs={'rb': g.rest_base})
+        # EgResource Resources (Example entries for attaching APIs)
+        # g.api.add_resource(EgResourceCollectionAPI,
+        #     '/redfish/v1/EgResources')
+        # g.api.add_resource(EgResourceAPI,
+        #     '/redfish/v1/EgResources/<string:ident>',
+        #     resource_class_kwargs={'rb': g.rest_base})
+        #
+        # EgResource SubResources (Example entries for attaching APIs)
+        # g.api.add_resource(EgSubResourceCollection,
+        #     '/redfish/v1/EgResources/<string:ident>/EgSubResources',
+        #     resource_class_kwargs={'rb': g.rest_base})
+        # g.api.add_resource(EgSubResource,
+        #     '/redfish/v1/EgResources/<string:ident1>/EgSubResources/<string:ident2>',
+        #     resource_class_kwargs={'rb': g.rest_base})
 
         # System Resources
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
