@@ -131,7 +131,7 @@ class ResourceManager(object):
             self.TaskService =      load_static('TaskService', 'redfish', mode, rest_base, self.resource_dictionary)
 
 #        if "Swordfish" in mockupfolders:
-#            self.SessionService = load_static('SessionService', 'redfish', mode, rest_base, self.resource_dictionary)
+#            self.StorageServices = load_static('StorageServices', 'redfish', mode, rest_base, self.resource_dictionary)
 #            self.StorageSystems = load_static('StorageSystems', 'redfish', mode, rest_base, self.resource_dictionary)
 
         # Attach APIs for dynamic resources
