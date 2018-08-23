@@ -24,7 +24,6 @@ from .power_api import PowerAPI, CreatePower
 
 members = {}
 
-done = 'false'
 INTERNAL_ERROR = 500
 
 
@@ -76,43 +75,15 @@ class ChassisAPI(Resource):
             global config
             global wildcards
             wildcards['id'] = ident
+            wildcards['linkSystem'] = ['UpdateWithPATCH']
+            wildcards['linkResourceBlocks'] = ['UpdateWithPATCH']
+            wildcards['linkMgr'] = 'UpdateWithPATCH'
             config=get_Chassis_instance(wildcards)
             members[ident]=config
-            global done
-            '''
-            # Attach URIs for subordinate resources
-            if  (done == 'false'):
-                g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ch_id>/Thermal')
-                g.api.add_resource(PowerAPI,   '/redfish/v1/Chassis/<string:ch_id>/Power')
-                done = 'true'
-            # Create instances of subordinate resources, then call put operation
-            cfg = CreateThermal()
-            out = cfg.put(ident)
-            cfg = CreatePower()
-            out = cfg.put(ident)
-            # Attach URIs for subordinate resources
-            '''
-            if  (done == 'false'):
-                # Power subordinate resource
-                path = g.rest_base + "Chassis/" + ident + "/Power"
-                logging.info('power path = ' + path)
-                g.api.add_resource(PowerAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-                config = CreatePower()
-                out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-                out = config.put("Power")
-                # Thermal subordinate resource
-                path = g.rest_base + "Chassis/" + ident + "/Thermal"
-                logging.info('thermal path = ' + path)
-                g.api.add_resource(ThermalAPI, path, resource_class_kwargs={'rb': g.rest_base, 'ch_id': ident} )
-                config = CreateThermal()
-                out = config.__init__(resource_class_kwargs={'rb': g.rest_base,'ch_id': ident})
-                out = config.put("Thermal")
-                done = 'true'
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('ChassisAPI put exit')
         return resp
 
     # HTTP PATCH
@@ -228,16 +199,15 @@ class CreateChassis(Resource):
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
-    def put(self,ident):
+    # Create instance
+    def put(self, ident):
         logging.info('CreateChassis put called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
-            config=get_Chassis_instance(wildcards)
-            members[ident]=config
-
+            config = get_Chassis_instance(wildcards)
+            members[ident] = config
             resp = config, 200
         except Exception:
             traceback.print_exc()

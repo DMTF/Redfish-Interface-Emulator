@@ -280,7 +280,7 @@ class RedfishAPI(Resource):
         except (IndexError, AttributeError, TypeError, AssertionError, KeyError) as e:
             traceback.print_exc()
             raise PathError("Resource not found: " + str(e.message))
-        print (config)
+        # print (config)      # Print out static objects
         return config
 
 #

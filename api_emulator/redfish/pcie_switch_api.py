@@ -97,7 +97,7 @@ class PCIeSwitchAPI(Resource):
     # PATCH commands can then be used to update the new instance.
     #
     # TODO: Fix the emulator-only PCIeSwitchAPI POST command
-    def patch(self, ident):
+    def post(self, ident):
         logging.info('PCIeSwitchAPI POST called')
         return 'POST is not a supported command for PCIeSwitchAPI', 405
 
@@ -215,15 +215,15 @@ class CreatePCIeSwitch(Resource):
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
-    def put(self,ident):
+    # Create instance
+    def put(self, ident):
         logging.info('CreatePCIeSwitch put called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
-            config=get_PCIeSwitch_instance(wildcards)
-            members[ident]=config
+            config = get_PCIeSwitch_instance(wildcards)
+            members[ident] = config
 
             resp = config, 200
         except Exception:

@@ -22,7 +22,6 @@ from .templates.Manager import get_Manager_instance
 
 members = {}
 
-done = 'false'
 INTERNAL_ERROR = 500
 
 
@@ -73,29 +72,15 @@ class ManagerAPI(Resource):
         try:
             global wildcards
             wildcards['id'] = ident
+            wildcards['linkSystem'] = ['UpdateWithPATCH']
+            wildcards['linkChassis'] = ['UpdateWithPATCH']
+            wildcards['linkInChassis'] = ['UpdateWithPATCH']
             config = get_Manager_instance(wildcards)
             members[ident] = config
-            global done
-            # Attach URIs for subordiante resources
-            '''
-            if  (done == 'false'):
-                # Add APIs for subordinate resourcs
-                collectionpath = g.rest_base + "Managers/" + ident + "/EgSubResources"
-                logging.info('collectionpath = ' + collectionpath)
-                g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-                singletonpath = collectionpath + "/<string:ident>"
-                logging.info('singletonpath = ' + singletonpath)
-                g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-                done = 'true'
-            '''
-            # Create an instance of subordinate resources
-            # cfg = CreateSubordinateRes()
-            # out = cfg.put(ident)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('ManagerAPI put exit')
         return resp
 
     # HTTP PATCH
@@ -207,29 +192,19 @@ class CreateManager(Resource):
 
     def __init__(self, **kwargs):
         logging.info('CreateManager init called')
-        logging.debug(kwargs)  # , kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards)  # , wildcards.keys())
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
+    # Create instance
     def put(self, ident):
         logging.info('CreateManager put called')
         try:
+            global config
             global wildcards
             wildcards['id'] = ident
             config = get_Manager_instance(wildcards)
             members[ident] = config
-            '''
-            # attach subordinate resources
-            collectionpath = g.rest_base + "Managers/" + ident + "/EgSubResources"
-            logging.info('collectionpath = ' + collectionpath)
-            g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-            singletonpath = collectionpath + "/<string:ident>"
-            logging.debug('singletonpath = ' + singletonpath)
-            g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-            '''
             resp = config, 200
         except Exception:
             traceback.print_exc()

@@ -2,12 +2,13 @@
 # Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
-# Example Collection Resource and Singleton Resource
-"""
-Collection API  GET, POST
-Singleton  API  GET, POST, PATCH, DELETE
+# ComputerSystem API File
 
 """
+Collection API:  GET, POST
+Singleton  API:  GET, POST, PATCH, DELETE
+"""
+
 import g
 
 import sys, traceback
@@ -26,26 +27,30 @@ from .simplestorage import members as simplestorage
 from .ResourceBlock_api import members as resource_blocks
 
 members = {}
-foo = 'false'
+
 INTERNAL_ERROR = 500
 
-#ComputerSystem API
+
+# ComputerSystem Singleton API
 class ComputerSystemAPI(Resource):
-    # kwargs is used to pass in the wildcards values to replace when the instance is created - via get_<resource>_instance().
+
+    # kwargs is used to pass in the wildcards values to be replaced
+    # when an instance is created via get_<resource>_instance().
     #
-    # __init__ should store the wildcards and pass the wildcards to the get_<resource>_instance(). 
+    # The call to attach the API establishes the contents of kwargs.
+    # All subsequent HTTP calls go through __init__.
+    #
+    # __init__ stores kwargs in wildcards, which is used to pass
+    # values to the get_<resource>_instance() call.
     def __init__(self, **kwargs):
-#        logging.basicConfig(level=logging.INFO)
         logging.info('ComputerSystemAPI init called')
         try:
-            global config
             global wildcards
             wildcards = kwargs
         except Exception:
             traceback.print_exc()
 
     def memory_summary(self,ident):
-
         totalsysmem=sum([x['CapacityMiB']for x in
             list(memory.get(ident,{}).values()) if x['MemoryType']=='DRAM'])
         totalpsysmem=sum([x['CapacityMiB']for x in
@@ -54,9 +59,7 @@ class ComputerSystemAPI(Resource):
                     u'TotalSystemMemoryGiB': totalsysmem,
                     u'TotalSystemPersistentMemoryGiB': totalpsysmem}
 
-
     def processor_summary(self,ident):
-
         procs=list(processors.get(ident,{}).values())
         if not procs:
             return {}
@@ -64,9 +67,9 @@ class ComputerSystemAPI(Resource):
                     u'Count': len(procs),
                     u'Model': procs[0].get('Model','unknown')}
 
-
     # HTTP GET
-    def get(self,ident):
+    def get(self, ident):
+        logging.info('ComputerSystemAPI GET called')
         try:
             # Find the entry with the correct value for Id
             resp = 404
@@ -80,68 +83,60 @@ class ComputerSystemAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
-    # HTTP POST
-    # - Create the resource (since URI variables are avaiable)
-    # - Update the members and members.id lists
-    # - Attach the APIs of subordinate resources (do this only once)
-    # - Finally, create an instance of the subordiante resources
-    def post(self,ident):
+    # HTTP PUT
+    def put(self, ident):
         logging.info('ComputerSystemAPI PUT called')
+        return 'PUT is not a supported command for ComputerSystemAPI', 405
+
+    # HTTP POST
+    # This is an emulator-only POST command that creates new resource
+    # instances from a predefined template. The new instance is given
+    # the identifier "ident", which is taken from the end of the URL.
+    # PATCH commands can then be used to update the new instance.
+    def post(self, ident):
+        logging.info('ComputerSystemAPI POST called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
+            wildcards['linkMgr'] = 'UpdateWithPATCH'
+            wildcards['linkChassis'] = ['UpdateWithPATCH']
             config=get_ComputerSystem_instance(wildcards)
             members[ident]=config
-            global foo
-            # Attach URIs for subordiante resources
-            '''
-            if  (foo == 'false'):
-                # Add APIs for subordinate resourcs
-                collectionpath = g.rest_base + "ComputerSystems/" + ident + "/EgSubResources"
-                logging.info('collectionpath = ' + collectionpath)
-                g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-                singletonpath = collectionpath + "/<string:ident>"
-                logging.info('singletonpath = ' + singletonpath)
-                g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-                foo = 'true'
-            '''
-            # Create an instance of subordinate resources
-            #cfg = CreateSubordinateRes()
-            #out = cfg.put(ident)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('ComputerSystemAPI put exit')
         return resp
 
     # HTTP PATCH
     def patch(self, ident):
         logging.info('ComputerSystemAPI PATCH called')
         raw_dict = request.get_json(force=True)
-        logging.info(raw_dict)
         try:
             # Update specific portions of the identified object
-            logging.info(members[ident])
             for key, value in raw_dict.items():
-                logging.info('Update ' + key + ' to ' + str(value))
                 members[ident][key] = value
-            logging.info(members[ident])
             resp = members[ident], 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
 
-
     # HTTP DELETE
-    def delete(self,ident):
-        # logging.info('ComputerSystemAPI delete called')
+    def delete(self, ident):
+        logging.info('ComputerSystemAPI DELETE called')
         try:
-            #del(members[ident])
-            resp = DeleteComposedSystem(ident)
-            resp = 200
+            resp = 404
+            if ident in members:
+                if members[ident]['SystemType'] == 'Composed':
+                    # Delete a composed system
+                    resp = DeleteComposedSystem(ident)
+                    resp = 200
+                else:
+                    # Delete a physical system
+                    del(members[ident])
+                    resp = 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -150,7 +145,9 @@ class ComputerSystemAPI(Resource):
 
 # ComputerSystem Collection API
 class ComputerSystemCollectionAPI(Resource):
+
     def __init__(self):
+        logging.info('ComputerSystemCollectionAPI init called')
         self.rb = g.rest_base
         self.config = {
             '@odata.context': self.rb + '$metadata#ComputerSystemCollection.ComputerSystemCollection',
@@ -163,7 +160,9 @@ class ComputerSystemCollectionAPI(Resource):
         self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
                 x in list(members.values())]
 
+    # HTTP GET
     def get(self):
+        logging.info('ComputerSystemCollectionAPI GET called')
         try:
             resp = self.config, 200
         except Exception:
@@ -171,19 +170,36 @@ class ComputerSystemCollectionAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
-    # The POST command should be for adding multiple instances. For now, just add one.
-    # Todo - Fix so the config can be passed in the data.
-#    def post(self):
-#        try:
-#            logging.debug(request.get_json())
-#            raise Exception('Not implemented')
-#            resp=self.config,200
-#        except Exception:
-#            traceback.print_exc()
-#            resp = INTERNAL_ERROR
-#        return resp
+    # HTTP PUT
+    def put(self):
+        logging.info('ComputerSystemCollectionAPI PUT called')
+        return 'PUT is not a supported command for ChassisCollectionAPI', 405
 
+    def verify(self, config):
+        #TODO: Implement a method to verify that the POST body is valid
+        return True,{}
+
+    # HTTP POST
+    # POST should allow adding multiple instances to a collection.
+    # For now, this only adds one instance.
+    # TODO: 'id' should be obtained from the request data.
+    # TODO: May need an update for composed systems.
     def post(self):
+        logging.info('ComputerSystemCollectionAPI POST called')
+        try:
+            config = request.get_json(force=True)
+            ok, msg = self.verify(config)
+            if ok:
+                members[config['Id']] = config
+                resp = config, 201
+            else:
+                resp = msg, 400
+        except Exception:
+            traceback.print_exc()
+            resp = INTERNAL_ERROR
+        return resp
+
+        '''
         resp = INTERNAL_ERROR
         req = request.get_json()
 
@@ -194,6 +210,17 @@ class ComputerSystemCollectionAPI(Resource):
             resp = INTERNAL_ERROR
 
         return resp
+        '''
+
+    # HTTP PATCH
+    def patch(self):
+        logging.info('ComputerSystemCollectionAPI PATCH called')
+        return 'PATCH is not a supported command for ChassisCollectionAPI', 405
+
+    # HTTP DELETE
+    def delete(self):
+        logging.info('ComputerSystemCollectionAPI DELETE called')
+        return 'DELETE is not a supported command for ChassisCollectionAPI', 405
 
 
 #class ComposedSystem(Resource):
@@ -394,53 +421,35 @@ def UpdateComposedSystem(req):
 
 # CreateComputerSystem
 #
-# Called internally to create a instances of a resource.  If the resource has subordinate resources,
-# those subordinate resource(s)  should be created automatically.
+# Called internally to create instances of a resource. If the
+# resource has subordinate resources, those subordinate resource(s)
+# are created automatically.
 #
-# This routine can also be used to pre-populate emulator with resource instances.  For example, a couple of
-# Chassis and a ComputerSystem (see examples in resource_manager.py)
-#
-# Note: this may not the optimal way to pre-populate the emulator, since the resource_manager.py files needs
-# to be editted.  A better method is just hack up a copy of usertest.py which performs a POST for each resource
-# instance desired (e.g. populate.py).  Then one could have a multiple 'populate' files and the emulator doesn't
-# need to change.
-# 
-# Note: In 'init', the first time through, kwargs may not have any values, so we need to check.
-#   The call to 'init' stores the path wildcards. The wildcards are used when subsequent calls instanctiate
-#   resources to modify the resource template.
-#
+# Note: In 'init', the first time through, kwargs may not have any
+# values, so we need to check. The call to 'init' stores the path
+# wildcards. The wildcards are used to modify the resource template
+# when subsequent calls are made to instantiate resources.
 class CreateComputerSystem(Resource):
     def __init__(self, **kwargs):
         logging.info('CreateComputerSystem init called')
-        logging.debug(kwargs)#, kwargs.keys(), 'resource_class_kwargs' in kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
             wildcards = copy.deepcopy(kwargs['resource_class_kwargs'])
-            logging.debug(wildcards)#, wildcards.keys())
 
-    # Attach APIs for subordinate resource(s). Attach the APIs for a resource collection and its singletons
-    def put(self,ident):
+    # Create instance
+    def put(self, ident):
         logging.info('CreateComputerSystem put called')
         try:
             global config
             global wildcards
             wildcards['id'] = ident
             wildcards['sys_id'] = ident
-            config=get_ComputerSystem_instance(wildcards)
-            members[ident]=config
+            config = get_ComputerSystem_instance(wildcards)
+            members[ident] = config
 
             ResetAction_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
             ResetActionInfo_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
 
-            '''
-            # attach subordinate resources
-            collectionpath = g.rest_base + "ComputerSystems/" + ident + "/EgSubResources"
-            logging.info('collectionpath = ' + collectionpath)
-            g.api.add_resource(EgSubResourceCollectionAPI, collectionpath, resource_class_kwargs={'path': collectionpath} )
-            singletonpath = collectionpath + "/<string:ident>"
-            logging.debug('singletonpath = ' + singletonpath)
-            g.api.add_resource(EgSubResourceAPI, singletonpath,  resource_class_kwargs={'rb': g.rest_base, 'eg_id': ident} )
-            '''
             resp = config, 200
         except Exception:
             traceback.print_exc()
