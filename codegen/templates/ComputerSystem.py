@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright Notice:
-# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2016 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # ComputerSystem.py
@@ -11,7 +11,7 @@ from api_emulator.utils import replace_recurse
 
 _TEMPLATE = \
 {
-    "@Redfish.Copyright": "Copyright 2014-2017 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@Redfish.Copyright": "Copyright 2014-2017 DMTF. All rights reserved.",
     "@odata.context": "/redfish/v1/$metadata#ComputerSystem.ComputerSystem",
     "@odata.id": "/redfish/v1/Systems/1",
     "@odata.type": "#ComputerSystem.v1_3_0.ComputerSystem",

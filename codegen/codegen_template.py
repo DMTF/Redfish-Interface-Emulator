@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 #
 # Copyright Notice:
-# Copyright 2016 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2016 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 '''
     This program generates a template file for the Redfish Interface
@@ -28,7 +28,7 @@ def write_program_header(outfile, base_program_name):
     """ Writes a program header """
     outfile.write('#!/usr/bin/env python3\n')
     outfile.write('# Copyright Notice:\n')
-    outfile.write('# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.\n')
+    outfile.write('# Copyright 2017 DMTF. All rights reserved.\n')
     outfile.write('# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md\n')
     outfile.write('\n')
     outfile.write('# {0}.py\n'.format(base_program_name))

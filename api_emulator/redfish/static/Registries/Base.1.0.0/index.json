@@ -1,5 +1,5 @@
 {
-    "@Redfish.Copyright":"Copyright © 2014-2015 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@Redfish.Copyright":"Copyright © 2014-2015 DMTF. All rights reserved.",
     "@odata.context": "/redfish/v1/$metadata#Registries/Members/$entity",
     "@odata.id": "/redfish/v1/Registries/Base.1.0.0",
     "@odata.type": "#MessageRegistryFile.1.0.0.MessageRegistryFile",

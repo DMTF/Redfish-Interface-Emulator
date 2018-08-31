@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2017 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Example Resoruce Template
@@ -8,7 +8,7 @@ import strgen
 
 _TEMPLATE = \
 {
-    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@Redfish.Copyright": "Copyright 2014-2016 DMTF. All rights reserved.",
     "@odata.context": "{rb}$metadata#ComputerSystem.ComputerSystem",
     "@odata.id": "{rb}Systems/{id}",
     "@odata.type": "#ComputerSystem.v1_3_0.ComputerSystem",
