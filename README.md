@@ -145,3 +145,10 @@ Ability to compose and delete systems (Composition Service) is also included.
     * Delete: navigate the browser to /Systems/\<SYSTEM\>/, if the system is of type "COMPOSED", a "delete" button appears. Just click and the composed system will be deleted.
 
 Screenshots of the browser available in /doc/browser-screenshots.pdf
+
+## Release Process
+
+1. Update `CHANGELOG.md` with the list of changes since the last release
+2. Update the `__version__` variable in `api_emulator/version.py` to reflect the new tool version
+3. Push changes to Github
+4. Create a new release in Github
