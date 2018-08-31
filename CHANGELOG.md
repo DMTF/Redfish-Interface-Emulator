@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.6] - 2018-08-31
+- Fixed how new resources are created via POST to allow for creation from templates as well as composed ComputerSystems
+
 ## [1.0.5] - 2018-07-16
 - Cleanup of package dependencies
 - Fixed problems with behavior of issuing POST to dynamic collections

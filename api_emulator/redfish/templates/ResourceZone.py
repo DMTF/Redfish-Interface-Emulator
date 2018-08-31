@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017-2018 Distributed Management Task Force, Inc. All rights reserved.
+# Copyright 2017-2018 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # ResourceZone Template File
@@ -9,7 +9,7 @@ import strgen
 
 _TEMPLATE = \
 {
-    "@Redfish.Copyright": "Copyright 2014-2016 Distributed Management Task Force, Inc. (DMTF). All rights reserved.",
+    "@Redfish.Copyright": "Copyright 2014-2016 DMTF. All rights reserved.",
     "@odata.context": "{rb}$metadata#Zone.Zone",
     "@odata.id": "{rb}CompositionService/ResourceZones/{id}",
     "@odata.type": "#Zone.v1_1_0.Zone",
