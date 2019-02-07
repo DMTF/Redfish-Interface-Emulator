@@ -94,7 +94,7 @@ def init_resource_manager():
 def error_response(msg, status, jsonify=False):
     data = {
         'Status': status,
-        'Message': msg
+        'Message': '{}'.format(msg)
     }
     if jsonify:
         data = json.dumps(data, indent=4)
@@ -150,7 +150,7 @@ class RedfishAPI(Resource):
                 resp = self.actions[action](action, cs_puid)
             except KeyError as e:
                 traceback.print_exc()
-                resp = error_response('Unknown action: {0}'.format(e.message), 400)
+                resp = error_response('Unknown action: {0}'.format(e), 400)
             except Exception:
                 traceback.print_exc()
                 resp = INTERNAL_ERROR
@@ -161,7 +161,7 @@ class RedfishAPI(Resource):
                 resp = self.actions[action](action)
             except KeyError as e:
                 traceback.print_exc()
-                resp = error_response('Unknown action: {0}'.format(e.message), 400)
+                resp = error_response('Unknown action: {0}'.format(e), 400)
             except Exception:
                 traceback.print_exc()
                 resp = INTERNAL_ERROR
@@ -186,7 +186,7 @@ class RedfishAPI(Resource):
             resp = error_response('Attribute Does Not Exist', 404)
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR_Get
+            resp = INTERNAL_ERROR
         return resp
 
 
@@ -204,7 +204,7 @@ class RedfishAPI(Resource):
         except (AssertionError, ValueError):
             resp = error_response('Unknown DELETE request - this is only for pooled nodes', 404)
         except RemovePooledNodeError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(e, 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -222,9 +222,9 @@ class RedfishAPI(Resource):
                 config = resource_manager._create_redfish(request.json, action)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(e, 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(e, 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -239,9 +239,9 @@ class RedfishAPI(Resource):
             config = resource_manager.update_system(request.json, idx)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(e, 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(e, 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -256,9 +256,9 @@ class RedfishAPI(Resource):
             config = resource_manager.add_event_subscription(request.json)
             resp = config, 201
         except CreatePooledNodeError as e:
-            resp = error_response(e.message, 406)
+            resp = error_response(e, 406)
         except AssertionError as e:
-            resp = error_response(e.message, 400)
+            resp = error_response(e, 400)
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
@@ -279,7 +279,7 @@ class RedfishAPI(Resource):
             config = obj.get_resource(path)
         except (IndexError, AttributeError, TypeError, AssertionError, KeyError) as e:
             traceback.print_exc()
-            raise PathError("Resource not found: " + str(e.message))
+            raise PathError("Resource not found: {}".format(e))
         # print (config)      # Print out static objects
         return config
 
@@ -398,7 +398,7 @@ def main():
     try:
         startup()
     except ConfigurationError as e:
-        print ('Error Loading Trays:', e.message)
+        print('Error Loading Trays: {}'.format(e))
     else:
         if (HTTPS == 'Enable'):
             context = ('server.crt', 'server.key')
