@@ -1,6 +1,6 @@
 aniso8601==1.2.1
 chardet==3.0.4
-Flask==0.12.2
+Flask==0.12.3
 Flask-HTTPAuth==3.2.3
 Flask-RESTful==0.3.6
 itsdangerous==0.24
@@ -8,8 +8,8 @@ Jinja2==2.9.6
 MarkupSafe==1.0
 python-dateutil==2.6.1
 pytz==2017.2
-requests==2.18.4
+requests==2.20.0
 six==1.10.0
 StringGenerator==0.2.0
-urllib3==1.22
+urllib3==1.23
 Werkzeug==0.12.2

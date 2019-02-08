@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017-2018 DMTF. All rights reserved.
+# Copyright 2017-2019 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # ResourceBlock API File

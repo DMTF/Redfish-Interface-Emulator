@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.7] - 2019-02-08
+- Fixed exception handling with how messages are printed
+
 ## [1.0.6] - 2018-08-31
 - Fixed how new resources are created via POST to allow for creation from templates as well as composed ComputerSystems
 

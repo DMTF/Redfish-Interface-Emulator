@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2017-2018 DMTF. All rights reserved.
+# Copyright 2017-2019 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Manager Template File
@@ -9,7 +9,7 @@ import strgen
 
 _TEMPLATE = \
 {
-    "@Redfish.Copyright": "Copyright 2014-2016 DMTF. All rights reserved.",
+    "@Redfish.Copyright": "Copyright 2014-2019 DMTF. All rights reserved.",
     "@odata.context": "{rb}$metadata#Manager.Manager",
     "@odata.id": "{rb}Managers/{id}",
     "@odata.type": "#Manager.v1_1_0.Manager",
