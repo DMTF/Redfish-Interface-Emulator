@@ -1,5 +1,5 @@
 {
-    "@Redfish.Copyright": "Copyright © 2014-2015 DMTF. All rights reserved.",
+    "@Redfish.Copyright": "Copyright 2014-2019 DMTF. All rights reserved.",
     "@odata.context": "/redfish/v1/$metadata#EventService",
     "@odata.id": "/redfish/v1/EventService",
     "@odata.type": "#EventService.1.0.0.EventService",
