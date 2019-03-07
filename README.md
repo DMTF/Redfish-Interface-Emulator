@@ -243,7 +243,7 @@ Once the command completes, inspect the log file which is produced, "test-rsa-em
 
 The command to test the emulator can executed against the emulator running locally or hosted in the cloud.
 
-### Composition GUI
+## Composition GUI
 
 Generally, Postman is used to interact with the Redfish interface. However, a web GUI is available for testing the composition service, including the ability to compose and delete systems.
 
