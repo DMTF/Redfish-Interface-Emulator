@@ -126,11 +126,10 @@ class ChassisCollectionAPI(Resource):
             '@odata.id': self.rb + 'Chassis',
             '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
             'Name': 'Chassis Collection',
-            'Links': {}
+            'Member@odata.count': len(members),
+            'Members': [{'@odata.id': x['@odata.id']} for
+                        x in list(members.values())]
         }
-        self.config['Links']['Member@odata.count'] = len(members)
-        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
-                x in list(members.values())]
 
     # HTTP GET
     def get(self):
