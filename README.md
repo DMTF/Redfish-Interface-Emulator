@@ -12,45 +12,48 @@ The emulator is structure so it can be hosted on a standalone system or multiple
 
 This program is a python35 program.
 
-## Installation and Invocation
+## Installation
 
-The emulator can be executed locally or on a cloud foundry.  The later allows you to create multiple instances of the emulator.
+Before the emulator can be executed locally, specific Python packages need to be installed.
 
-### Required Python packages
+### Local Standalone
 
-The required python packages for an environment are listed in ./packageSets folder.  The package set files provide a list of environment in which the python code has successfully executed. The files can be generated with a "pip freeze' command. The files are in 'environments.txt' format, so they can be used with pip to install the enviroment.
+The required python packages for a local environment are listed in the file **./packageSets/Env-Local-Python3.5.2_requirements.txt**.  The file lists the Python package and revision.
 
-* Package sets names prefixed with Env-Local are for local execution
-* Package sets names prefixed with Env-Cloud are for cloud foundry executions 
+The 'pip' command can be used to install the environment.
+
+	pip install -r [packageSet]
+
+The 'pip freeze' command can be used to display the installed packages and their revision.
+
+### Cloud
+The required python packages for a Cloud Foundry environment are listed in the file **./requirements.txt**.  The file lists the Python package, without the revision.
+The packages will be installed automatically during invocation.
+
+## Invocation
 
 ### Standalone
 
-1. Use one of the Env-Local package sets file to install the appropriate python packages
+Edit the emulator_config.json file and set **"MODE": "Local"**, then start the emulator.
 
-	pip install -r [packageSet]
-2. Edit the emulator_config.json file and set 
-
-	"MODE": "Local"
-3. Start the emulator
 	python emulator.py
 
 ### Cloud Foundry
 
-For a cloud foundry, the packages listed in the requirements.txt file will be installed during the invocation.
-
-1. Verify that the files requirements.txt, runtime.txt, and Profile exists in the directory
-
-2. Edit the emulator_config.json file and set
-
-	"MODE": "Cloud"
-
-3. Push the emulator to the foundry.  The 'foundry-app-name' will determine the URL for the Redfish service.
+Edit the emulator_config.json file and set **"MODE": "Cloud"**, then push the emulator to the foundry.
 
 	cf push [foundry-app-name]
 
+The **foundry-app-name** determines the URL for the Redfish service.
+
+The cloud foundry makes use of the following files: requirements.txt, runtime.txt, and Profile. So they should exists in the same directory as emulator.py.
+
+## Configuring the Emulator
+The behavior of the emulator can be control via command line flags or property values in emulator-config.json.
+
 ### Emulator app flags
 
-The emulator is invoke with the following command:
+The emulator is invoked with the following command:
 
     python emulator.py [-h] [-v] [-port PORT] [-debug]
     -h -- help (gives syntax and usage) 
@@ -78,15 +81,28 @@ The emulator reads the emulator_config.json file to configure its behavior.
 * The TRAYS property specifies the path to the resources that will make up the initial resource pools. These simple resource pools are depleted as computer systems are composed. Multiple trays can be specified.
 * The POPULATE property specifies the path to the file used by the INFRAGEN module to populate the Redfish Interface backend. If the file does not exist or if POPULATE is not defined, the emulator will start empty.
 
-### Copying a mockup
+### HTTPS
+The emulator supports HTTP and HTTPS connections.  HTTPS is enabled by setting the HTTPS property in emulator-config.json.
 
-The location for the static mockup is in the directory ./api_emulator/redfish/static.  The emulator comes with a copy of an earlier Redfish mockup.  This can be replaced with any new mockup file.
+    {
+        "HTTPS": "Enable",
+ 		...
+    }
 
-If the new mockup has additional resources off the ServiceRoot, then small modifications need to be made in resource_emulator.py to adds these new resources.
+When HTTPS is enabled, the emulator looks for the files: **server.crt** and **server.key** in the same directory as emulator.py.  The certificate file and key file can be self-signed or obtained from a certificate authority.
 
-### Creating dynamic resources
+## Static emulation of a mockup
 
-Resources can be incremental recasted as dynamic, so one can straddle static vs dynamic emulation.  The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.  An example for the Chassis resource is included in the source code.
+The emulator can be used to support mockups, statically. The means on HTTP GETs will work.  This can be done by just copying the mockup hierarchy to the ./static folder.
+
+The static mockup is found in the directory ./api_emulator/redfish/static.  The emulator comes with a sample Redfish mockup.  This can be replaced with any new mockup file. The Redfish Forum has posted several of their mockups in [DSP2043](https://www.dmtf.org/sites/default/files/DSP2043_1.2.0.zip).
+
+Note: If the new mockup has additional resources in the ServiceRoot, then modifications need to be made in resource_emulator.py to adds these new resources.
+
+## Dynamic emulation
+The emulator was designed to support dynamic resources.  This requires that Python code exists for each dynamic resource. Resources can be incremental recasted as dynamic, so one can straddle static vs dynamic emulation, with some resources static while others are dynamic.
+
+The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.  An example for the Chassis resource is included in the source code.
 
 1. Create an API file (e.g. Chassis\_api.py)
     * The file is placed in the ./api\_emulator/Redfish directory
@@ -99,52 +115,149 @@ Resources can be incremental recasted as dynamic, so one can straddle static vs 
     * Comment out the line which loads the static mockup for the Chassis resource
     * Add the line to add the resource API defined in chassis_api.py
 
-Code generators for the steps #1 (API file) and #2 (template file) exists in the ./codegen directory.
+To automate step #1 and #2, above, a code generator exists in the ./codegen directory.
 
-* Generate API file
-    * The following command generates an API file
-    * The HTTP commands implemented are GET, PATCH, POST and DELETE
-    * If the resource has subordinate resources that need to be instantiated when this resource is instantiated, that code will need to be manually added.
-* `codegen_api Chassis <outputdir>`
+#### Auto-generate the API file
+To generate a API file, execute the following command
 
-* Generate template file
-    * The following command generates a template file
-    * The file uses a index.json file located in the current working directory to drive the creation of the template. (TODO - add the filename as a command line parameter)
-    * The file contains a dictionary with the names of Redfish collections and there corresponding wildcard.  This dictionary should be update the keep in sync with Redfish modeling. 
-* `codegen_template Chassis <outputdir>`
+	codegen_api [mockup] [outputdir]
 
-### INFRAGEN Module
+Where
 
-Python module that can be used to populate the Redfish Interface backend with data (Chassi, Systems, Resource Blocks, Resources Zones, Processors, Memory, etc).
+* \[mockup\] is the name of the singleton resource
+* \[outputdir\] is the directory for the API file
+* The command uses the index.json file in the current work directory as input
 
-To use the module a JSON file needs to be in place describing the infrastructure (an example is provided in 'infragen/populate-config.json').
+The generated code supports the HTTP GET, PATCH, POST and DELETE commands
 
-Moreover, the POPULATE property needs to be set in emulator-config.json. The POPULATE property specifies the path to the json file. If the file does not exist or if POPULATE is not defined, the emulator will start empty.
+If the resource has subordinate resources that need to be instantiated when this resource is instantiated, that code will need to be manually added.
 
-As part of INFRAGEN, generate_template.py can be used to help a user with the creation of JSON template according to a specific Redfish schema by guiding the user through the schema and asking for input values. This module runs independently of the populate function and from the emulator itself.
+#### Auto-generate the template file
+To generate a template file, execute the following command
 
-### Testing the Emulator
+	codegen_template [mockup] [outputdir]
 
-The command to test the emulator can executed against the emulator running locally or hosted in the cloud.
+Where
+
+* \[mockup\] is the name of the singleton resource
+* \[outputdir\] is the directory for the API file
+* The command uses the index.json file in the current work directory as input   
+   
+ (TODO - add the filename as a command line parameter)
+
+The codegen_template source file contains a dictionary with the names of Redfish collections and their corresponding wildcard.  This dictionary needs to be manually updated to the keep in sync with Redfish modeling. 
+
+## Populating the dynamic emulator - INFRAGEN Module
+
+Once a resource is made dynamic, the emulator can either start up with no members in its collections or some initial set of members.
+
+To populate the Redfish model, set the POPULATE property in emulator-config.json.
+
+    {
+        "POPULATE": "Emulator",
+		. . .
+    }
+
+Once the emulator has started, it will read the file **./infragen/populate-config.json**.  This file contains a JSON structure which specifies resources to populate.  The following example specifies that 5 Chassis be instantiated and linked to 5 Systems.
+
+```
+{
+  "POPULATE": {
+    "Chassis": [
+      {
+        "Name": "Compute Chassis",
+        "Id": "Chassis-{0}",
+        "Count": 5,
+        "Links": {
+          "ComputerSystems": [
+            {
+              "Name": "Compute System",
+              "Id": "System-{0}",
+              "Count": 1,
+              "Processors": [
+                {
+                  "Id": "CPU{0}",
+                  "TotalCores": 12,
+                  "MaxSpeedMHz": 2400,
+                  "Count": 2
+                }
+              ],
+              "Memory": [
+                {
+                  "Id": "DRAM{0}",
+                  "CapacityMiB": 16384,
+                  "MemoryType": "DRAM",
+                  "Count": 4
+                },
+                {
+                  "Id": "NVRAM{0}",
+                  "CapacityMiB": 65536,
+                  "MemoryType": "NVDIMM_N",
+                  "Count": 4
+                }
+              ],
+              "SimpleStorage": [
+                {
+                  "Id": "SAS-CTRL{0}",
+                  "Count": 1,
+                  "Devices": {
+                    "CapacityBytes": 549755813888,
+                    "Count": 1
+                  }
+                }
+              ],
+              "EthernetInterfaces": [
+                {
+                  "Id": "NIC-{0}",
+                  "SpeedMbps": 10000,
+                  "Count": 2
+                }
+              ]
+            }
+          ]
+        }
+      },
+```
+
+### INFRAGEN module
+
+The INFRAGEN module is used to populate the Redfish Interface with members (Chassis, Systems, Resource Blocks, Resources Zones, Processors, Memory, etc).
+
+This module is execute by emulator.py once the emulator is up and reads the populate-config.json file.
+
+The tool generate_template.py can be used to help a user with the creation of JSON template according to a specific Redfish schema by guiding the user through the schema and asking for input values. This module runs independently of the populate function and from the emulator itself.
+
+## Testing the (dynamic) Emulator
 
 The following is the general command for running unit test.
 
     python unittests.py <SPEC> "<PATH>"
-    (e.g python unittests.py Redfish "localhost:5000")
-    <SPEC> should correspond to the value in emulator-config.json
-    <PATH> is the path to use for testing and should be enclosed in double-quotes
+
+Where
+
+* <SPEC> should correspond to the value in emulator-config.json
+* <PATH> is the path to use for testing and should be enclosed in double-quotes
+* Example: python unittests.py Redfish "localhost:5000"
 
 Once the command completes, inspect the log file which is produced, "test-rsa-emulator.log".
 
-### Browser feature - http://localhost:5000/browse.html
+The command to test the emulator can executed against the emulator running locally or hosted in the cloud.
 
-Feature added to make it easier to navigate/show the API.
+## Composition GUI
 
-Ability to compose and delete systems (Composition Service) is also included.
-    * Compose: when navigating the browser to /CompositionService/ResourceZones/\<ZONE\>/, a check box appears next to each Resource Block. The user shall select the Resource Blocks he wants to use to compose a system and then press the button "compose" on the top.
-    * Delete: navigate the browser to /Systems/\<SYSTEM\>/, if the system is of type "COMPOSED", a "delete" button appears. Just click and the composed system will be deleted.
+Generally, Postman is used to interact with the Redfish interface. However, a web GUI is available for testing the composition service, including the ability to compose and delete systems.
+
+* Compose
+	* Navigate to /CompositionService/ResourceZones/\<ZONE\>/, a check box appears next to each Resource Block
+	* Select the Resource Blocks to use to compose a system
+	* Press the button "compose" on the top of the webpage
+* Delete
+	* Navigate the browser to /Systems/\<SYSTEM\>/, if the system is of type "COMPOSED", a "delete" button appears
+	* Select the delete button and the composed system will be deleted
 
 Screenshots of the browser available in /doc/browser-screenshots.pdf
+
+To use, point a brower to the URI **http://localhost:5000/browse.html**
 
 ## Release Process
 
