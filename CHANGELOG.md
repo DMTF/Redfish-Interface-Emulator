@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.8] - 2019-03-26
+- Removed emulator_ssl.py
+- Clarified how to use HTTPS
+- Fixed properties presented in the ChassisCollection resource
+
 ## [1.0.7] - 2019-02-08
 - Fixed exception handling with how messages are printed
 
