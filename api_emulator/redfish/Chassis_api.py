@@ -126,7 +126,7 @@ class ChassisCollectionAPI(Resource):
             '@odata.id': self.rb + 'Chassis',
             '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
             'Name': 'Chassis Collection',
-            'Member@odata.count': len(members),
+            'Members@odata.count': len(members),
             'Members': [{'@odata.id': x['@odata.id']} for
                         x in list(members.values())]
         }

@@ -151,7 +151,7 @@ def write_collection_api(outfile, base_program_name):
     outfile.write(argument_string)
     outfile.write("\t\t\t'Links': {}\n")
     outfile.write("\t\t}\n")
-    outfile.write("\t\tself.config['Links']['Member@odata.count'] = len(member_ids)\n")
+    outfile.write("\t\tself.config['Links']['Members@odata.count'] = len(member_ids)\n")
     outfile.write("\t\tself.config['Links']['Members'] = member_ids\n")
     outfile.write("\n")
     outfile.write("\tdef get(self):\n")
