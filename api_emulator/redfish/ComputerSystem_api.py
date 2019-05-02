@@ -156,7 +156,7 @@ class ComputerSystemCollectionAPI(Resource):
             'Name': 'ComputerSystem Collection',
             'Links': {}
         }
-        self.config['Links']['Member@odata.count'] = len(members)
+        self.config['Links']['Members@odata.count'] = len(members)
         self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
                 x in list(members.values())]
 
