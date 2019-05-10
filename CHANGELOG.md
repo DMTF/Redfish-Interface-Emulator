@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.9] - 2019-05-10
+- Corrected "Members@odata.count" property
+
 ## [1.0.8] - 2019-03-26
 - Removed emulator_ssl.py
 - Clarified how to use HTTPS
