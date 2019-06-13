@@ -235,18 +235,16 @@ class ResourceManager(object):
             'Name': 'Root Service',
             'ServiceVersion': '1.0.0',
             'UUID': self.uuid,
-            'Links': {
-                'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
-                # 'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
-                'Managers': {'@odata.id': self.rest_base + 'Managers'},
-                'TaskService': {'@odata.id': self.rest_base + 'TaskService'},
-                'SessionService': {'@odata.id': self.rest_base + 'SessionService'},
-                'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
-                'EventService': {'@odata.id': self.rest_base + 'EventService'},
-                'Registries': {'@odata.id': self.rest_base + 'Registries'},
-                'Systems': {'@odata.id': self.rest_base + 'Systems'},
-                'CompositionService': {'@odata.id': self.rest_base + 'CompositionService'}
-            }
+            'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
+            # 'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
+            'Managers': {'@odata.id': self.rest_base + 'Managers'},
+            'TaskService': {'@odata.id': self.rest_base + 'TaskService'},
+            'SessionService': {'@odata.id': self.rest_base + 'SessionService'},
+            'AccountService': {'@odata.id': self.rest_base + 'AccountService'},
+            'EventService': {'@odata.id': self.rest_base + 'EventService'},
+            'Registries': {'@odata.id': self.rest_base + 'Registries'},
+            'Systems': {'@odata.id': self.rest_base + 'Systems'},
+            'CompositionService': {'@odata.id': self.rest_base + 'CompositionService'}
         }
 
         return config
