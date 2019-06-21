@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.0] - 2019-06-21
+- Fixed many Service Root properties by moving them out of Links and to the root level
+
 ## [1.0.9] - 2019-05-10
 - Corrected "Members@odata.count" property
 
