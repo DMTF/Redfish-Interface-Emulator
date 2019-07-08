@@ -59,7 +59,7 @@ class TestRedfishEmulator(unittest.TestCase):
         """
         r = requests.get(url)
         self.assert_status(r, 200, logger)
-	logger.info('PASS: GET of {0} successful (response below)\n {1}'.format(getting, r.text))
+        logger.info('PASS: GET of {0} successful (response below)\n {1}'.format(getting, r.text))
 
     def get_logger(self, name, log_file):
         """
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     parser.add_argument('address', metavar='address', type=str, nargs=1,
                         help='Address to access the emulator')
     args = parser.parse_args()
-    print'Testing interface at:', sys.argv[2]
+    print('Testing interface at:', sys.argv[2])
     suite = unittest.TestLoader().loadTestsFromTestCase(TestRedfishEmulator)
     runner = unittest.TextTestRunner(verbosity=2)
 
