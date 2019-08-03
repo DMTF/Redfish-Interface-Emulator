@@ -28,7 +28,7 @@ _TEMPLATE = {u'@odata.context': '{rb}$metadata#EthernetInterface.EthernetInterfa
              u'NameServers': ['8.8.8.8'],
              u'PermanentMACAddress': "':'.join(['%02x'%randint(0,255) for x in range(6)])",
              u'SpeedMbps': 10000,
-             u'Status': {'State': {'Health': 'OK', 'State': 'Enabled'}},
+             u'Status': {'Health': 'OK', 'State': 'Enabled'},
              u'VLAN': {u'VLANId': 0}}
 
 
