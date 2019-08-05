@@ -27,14 +27,14 @@ _TEMPLATE = \
         "Health": "OK"
     },
     "GraphicalConsole": {
-        "ServiceEnabled": "true",
+        "ServiceEnabled": True,
         "MaxConcurrentSessions": 2,
         "ConnectTypesSupported": [
             "KVMIP"
         ]
     },
     "SerialConsole": {
-        "ServiceEnabled": "true",
+        "ServiceEnabled": True,
         "MaxConcurrentSessions": 1,
         "ConnectTypesSupported": [
             "Telnet",
@@ -43,7 +43,7 @@ _TEMPLATE = \
         ]
     },
     "CommandShell": {
-        "ServiceEnabled": "true",
+        "ServiceEnabled": True,
         "MaxConcurrentSessions": 4,
         "ConnectTypesSupported": [
             "Telnet",

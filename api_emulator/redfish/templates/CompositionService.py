@@ -19,7 +19,7 @@ _TEMPLATE = \
         "State": "Enabled",
         "Health": "OK"
     },
-    "ServiceEnabled": "true",
+    "ServiceEnabled": True,
     "ResourceBlocks": {
         "@odata.id": "{rb}CompositionService/ResourceBlocks"
     },
