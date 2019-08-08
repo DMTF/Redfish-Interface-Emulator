@@ -51,7 +51,8 @@ def create_resources(template, chassis, suffix, suffix_id):
             dsk_id=dsk['Id'].format(dsk_count)
             dsk_count+=1
             resource_ids['SimpleStorage'].append(dsk_id)
-            capacitygb = dsk['Devices'].get('CapacityBytes', 512 * 1024 ** 3) / 1024 ** 3
+            capacitygb = int(dsk['Devices'].get('CapacityBytes',
+                                                512 * 1024 ** 3) / 1024 ** 3)
             drives = dsk['Devices'].get('Count', 1)
             CreateSimpleStorage(rb=g.rest_base, suffix=suffix, storage_id=dsk_id,
                                 suffix_id=suffix_id, chassis_id=chassis, capacitygb=capacitygb,
