@@ -19,7 +19,7 @@ _TEMPLATE = \
         "State": "Enabled",
         "Health": "OK"
     },
-    "ServiceEnabled": "true",
+    "ServiceEnabled": True,
     "DeliveryRetryAttempts": 3,
     "DeliveryRetryIntervalSeconds": 60,
     "EventTypesForSubscription": [
