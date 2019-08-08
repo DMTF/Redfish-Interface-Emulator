@@ -17,7 +17,7 @@ _TEMPLATE = {'@odata.context': '{rb}$metadata#Memory.Memory',
              'MemoryType': '',  # DRAM,NVDIMM_N,F,P
              'OperatingMemoryModes': [],  # Volatile,PMEM, Block
              'SerialNumber': 'TJ27JXQY',
-             'Status': {'State': {'Health': 'OK', 'State': 'Enabled'}},
+             'Status': {'Health': 'OK', 'State': 'Enabled'},
              'VendorID': 'Generic'}
 
 
