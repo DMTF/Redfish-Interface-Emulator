@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.1] - 2019-08-09
+- Fixed Status objects
+- Fixed data type used for ServiceEnabled
+
 ## [1.1.0] - 2019-06-21
 - Fixed many Service Root properties by moving them out of Links and to the root level
 
