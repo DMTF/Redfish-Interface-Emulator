@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.2] - 2019-08-23
+- Fixed CapacityBytes property to always be an integer
+
 ## [1.1.1] - 2019-08-09
 - Fixed Status objects
 - Fixed data type used for ServiceEnabled
