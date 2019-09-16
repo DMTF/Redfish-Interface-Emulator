@@ -233,7 +233,7 @@ class ResourceManager(object):
             '@odata.id': self.rest_base,
             'Id': 'RootService',
             'Name': 'Root Service',
-            'ServiceVersion': '1.0.0',
+            'RedfishVersion': '1.0.0',
             'UUID': self.uuid,
             'Chassis': {'@odata.id': self.rest_base + 'Chassis'},
             # 'EgResources': {'@odata.id': self.rest_base + 'EgResources'},
