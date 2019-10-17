@@ -63,7 +63,7 @@ The emulator is invoked with the following command:
 
 ### Format of emulator-config.json
 
-The emulator reads the emulator_config.json file to configure its behavior.
+The emulator reads the emulator-config.json file to configure its behavior.
     
     {
         "MODE": "Local"
