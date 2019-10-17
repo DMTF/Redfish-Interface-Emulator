@@ -34,13 +34,13 @@ The packages will be installed automatically during invocation.
 
 ### Standalone
 
-Edit the emulator_config.json file and set **"MODE": "Local"**, then start the emulator.
+Edit the emulator-config.json file and set **"MODE": "Local"**, then start the emulator.
 
 	python emulator.py
 
 ### Cloud Foundry
 
-Edit the emulator_config.json file and set **"MODE": "Cloud"**, then push the emulator to the foundry.
+Edit the emulator-config.json file and set **"MODE": "Cloud"**, then push the emulator to the foundry.
 
 	cf push [foundry-app-name]
 
@@ -61,9 +61,9 @@ The emulator is invoked with the following command:
     -port -- specifies the port number to use
     -debug -- enables debugging (needed to debug flask calls)
 
-### Format of emulator_config.json
+### Format of emulator-config.json
 
-The emulator reads the emulator_config.json file to configure its behavior.
+The emulator reads the emulator-config.json file to configure its behavior.
     
     {
         "MODE": "Local"
