@@ -87,10 +87,12 @@ def init_resource_manager():
     global TRAYS
     global SPEC
 
-    if (STATIC=='Static'):
+    if (STATIC=='Enable'):
+        print (' * Using static mockup')
         resource_manager = StaticResourceManager(REST_BASE, SPEC,MODE,TRAYS)
     else:
-        resource_manager = StaticResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+        print (' * Using dynamic emulation')
+        resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
 
 
     # If POPULATE is specified in emulator-config.json, INFRAGEN is called to populate emulator (i.e. with Chassi, CS, Resource Blocks, etc) according to specified file
@@ -133,7 +135,21 @@ def output_json(data, code, headers=None):
     resp.headers.extend(headers or {})
     return resp
 
-
+# The following code provides a mechanism for the Redfish client to either
+#    - Emulator Service Root
+#    - Control the emulator
+#    - Test code fragments
+#
+# To control the emulator:
+#    - Issuing a DELETE /redfish/v1/reset to reset the emulator
+#
+# To test code fragments
+#    - Issuing a POST with an Action to /redfish/v1/Chassis/{id} or /redfish/v1/Systems/{id} to perform action.
+#       - Assumes {id} is an integer.
+#       - Action may be ApplySettings, Reset, Subscribe
+#    - Issuing a GET
+#    - Issuing a DELETE /redfish/v1/xxx/{id} to remove a pooled node (need to add checks)
+#
 class RedfishAPI(Resource):
     def __init__(self):
         # Dictionary of actions and their method
@@ -386,7 +402,7 @@ def main():
     try:
         SPEC = config['SPEC']
         assert SPEC == 'Redfish', 'Unknown spec: {0}, must be Redfish'.format(SPEC)
-#    assert SPEC.lower() in ['redfish', 'chinook'], 'Unknown spec: ' + SPEC
+#    assert SPEC.lower() in ['redfish'], 'Unknown spec: ' + SPEC
     except:
         pass
 
@@ -417,9 +433,11 @@ def main():
         print('Error Loading Trays: {}'.format(e))
     else:
         if (HTTPS == 'Enable'):
+            print (' * Use HTTPS')
             context = ('server.crt', 'server.key')
             kwargs = {'debug': args.debug, 'port': args.port, 'ssl_context' : context}
         else:
+            print (' * Use HTTP')
             kwargs = {'debug': args.debug, 'port': args.port}
 
         if not args.debug:
