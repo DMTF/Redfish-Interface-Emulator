@@ -8,9 +8,11 @@ Static emulator is accomplish by copy a Redfish mockup in a ./static directory.
 
 Dynamic emulator is accomplished by creating the Python files.  The code for an example resource (EgResource) is available to expedite the creation of dynamic resources.  The example is for a collection/member construct, EgResources/{id}.
 
+The Swordfish model has been emulate using this emulator.  The repository is available at [Swordfish API Emulator](https://github.com/SNIA/Swordfish-API-Emulator).  The repository provides a good example of the Python files for dynamic resources.
+
 The emulator is structure so it can be hosted on a standalone system or multiple instances in a Cloud Foundry.  Note: the cloud foundry method has be successful within a company internal cloud foundry service. It has not be attempted on a public cloud foundry service.
 
-This program is a python35 program.
+This program is a python35 program.  The program has been verified on 3.5.2.
 
 ## Installation
 
