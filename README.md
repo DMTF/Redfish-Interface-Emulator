@@ -71,7 +71,7 @@ The emulator reads the emulator-config.json file to configure its behavior.
         "MODE": "Local"
         "HTTPS": "Disable",
         "SPEC": "Redfish",
-		"STATIC": "Enable",
+        "STATIC": "Enable",
         "TRAYS": [
             "./Resources/Systems/1/index.json"
         ]
