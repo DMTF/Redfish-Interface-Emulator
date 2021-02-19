@@ -8,9 +8,11 @@ Static emulator is accomplish by copy a Redfish mockup in a ./static directory.
 
 Dynamic emulator is accomplished by creating the Python files.  The code for an example resource (EgResource) is available to expedite the creation of dynamic resources.  The example is for a collection/member construct, EgResources/{id}.
 
+The Swordfish model has been emulate using this emulator.  The repository is available at [Swordfish API Emulator](https://github.com/SNIA/Swordfish-API-Emulator).  The repository provides a good example of the Python files for dynamic resources.
+
 The emulator is structure so it can be hosted on a standalone system or multiple instances in a Cloud Foundry.  Note: the cloud foundry method has be successful within a company internal cloud foundry service. It has not be attempted on a public cloud foundry service.
 
-This program is a python35 program.
+This program is a python35 program.  The program has been verified on 3.5.2.
 
 ## Installation
 
@@ -69,17 +71,26 @@ The emulator reads the emulator-config.json file to configure its behavior.
         "MODE": "Local"
         "HTTPS": "Disable",
         "SPEC": "Redfish",
+        "STATIC": "Enable",
         "TRAYS": [
             "./Resources/Systems/1/index.json"
         ]
         "POPULATE": "Emulator"
     }
 
+
 * The MODE property specifies port to use. If the value is 'Cloud', the port is assigned by the cloud foundry. If the value is ‘Local’, the port is assigned the value of the port parameter is the command line or 5000, by default. (e.g. localhost:5000/redfish/v1)
 * The HTTPS property specifies whether HTTP or HTTPS will used by the client
+* The STATIC property specifies whether the emulator runs with the mockups in ./api_emulator/redfish/static
 * The SPEC property specifies whether the computer system is represented as a Redfish ComputerSystem (SPEC = “Redfish”) or another schema.
 * The TRAYS property specifies the path to the resources that will make up the initial resource pools. These simple resource pools are depleted as computer systems are composed. Multiple trays can be specified.
 * The POPULATE property specifies the path to the file used by the INFRAGEN module to populate the Redfish Interface backend. If the file does not exist or if POPULATE is not defined, the emulator will start empty.
+
+Three sample configuration files are provided:
+
+* emulator-config_static.json (default) - start emulator with the static mockup
+* emulator-dontpopulate.json - start emulator with no chassis or systems
+* emulator-populate.json - start emulator and populate with **infragen**
 
 ### HTTPS
 The emulator supports HTTP and HTTPS connections.  HTTPS is enabled by setting the HTTPS property in emulator-config.json.
@@ -95,9 +106,9 @@ When HTTPS is enabled, the emulator looks for the files: **server.crt** and **se
 
 The emulator can be used to support mockups, statically. The means on HTTP GETs will work.  This can be done by just copying the mockup hierarchy to the ./static folder.
 
-The static mockup is found in the directory ./api_emulator/redfish/static.  The emulator comes with a sample Redfish mockup.  This can be replaced with any new mockup file. The Redfish Forum has posted several of their mockups in [DSP2043](https://www.dmtf.org/sites/default/files/DSP2043_1.2.0.zip).
+The static mockup is found in the directory ./api_emulator/redfish/static.  The emulator comes with a sample Redfish mockup.  This can be replaced with any mockup folder. The Redfish Forum has posted several of their mockups in [DSP2043](https://www.dmtf.org/sites/default/files/DSP2043_1.2.0.zip).
 
-Note: If the new mockup has additional resources in the ServiceRoot, then modifications need to be made in resource_emulator.py to adds these new resources.
+Note: If the new mockup has additional resources in the ServiceRoot, then modifications need to be made in static_resource_emulator.py to adds these new resources.
 
 ## Dynamic emulation
 The emulator was designed to support dynamic resources.  This requires that Python code exists for each dynamic resource. Resources can be incremental recasted as dynamic, so one can straddle static vs dynamic emulation, with some resources static while others are dynamic.

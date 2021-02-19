@@ -26,6 +26,7 @@ from flask_restful import reqparse, Api, Resource
 # Emulator Imports
 from api_emulator.version import __version__
 from api_emulator.resource_manager import ResourceManager
+from api_emulator.static_resource_manager import StaticResourceManager
 from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, RemovePooledNodeError
 from api_emulator.resource_dictionary import ResourceDictionary
 
@@ -37,6 +38,7 @@ TRAYS = None
 SPEC = None
 MODE = None
 MOCKUPFOLDERS = None
+STATIC = None
 
 CONFIG = 'emulator-config.json'
 
@@ -56,9 +58,18 @@ parser.add_argument('Action', type=str, required=True)
 # If running on Cloud, use dyanaically assigned port
 with open(CONFIG, 'r') as f:
     config = json.load(f)
-    MODE = config['MODE']
+    try:
+        MODE = config['MODE']
+    except:
+        pass
+
     try:
         POPULATE = config['POPULATE']
+    except:
+        pass
+
+    try:
+        STATIC = config['STATIC']
     except:
         pass
 
@@ -75,7 +86,14 @@ def init_resource_manager():
     global REST_BASE
     global TRAYS
     global SPEC
-    resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+
+    if (STATIC=='Enable'):
+        print (' * Using static mockup')
+        resource_manager = StaticResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+    else:
+        print (' * Using dynamic emulation')
+        resource_manager = ResourceManager(REST_BASE, SPEC,MODE,TRAYS)
+
 
     # If POPULATE is specified in emulator-config.json, INFRAGEN is called to populate emulator (i.e. with Chassi, CS, Resource Blocks, etc) according to specified file
     try:
@@ -117,7 +135,21 @@ def output_json(data, code, headers=None):
     resp.headers.extend(headers or {})
     return resp
 
-
+# The following code provides a mechanism for the Redfish client to either
+#    - Emulator Service Root
+#    - Control the emulator
+#    - Test code fragments
+#
+# To control the emulator:
+#    - Issuing a DELETE /redfish/v1/reset to reset the emulator
+#
+# To test code fragments
+#    - Issuing a POST with an Action to /redfish/v1/Chassis/{id} or /redfish/v1/Systems/{id} to perform action.
+#       - Assumes {id} is an integer.
+#       - Action may be ApplySettings, Reset, Subscribe
+#    - Issuing a GET
+#    - Issuing a DELETE /redfish/v1/xxx/{id} to remove a pooled node (need to add checks)
+#
 class RedfishAPI(Resource):
     def __init__(self):
         # Dictionary of actions and their method
@@ -370,7 +402,7 @@ def main():
     try:
         SPEC = config['SPEC']
         assert SPEC == 'Redfish', 'Unknown spec: {0}, must be Redfish'.format(SPEC)
-#    assert SPEC.lower() in ['redfish', 'chinook'], 'Unknown spec: ' + SPEC
+#    assert SPEC.lower() in ['redfish'], 'Unknown spec: ' + SPEC
     except:
         pass
 
@@ -401,9 +433,11 @@ def main():
         print('Error Loading Trays: {}'.format(e))
     else:
         if (HTTPS == 'Enable'):
+            print (' * Use HTTPS')
             context = ('server.crt', 'server.key')
             kwargs = {'debug': args.debug, 'port': args.port, 'ssl_context' : context}
         else:
+            print (' * Use HTTP')
             kwargs = {'debug': args.debug, 'port': args.port}
 
         if not args.debug:
