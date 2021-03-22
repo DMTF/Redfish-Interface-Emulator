@@ -41,8 +41,8 @@ from .redfish.processor import Processor, Processors
 from .redfish.memory import Memory, MemoryCollection
 from .redfish.simplestorage import SimpleStorage, SimpleStorageCollection
 from .redfish.ethernetinterface import EthernetInterfaceCollection, EthernetInterface
-from .redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
-from .redfish.ComputerSystem.ResetAction_api import ResetAction_API
+from .redfish.ResetActionInfo_api import ResetActionInfo_API
+from .redfish.ResetAction_api import ResetAction_API
 # PCIe Switch imports
 from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 # CompositionService imports

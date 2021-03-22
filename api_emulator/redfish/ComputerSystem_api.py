@@ -18,8 +18,8 @@ from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
 from .templates.ComputerSystem import get_ComputerSystem_instance
-from .ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
-from .ComputerSystem.ResetAction_api import ResetAction_API
+from .ResetActionInfo_api import ResetActionInfo_API
+from .ResetAction_api import ResetAction_API
 from .processor import members as processors
 from .memory import members as memory
 from .ethernetinterface import members as ethernetinterfaces
@@ -142,6 +142,9 @@ class ComputerSystemAPI(Resource):
             resp = INTERNAL_ERROR
         return resp
 
+   
+
+
 
 # ComputerSystem Collection API
 class ComputerSystemCollectionAPI(Resource):
@@ -221,6 +224,28 @@ class ComputerSystemCollectionAPI(Resource):
     def delete(self):
         logging.info('ComputerSystemCollectionAPI DELETE called')
         return 'DELETE is not a supported command for ChassisCollectionAPI', 405
+
+
+
+def state_disabled(ident):
+    try:
+        resp = 404
+        conf= members[ident]
+        conf['Status']['State'] = 'Disabled'
+    except Exception:
+        traceback.print_exc()
+        resp = INTERNAL_ERROR
+    return resp
+
+def state_enabled(ident):
+        try:
+            resp = 404
+            conf= members[ident]
+            conf['Status']['State'] = 'Enabled'
+        except Exception:
+            traceback.print_exc()
+            resp = INTERNAL_ERROR
+        return resp
 
 
 #class ComposedSystem(Resource):

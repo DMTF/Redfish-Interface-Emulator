@@ -6,8 +6,8 @@ from api_emulator.redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from api_emulator.redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 from api_emulator.redfish.power_api import CreatePower
 from api_emulator.redfish.thermal_api import CreateThermal
-from api_emulator.redfish.ComputerSystem.ResetAction_api import ResetAction_API
-from api_emulator.redfish.ComputerSystem.ResetActionInfo_api import ResetActionInfo_API
+from api_emulator.redfish.ResetAction_api import ResetAction_API
+from api_emulator.redfish.ResetActionInfo_api import ResetActionInfo_API
 from api_emulator.redfish.processor import CreateProcessor
 from api_emulator.redfish.memory import CreateMemory
 from api_emulator.redfish.simplestorage import CreateSimpleStorage

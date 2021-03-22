@@ -10,7 +10,7 @@ import sys, traceback
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
-from .ResetActionInfo_template import get_ResetActionInfo_instance
+from .templates.ResetActionInfo_template import get_ResetActionInfo_instance
 
 members = {}
 
@@ -36,6 +36,8 @@ class ResetActionInfo_API(Resource):
     def get(self,ident):
         try:
             resp = 404
+            print ('ResetActionInfo')
+            print (members)
             if ident in members:
                 resp = members[ident], 200
         except Exception:
