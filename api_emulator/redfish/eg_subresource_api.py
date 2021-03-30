@@ -132,7 +132,7 @@ class EgSubResourceCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#EgSubResourceCollection.EgSubResourceCollection',
             '@odata.id': self.rb + 'EgSubResources',
-            '@odata.type': '#EgSubResourceCollection.1.0.0.EgSubResourceCollection',
+            '@odata.type': '#EgSubResourceCollection.EgSubResourceCollection',
             'Name': 'EgSubResource Collection',
             'Links': {}
         }

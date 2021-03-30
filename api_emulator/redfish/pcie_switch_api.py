@@ -139,7 +139,7 @@ class PCIeSwitchesAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#PCIeSwitchCollection',
             '@odata.id': self.rb + 'PCIeSwitchCollection',
-            '@odata.type': '#PCIeSwitchCollection.1.0.0.PCIeSwitchCollection',
+            '@odata.type': '#PCIeSwitchCollection.PCIeSwitchCollection',
             'Name': 'PCIe Switch Collection',
             'Links': {}
         }

@@ -155,7 +155,7 @@ class ComputerSystemCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#ComputerSystemCollection.ComputerSystemCollection',
             '@odata.id': self.rb + 'ComputerSystemCollection',
-            '@odata.type': '#ComputerSystemCollection.1.0.0.ComputerSystemCollection',
+            '@odata.type': '#ComputerSystemCollection.ComputerSystemCollection',
             'Name': 'ComputerSystem Collection',
             'Links': {}
         }

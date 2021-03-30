@@ -87,7 +87,7 @@ class ResourceZoneCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#ResourceZoneCollection.ResourceZoneCollection',
             '@odata.id': self.rb + 'CompositionService/ResourceZones',
-            '@odata.type': '#ResourceZoneCollection.1.0.0.ResourceZoneCollection',
+            '@odata.type': '#ResourceZoneCollection.ResourceZoneCollection',
             'Name': 'Resource Zone Collection',
             'Links': {}
         }

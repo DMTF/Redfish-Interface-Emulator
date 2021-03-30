@@ -120,7 +120,7 @@ class SubscriptionCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#SubscriptionCollection.SubscriptionCollection',
             '@odata.id': self.rb + 'SubscriptionCollection',
-            '@odata.type': '#SubscriptionCollection.1.0.0.SubscriptionCollection',
+            '@odata.type': '#SubscriptionCollection.SubscriptionCollection',
             'Name': 'Subscription Collection',
             'Links': {}
         }

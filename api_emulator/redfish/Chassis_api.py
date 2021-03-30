@@ -124,7 +124,7 @@ class ChassisCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#ChassisCollection.ChassisCollection',
             '@odata.id': self.rb + 'Chassis',
-            '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
+            '@odata.type': '#ChassisCollection.ChassisCollection',
             'Name': 'Chassis Collection',
             'Members@odata.count': len(members),
             'Members': [{'@odata.id': x['@odata.id']} for

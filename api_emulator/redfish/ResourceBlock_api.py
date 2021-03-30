@@ -87,7 +87,7 @@ class ResourceBlockCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#ResourceBlockCollection.ResourceBlockCollection',
             '@odata.id': self.rb + 'CompositionService/ResourceBlocks',
-            '@odata.type': '#ResourceBlockCollection.1.0.0.ResourceBlockCollection',
+            '@odata.type': '#ResourceBlockCollection.ResourceBlockCollection',
             'Name': 'Resource Block Collection',
             'Links': {}
         }
