@@ -36,10 +36,10 @@ class ComputerSystemCollection(object):
 
         return {
             '@odata.context': '/redfish/v1/$metadata#Systems',
-            '@odata.type': '#ComputerSystem.1.0.0.ComputerSystemCollection',
+            '@odata.type': '#ComputerSystemCollection.ComputerSystemCollection',
             '@odata.id': '/redfish/v1/Systems',
             'Name': 'Computer System Collection',
-            
+
             'Links': {
                 'Members@odata.count': len(systems),
                 'Members': systems
@@ -64,7 +64,3 @@ class ComputerSystemCollection(object):
         Removing the given ComputerSystem
         """
         del self.systems[cs.cs_puid]
-
-
-
-
