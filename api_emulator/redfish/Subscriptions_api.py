@@ -118,9 +118,8 @@ class SubscriptionCollectionAPI(Resource):
         logging.info('SubscriptionCollectionAPI init called')
         self.rb = g.rest_base
         self.config = {
-            '@odata.context': self.rb + '$metadata#SubscriptionCollection.SubscriptionCollection',
-            '@odata.id': self.rb + 'SubscriptionCollection',
-            '@odata.type': '#SubscriptionCollection.SubscriptionCollection',
+            '@odata.id': self.rb + 'EventDestinationCollection',
+            '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
             'Name': 'Subscription Collection',
             'Links': {}
         }
