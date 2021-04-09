@@ -120,7 +120,7 @@ class SubscriptionCollectionAPI(Resource):
         self.config = {
             '@odata.id': self.rb + 'EventDestinationCollection',
             '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
-            'Name': 'Subscription Collection',
+            'Name': 'Event Destination Collection',
             'Links': {}
         }
         self.config['Links']['Members@odata.count'] = len(members)
