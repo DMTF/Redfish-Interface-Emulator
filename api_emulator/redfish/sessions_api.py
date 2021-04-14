@@ -1,8 +1,8 @@
 # Copyright Notice:
-# Copyright 2017-2019 DMTF. All rights reserved.
+# Copyright 2017-2021 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
-# Subscriptions API File
+# Sessions API File
 
 """
 Collection API:  GET, POST
@@ -18,15 +18,15 @@ from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
 # Resource and SubResource imports
-from .templates.Subscription import get_Subscription_instance
+from .templates.Session import get_Session_instance
 
 members = {}
 
 INTERNAL_ERROR = 500
 
 
-# Subscription Singleton API
-class SubscriptionAPI(Resource):
+# Session Singleton API
+class SessionAPI(Resource):
 
     # kwargs is used to pass in the wildcards values to be replaced
     # when an instance is created via get_<resource>_instance().
@@ -37,7 +37,7 @@ class SubscriptionAPI(Resource):
     # __init__ stores kwargs in wildcards, which is used to pass
     # values to the get_<resource>_instance() call.
     def __init__(self, **kwargs):
-        logging.info('SubscriptionAPI init called')
+        logging.info('SessionAPI init called')
         try:
             global wildcards
             wildcards = kwargs
@@ -46,7 +46,7 @@ class SubscriptionAPI(Resource):
 
     # HTTP GET
     def get(self, ident):
-        logging.info('SubscriptionAPI GET called')
+        logging.info('SessionAPI GET called')
         try:
             # Find the entry with the correct value for Id
             resp = 404
@@ -59,8 +59,8 @@ class SubscriptionAPI(Resource):
 
     # HTTP PUT
     def put(self, ident):
-        logging.info('SubscriptionAPI PUT called')
-        return 'PUT is not a supported command for SubscriptionAPI', 405
+        logging.info('SessionAPI PUT called')
+        return 'PUT is not a supported command for SessionAPI', 405
 
     # HTTP POST
     # This is an emulator-only POST command that creates new resource
@@ -68,23 +68,23 @@ class SubscriptionAPI(Resource):
     # the identifier "ident", which is taken from the end of the URL.
     # PATCH commands can then be used to update the new instance.
     def post(self, ident):
-        logging.info('SubscriptionAPI POST called')
+        logging.info('SessionAPI POST called')
         try:
             global config
             global wildcards
             wildcards['id']= ident
-            config = get_Subscription_instance(wildcards)
+            config = get_Session_instance(wildcards)
             members.append(config)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('SubscriptionAPI POST exit')
+        logging.info('SessionAPI POST exit')
         return resp
 
     # HTTP PATCH
     def patch(self, ident):
-        logging.info('SubscriptionAPI PATCH called')
+        logging.info('SessionAPI PATCH called')
         raw_dict = request.get_json(force=True)
         try:
             # Update specific portions of the identified object
@@ -98,7 +98,7 @@ class SubscriptionAPI(Resource):
 
     # HTTP DELETE
     def delete(self, ident):
-        logging.info('SubscriptionAPI DELETE called')
+        logging.info('SessionAPI DELETE called')
         try:
             # Find the entry with the correct value for Id
             resp = 404
@@ -111,16 +111,16 @@ class SubscriptionAPI(Resource):
         return resp
 
 
-# Subscription Collection API
-class SubscriptionCollectionAPI(Resource):
+# Session Collection API
+class SessionCollectionAPI(Resource):
 
     def __init__(self):
-        logging.info('SubscriptionCollectionAPI init called')
+        logging.info('SessionCollectionAPI init called')
         self.rb = os.path.join (g.rest_base, 'EventService/')
         self.config = {
-            '@odata.id': self.rb + 'Subscriptions',
-            '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
-            'Name': 'Event Destination Collection',
+            '@odata.id': self.rb + 'Sessions',
+            '@odata.type': '#SessionCollection.SessionCollection',
+            'Name': 'Session Collection',
             'Links': {}
         }
         self.config['Links']['Members@odata.count'] = len(members)
@@ -129,7 +129,7 @@ class SubscriptionCollectionAPI(Resource):
 
     # HTTP GET
     def get(self):
-        logging.info('SubscriptionCollectionAPI GET called')
+        logging.info('SessionCollectionAPI GET called')
         try:
             resp = self.config, 200
         except Exception:
@@ -139,8 +139,8 @@ class SubscriptionCollectionAPI(Resource):
 
     # HTTP PUT
     def put(self):
-        logging.info('SubscriptionCollectionAPI PUT called')
-        return 'PUT is not a supported command for SubscriptionCollectionAPI', 405
+        logging.info('SessionCollectionAPI PUT called')
+        return 'PUT is not a supported command for SessionCollectionAPI', 405
 
     def verify(self, config):
         # TODO: Implement a method to verify that the POST body is valid
@@ -151,7 +151,7 @@ class SubscriptionCollectionAPI(Resource):
     # For now, this only adds one instance.
     # TODO: 'id' should be obtained from the request data.
     def post(self):
-        logging.info('SubscriptionCollectionAPI POST called')
+        logging.info('SessionCollectionAPI POST called')
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
@@ -167,16 +167,16 @@ class SubscriptionCollectionAPI(Resource):
 
     # HTTP PATCH
     def patch(self):
-        logging.info('SubscriptionCollectionAPI PATCH called')
-        return 'PATCH is not a supported command for SubscriptionCollectionAPI', 405
+        logging.info('SessionCollectionAPI PATCH called')
+        return 'PATCH is not a supported command for SessionCollectionAPI', 405
 
     # HTTP DELETE
     def delete(self):
-        logging.info('SubscriptionCollectionAPI DELETE called')
-        return 'DELETE is not a supported command for SubscriptionCollectionAPI', 405
+        logging.info('SessionCollectionAPI DELETE called')
+        return 'DELETE is not a supported command for SessionCollectionAPI', 405
 
 
-# CreateSubscription
+# CreateSession
 #
 # Called internally to create instances of a subresource. If the
 # resource has subordinate resources, those subordinate resource(s)
@@ -186,10 +186,10 @@ class SubscriptionCollectionAPI(Resource):
 # values, so we need to check. The call to 'init' stores the path
 # wildcards. The wildcards are used to modify the resource template
 # when subsequent calls are made to instantiate resources.
-class CreateSubscription(Resource):
+class CreateSession(Resource):
 
     def __init__(self, **kwargs):
-        logging.info('CreateSubscription init called')
+        logging.info('CreateSession init called')
         logging.debug(kwargs)
         if 'resource_class_kwargs' in kwargs:
             global wildcards
@@ -198,15 +198,15 @@ class CreateSubscription(Resource):
 
     # Add subordinate resource
     def put(self,ident):
-        logging.info('CreateSubscription put called')
+        logging.info('CreateSession put called')
         try:
             global config
             global wildcards
-            config=get_Subscription_instance(wildcards)
+            config=get_Session_instance(wildcards)
             members.append(config)
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
-        logging.info('CreateSubscription init exit')
+        logging.info('CreateSession init exit')
         return resp
