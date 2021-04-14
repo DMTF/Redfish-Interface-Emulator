@@ -116,7 +116,7 @@ class SessionCollectionAPI(Resource):
 
     def __init__(self):
         logging.info('SessionCollectionAPI init called')
-        self.rb = os.path.join (g.rest_base, 'EventService/')
+        self.rb = os.path.join (g.rest_base, 'SessionService/')
         self.config = {
             '@odata.id': self.rb + 'Sessions',
             '@odata.type': '#SessionCollection.SessionCollection',
