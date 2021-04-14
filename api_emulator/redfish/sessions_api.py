@@ -18,7 +18,7 @@ from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
 # Resource and SubResource imports
-from .templates.Session import get_Session_instance
+from .templates.session import get_Session_instance
 
 members = {}
 
