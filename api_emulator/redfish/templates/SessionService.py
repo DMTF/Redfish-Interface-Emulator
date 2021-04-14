@@ -40,7 +40,7 @@ def get_SessionService_instance(wildcards):
     c['@odata.context'] = c['@odata.context'].format(**wildcards)
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
     c['Id'] = c['Id'].format(**wildcards)
-    c['Subscriptions']['@odata.id'] = c['Subscriptions']['@odata.id'].format(**wildcards)
-    c['Actions']['#SessionService.SubmitTestEvent']['target'] = c['Actions']['#SessionService.SubmitTestEvent']['target'].format(**wildcards)
+    c['Name'] = c['Name'].format(**wildcards)
+    c['Sessions']['@odata.id'] = c['Sessions']['@odata.id'].format(**wildcards)
 
     return c
