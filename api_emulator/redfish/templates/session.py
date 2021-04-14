@@ -19,7 +19,7 @@ _TEMPLATE = \
 
 }
 
-def get_Subscription_instance(wildcards):
+def get_Session_instance(wildcards):
     """
     Instantiate and format the template
 
