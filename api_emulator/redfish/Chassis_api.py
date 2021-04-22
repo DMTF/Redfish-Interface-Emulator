@@ -11,12 +11,9 @@ Singleton  API:  GET, POST, PATCH, DELETE
 
 import g
 
-import json, os
 import sys, traceback
 import logging
 import copy
-
-from flask import jsonify
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
 
@@ -24,10 +21,8 @@ from flask_restful import reqparse, Api, Resource
 from .templates.Chassis import get_Chassis_instance
 from .thermal_api import ThermalAPI, CreateThermal
 from .power_api import PowerAPI, CreatePower
-from .constants import *
 
 members = {}
-config = {}
 
 INTERNAL_ERROR = 500
 
@@ -45,23 +40,24 @@ class ChassisAPI(Resource):
     # values to the get_<resource>_instance() call.
     def __init__(self, **kwargs):
         logging.info('ChassisAPI init called')
-        self.root = PATHS['Root']
-        self.chassis = PATHS['Chassis']['path']
+        try:
+            global wildcards
+            wildcards = kwargs
+        except Exception:
+            traceback.print_exc()
 
     # HTTP GET
     def get(self, ident):
         logging.info('ChassisAPI GET called')
-        if ident in members:
-            resp = 404
-            return resp
-        path = os.path.join(self.root, self.chassis, ident, 'index.json')
         try:
-            chassis_json = open(path)
-            data = json.load(chassis_json)
-        except Exception as e:
+            # Find the entry with the correct value for Id
+            resp = 404
+            if ident in members:
+                resp = members[ident], 200
+        except Exception:
             traceback.print_exc()
-            raise Exception("Unable read file because of following error::{}".format(e))
-        return jsonify(data)
+            resp = INTERNAL_ERROR
+        return resp
 
     # HTTP PUT
     def put(self, ident):
@@ -123,23 +119,27 @@ class ChassisAPI(Resource):
 class ChassisCollectionAPI(Resource):
 
     def __init__(self):
-        self.root = PATHS['Root']
-        self.chassis = PATHS['Chassis']['path']
+        logging.info('ChassisCollectionAPI init called')
+        self.rb = g.rest_base
+        self.config = {
+            '@odata.context': self.rb + '$metadata#ChassisCollection.ChassisCollection',
+            '@odata.id': self.rb + 'Chassis',
+            '@odata.type': '#ChassisCollection.1.0.0.ChassisCollection',
+            'Name': 'Chassis Collection',
+            'Members@odata.count': len(members),
+            'Members': [{'@odata.id': x['@odata.id']} for
+                        x in list(members.values())]
+        }
 
+    # HTTP GET
     def get(self):
-        path = os.path.join(self.root, self.chassis, 'index.json')
+        logging.info('ChassisCollectionAPI GET called')
         try:
-            chassis_json = open(path)
-            data = json.load(chassis_json)
-        except Exception as e:
+            resp = self.config, 200
+        except Exception:
             traceback.print_exc()
-            return {"error": "Unable read file because of following error::{}".format(e)}, 500
-
-        return jsonify(data)
-
-    def verify(self, config):
-        # TODO: Implement a method to verify that the POST body is valid
-        return True,{}
+            resp = INTERNAL_ERROR
+        return resp
 
     # HTTP PUT
     def put(self):
