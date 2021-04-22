@@ -1,7 +1,7 @@
 {
     "@odata.context": "/redfish/v1/$metadata#Systems",
     "@odata.id": "/redfish/v1/Systems",
-    "@odata.type": "#ComputerSystem.ComputerSystemCollection",
+    "@odata.type": "#ComputerSystemCollection.ComputerSystemCollection",
     "Name": "Computer System Collection",
 
     "Links": {
