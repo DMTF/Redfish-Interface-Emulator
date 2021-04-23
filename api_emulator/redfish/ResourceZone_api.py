@@ -85,9 +85,9 @@ class ResourceZoneCollectionAPI(Resource):
         logging.info('ResourceZoneCollectionAPI init called')
         self.rb = g.rest_base
         self.config = {
-            '@odata.context': self.rb + '$metadata#ResourceZoneCollection.ResourceZoneCollection',
+            '@odata.context': self.rb + '$metadata#ZoneCollection.ZoneCollection',
             '@odata.id': self.rb + 'CompositionService/ResourceZones',
-            '@odata.type': '#ResourceZoneCollection.1.0.0.ResourceZoneCollection',
+            '@odata.type': '#ZoneCollection.ZoneCollection',
             'Name': 'Resource Zone Collection',
             'Links': {}
         }

@@ -14,7 +14,7 @@ import traceback
 import xml.etree.ElementTree as ET
 import logging
 import copy
-#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 
 import g

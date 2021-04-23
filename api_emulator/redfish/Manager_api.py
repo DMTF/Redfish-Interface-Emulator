@@ -121,7 +121,7 @@ class ManagerCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#ManagerCollection.ManagerCollection',
             '@odata.id': self.rb + 'Managers',
-            '@odata.type': '#ManagerCollection.1.0.0.ManagerCollection',
+            '@odata.type': '#ManagerCollection.ManagerCollection',
             'Name': 'Manager Collection',
             'Links': {}
         }

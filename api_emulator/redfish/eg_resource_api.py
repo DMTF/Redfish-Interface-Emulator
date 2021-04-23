@@ -146,7 +146,7 @@ class EgResourceCollectionAPI(Resource):
         self.config = {
             '@odata.context': self.rb + '$metadata#EgResourceCollection',
             '@odata.id': self.rb + 'EgResources',
-            '@odata.type': '#EgResourceCollection.1.0.0.EgResourceCollection',
+            '@odata.type': '#EgResourceCollection.EgResourceCollection',
             'Name': 'EgResource Collection',
             'Links': {}
         }

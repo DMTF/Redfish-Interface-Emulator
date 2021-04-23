@@ -1,5 +1,5 @@
 # Copyright Notice:
-# Copyright 2016-2019 DMTF. All rights reserved.
+# Copyright 2016-2021 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Redfish Event Service and Events
@@ -22,11 +22,10 @@ class Subscription(object):
         self.rb = rest_base
 
         self.config = {
-            '@odata.context': '/redfish/v1/$metadata#EventService/Members/Subscriptions/Members/$entity',
             '@odata.id': '/redfish/v1/EventService/Subscriptions/' + str(idx),
-            '@odata.type': '#EventService.1.0.0.EventDestination',
+            '@odata.type': '#EventDestination.v1_10_1.EventDestination',
             'Id': str(idx),
-            'Name': 'EventSubscription ' + str(idx),
+            'Name': 'EventDestination ' + str(idx),
             'Destination': dest,
             'EventTypes': types,
             'Context': context,
@@ -56,7 +55,6 @@ class Subscriptions(object):
         self.members = []
 
         self.config = {
-            '@odata.context': self.rb + '$metadata#EventService/Members/Events/$entity',
             '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
             'Name': 'Event Subscription Collection',
             'Members': {},
@@ -102,9 +100,8 @@ class EventService(object):
 
 
         self.config = {
-            '@odata.context': self.rb + '$metadata#EventService',
             '@odata.id': self.rb + 'EventService',
-            '@odata.type': '#EventService.1.0.0.EventService',
+            '@odata.type': '#EventService.1_7_0.EventService',
             'Name': 'Event Service',
             'ServiceEnabled': True,
             'DeliveryRetryAttempts': 3,

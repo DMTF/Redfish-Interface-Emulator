@@ -116,12 +116,11 @@ class SubscriptionCollectionAPI(Resource):
 
     def __init__(self):
         logging.info('SubscriptionCollectionAPI init called')
-        self.rb = g.rest_base
+        self.rb = os.path.join (g.rest_base, 'EventService/')
         self.config = {
-            '@odata.context': self.rb + '$metadata#SubscriptionCollection.SubscriptionCollection',
-            '@odata.id': self.rb + 'SubscriptionCollection',
-            '@odata.type': '#SubscriptionCollection.1.0.0.SubscriptionCollection',
-            'Name': 'Subscription Collection',
+            '@odata.id': self.rb + 'Subscriptions',
+            '@odata.type': '#EventDestinationCollection.EventDestinationCollection',
+            'Name': 'Event Destination Collection',
             'Links': {}
         }
         self.config['Links']['Members@odata.count'] = len(members)
