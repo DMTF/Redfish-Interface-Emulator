@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.4] - 2021-04-30
+- Added support for /redfish
+
 ## [1.1.3] - 2021-04-16
 - Corrected `RedfishVersion` property in service root
 - Fixes to usage of static mockups
