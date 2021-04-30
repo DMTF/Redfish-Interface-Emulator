@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.1.3] - 2021-04-16
+- Corrected `RedfishVersion` property in service root
+- Fixes to usage of static mockups
+- Corrected `@odata.type` property in many resources
+- Added support for emulating sessions and session service
+
 ## [1.1.2] - 2019-08-23
 - Fixed CapacityBytes property to always be an integer
 
