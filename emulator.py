@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 #
 # Copyright Notice:
-# Copyright 2016-2019 DMTF. All rights reserved.
+# Copyright 2016-2021 DMTF. All rights reserved.
 # License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
 
 # Redfish Interface Emulator - main
@@ -336,6 +336,10 @@ def reset():
 @g.app.route('/')
 def index():
     return render_template('index.html')
+
+@g.app.route('/redfish')
+def serviceInfo():
+    return render_template('service.json')
 
 @g.app.route('/browse.html')
 def browse():
