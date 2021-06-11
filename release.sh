@@ -13,8 +13,8 @@ while : ; do
 done
 
 # Rebase
-#git checkout master
-#git fetch && git rebase origin
+git checkout master
+git fetch && git rebase origin
 
 # Update the version number in rf_protocol_validator.py
 sed -i -E 's/__version__ = .+/__version__ = '\'$1\''/' api_emulator/version.py
@@ -28,11 +28,11 @@ xit
 eof
 
 # Commit and push changes
-#git add CHANGELOG.md api_emulator/version.py
-#git commit -m "$1 versioning"
-#git push origin master
+git add CHANGELOG.md api_emulator/version.py
+git commit -m "$1 versioning"
+git push origin master
 
 # Make new release in GitHub
-#CHANGES="Changes since last release:"$'\n\n'"$CHANGES"
-#gh release create $1 -n "$CHANGES"
+CHANGES="Changes since last release:"$'\n\n'"$CHANGES"
+gh release create $1 -n "$CHANGES"
 
