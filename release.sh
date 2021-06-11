@@ -16,7 +16,7 @@ done
 git checkout master
 git fetch && git rebase origin
 
-# Update the version number in rf_protocol_validator.py
+# Update the version number in api_emulator/version.py
 sed -i -E 's/__version__ = .+/__version__ = '\'$1\''/' api_emulator/version.py
 
 # Update the change log file
