@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.5] - 2021-06-18
+- Added Dockerfile to build Docker containers
+
 ## [1.1.4] - 2021-04-30
 - Added support for /redfish
 
