@@ -29,8 +29,29 @@ The 'pip' command can be used to install the environment.
 The 'pip freeze' command can be used to display the installed packages and their revision.
 
 ### Cloud
+
 The required python packages for a Cloud Foundry environment are listed in the file **./requirements.txt**.  The file lists the Python package, without the revision.
 The packages will be installed automatically during invocation.
+
+### Docker
+
+Use one of these actions to pull or build the container:
+
+* Pull the container from Docker Hub:
+
+    ```bash
+    docker pull dmtf/redfish-interface-emulator:latest
+    ```
+* Build a container from local source:
+
+    ```bash
+    docker build -t dmtf/redfish-interface-emulator:latest.
+    ```
+* Build a container from GitHub:
+
+    ```bash
+    docker build -t dmtf/redfish-interface-emulator:latest https://github.com/DMTF/Redfish-Interface-Emulator.git
+    ```
 
 ## Invocation
 
@@ -49,6 +70,14 @@ Edit the emulator-config.json file and set **"MODE": "Cloud"**, then push the em
 The **foundry-app-name** determines the URL for the Redfish service.
 
 The cloud foundry makes use of the following files: requirements.txt, runtime.txt, and Profile. So they should exists in the same directory as emulator.py.
+
+### Docker
+
+This command runs the container with the built-in mockup:
+
+```bash
+docker run --rm dmtf/redfish-interface-emulator:latest
+```
 
 ## Configuring the Emulator
 The behavior of the emulator can be control via command line flags or property values in emulator-config.json.
@@ -272,7 +301,10 @@ To use, point a brower to the URI **http://localhost:5000/browse.html**
 
 ## Release Process
 
-1. Update `CHANGELOG.md` with the list of changes since the last release
-2. Update the `__version__` variable in `api_emulator/version.py` to reflect the new tool version
-3. Push changes to Github
-4. Create a new release in Github
+Run the `release.sh` script to publish a new version.
+
+```bash
+sh release.sh <NewVersion>
+```
+
+Enter the release notes when prompted; an empty line signifies no more notes to add.
