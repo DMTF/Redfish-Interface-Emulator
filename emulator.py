@@ -14,8 +14,8 @@ import traceback
 import xml.etree.ElementTree as ET
 import logging
 import copy
-logging.basicConfig(level=logging.DEBUG)
 
+logging.basicConfig(level=logging.DEBUG)
 
 import g
 
@@ -31,7 +31,6 @@ from api_emulator.exceptions import CreatePooledNodeError, ConfigurationError, R
 from api_emulator.resource_dictionary import ResourceDictionary
 
 from infragen.populate import populate
-
 
 # Trays to load into the resource manager
 TRAYS = None
@@ -125,6 +124,12 @@ INTERNAL_ERROR = error_response('Internal Server Error', 500)
 class PathError(Exception):
     pass
 
+@g.api.representation('application/xml')
+def output_xml(data, code, headers=None):
+    resp = make_response(data, code)
+    resp.headers.extend(headers or {})
+    resp.headers['Content-Type'] = 'text/xml; charset=ISO-8859-1'
+    return resp
 
 @g.api.representation('application/json')
 def output_json(data, code, headers=None):
@@ -134,6 +139,8 @@ def output_json(data, code, headers=None):
     resp = make_response(json.dumps(data, indent=4), code)
     resp.headers.extend(headers or {})
     return resp
+
+
 
 # The following code provides a mechanism for the Redfish client to either
 #    - Emulator Service Root
@@ -345,6 +352,36 @@ def serviceInfo():
 def browse():
     return render_template('browse.html')
 
+# If DELETE /redfish/v1/reset, then reset the resource manager
+#
+@g.app.route('/redfish/v1/$metadata')
+def get_metadata():
+    logging.info ('In get_metadata')
+    try:
+
+        md_xml = ""
+
+        if os.path.exists('Resources/$metadata/index.xml'):
+            # Use dynamic data source
+            filename = 'Resources/$metadata/index.xml'
+        else:
+            # Use static mockup
+            mockup_path = MOCKUPFOLDERS[0]
+            filename = os.path.join("api_emulator", mockup_path, 'static', '$metadata', 'index.xml')
+
+        with open(filename, 'r') as var:
+            for line in var:
+                line = line.rstrip()
+                md_xml += line
+
+        resp = make_response(md_xml, 200)
+        resp.headers['Content-Type'] = 'text/xml'
+        return resp
+
+    except Exception:
+        traceback.print_exc()
+        resp = error_response('Internal Server Error', 500, True)
+    return resp
 
 #
 # If any other RESTful request, send to RedfishAPI object for processing. Note: <path:path> specifies any path
