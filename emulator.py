@@ -352,8 +352,7 @@ def serviceInfo():
 def browse():
     return render_template('browse.html')
 
-# If DELETE /redfish/v1/reset, then reset the resource manager
-#
+# Return metadata as type text/xml
 @g.app.route('/redfish/v1/$metadata')
 def get_metadata():
     logging.info ('In get_metadata')
