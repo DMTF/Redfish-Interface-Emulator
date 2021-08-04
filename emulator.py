@@ -390,9 +390,10 @@ def get_odata():
 
         odata_json = ""
 
-        if os.path.exists('Resources/odata/index.json'):
+        if os.path.exists('Resources//odata//index.json'):
             # Use dynamic data source
             filename = 'Resources/odata/index.json'
+            logging.info ('Resources path exists:', filename)
         else:
             # Use static mockup
             mockup_path = MOCKUPFOLDERS[0]
@@ -404,6 +405,7 @@ def get_odata():
                 odata_json += line
 
         resp = make_response(odata_json, 200)
+        resp.headers['Content-Type'] = 'application/json'
         return resp
 
     except Exception:
