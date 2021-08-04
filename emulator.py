@@ -382,6 +382,36 @@ def get_metadata():
         resp = error_response('Internal Server Error', 500, True)
     return resp
 
+# Return odata
+@g.app.route('/redfish/v1/odata')
+def get_odata():
+    logging.info ('In get_odata')
+    try:
+
+        odata_json = ""
+
+        if os.path.exists('Resources/odata/index.json'):
+            # Use dynamic data source
+            filename = 'Resources/odata/index.json'
+        else:
+            # Use static mockup
+            mockup_path = MOCKUPFOLDERS[0]
+            filename = os.path.join("api_emulator", mockup_path, 'static', 'odata', 'index.json')
+
+        with open(filename, 'r') as var:
+            for line in var:
+                line = line.rstrip()
+                odata_json += line
+
+        resp = make_response(odata_json, 200)
+        return resp
+
+    except Exception:
+        traceback.print_exc()
+        resp = error_response('Internal Server Error', 500, True)
+    return resp
+
+
 #
 # If any other RESTful request, send to RedfishAPI object for processing. Note: <path:path> specifies any path
 #
