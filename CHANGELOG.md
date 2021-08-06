@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.6] - 2021-08-06
+- Added support for /redfish/v1/odata
+- Fixed usage of /redfish/v1/$metadata
+
 ## [1.1.5] - 2021-06-18
 - Added Dockerfile to build Docker containers
 
