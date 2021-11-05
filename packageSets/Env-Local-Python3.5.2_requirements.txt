@@ -11,5 +11,5 @@ pytz==2017.2
 requests==2.20.0
 six==1.10.0
 StringGenerator==0.2.0
-urllib3==1.24.2
+urllib3==1.26.5
 Werkzeug==0.15.3
