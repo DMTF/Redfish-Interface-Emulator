@@ -1,4 +1,4 @@
-Copyright 2016-2019 DMTF. All rights reserved.
+Copyright 2016-2022 DMTF. All rights reserved.
 
 # Redfish Interface Emulator
 
@@ -10,30 +10,52 @@ Dynamic emulator is accomplished by creating the Python files.  The code for an 
 
 The Swordfish model has been emulate using this emulator.  The repository is available at [Swordfish API Emulator](https://github.com/SNIA/Swordfish-API-Emulator).  The repository provides a good example of the Python files for dynamic resources.
 
-The emulator is structure so it can be hosted on a standalone system or multiple instances in a Cloud Foundry.  Note: the cloud foundry method has be successful within a company internal cloud foundry service. It has not be attempted on a public cloud foundry service.
+The program has been verified on 3.5.2 and 3.9.1. Use the packet sets to install the correct packages.
 
-This program is a python35 program.  The program has been verified on 3.5.2.
+The emulator is structure so it can be ran locally, in a   Cloud Foundry, or as a Docker file.
 
-## Installation
+## Execute Locally
 
-Before the emulator can be executed locally, specific Python packages need to be installed.
+When executing the Emulator locally, the Redfish service appears at port 5000, by default.  The Redfish client uses the following URL to access the emulator Redfish server - http://localhost:5000.  To run a second instance must a different 'port'. The port number can be changed via the command line parameters or the config.json file.
 
-### Local Standalone
+### Package Installation
 
-The required python packages for a local environment are listed in the file **./packageSets/Env-Local-Python3.5.2_requirements.txt**.  The file lists the Python package and revision.
+The required python packages are listed in the files in the **./packageSets** directory.
 
 The 'pip' command can be used to install the environment.
 
 	pip install -r [packageSet]
 
-The 'pip freeze' command can be used to display the installed packages and their revision.
+If you are able to execute this emulator on later versions of Python, please issue the 'pip freeze' command.  Then place the output into a Github issue. We can add the package set to this repository.
 
-### Cloud
+### Invocation
+
+Edit the emulator-config.json file and set **"MODE": "Local"**, then start the emulator.
+
+	python emulator.py
+
+## Execute on a Cloud Foundry
+
+The cloud foundry method has be successful within a company internal cloud foundry service. It has not be attempted on a public cloud foundry service.
+
+### Package Installation
 
 The required python packages for a Cloud Foundry environment are listed in the file **./requirements.txt**.  The file lists the Python package, without the revision.
 The packages will be installed automatically during invocation.
 
-### Docker
+The cloud foundry makes use of the following files: requirements.txt, runtime.txt, and Profile. So they should exists in the same directory as emulator.py.
+
+### Invocation
+
+Edit the emulator-config.json file and set **"MODE": "Cloud"**, then push the emulator to the foundry.
+
+	cf push [foundry-app-name]
+
+The **foundry-app-name** determines the URL for the Redfish service.
+
+## Execute via Docker
+
+### Installation
 
 Use one of these actions to pull or build the container:
 
@@ -53,25 +75,7 @@ Use one of these actions to pull or build the container:
     docker build -t dmtf/redfish-interface-emulator:latest https://github.com/DMTF/Redfish-Interface-Emulator.git
     ```
 
-## Invocation
-
-### Standalone
-
-Edit the emulator-config.json file and set **"MODE": "Local"**, then start the emulator.
-
-	python emulator.py
-
-### Cloud Foundry
-
-Edit the emulator-config.json file and set **"MODE": "Cloud"**, then push the emulator to the foundry.
-
-	cf push [foundry-app-name]
-
-The **foundry-app-name** determines the URL for the Redfish service.
-
-The cloud foundry makes use of the following files: requirements.txt, runtime.txt, and Profile. So they should exists in the same directory as emulator.py.
-
-### Docker
+### Invocation
 
 This command runs the container with the built-in mockup:
 
@@ -133,31 +137,37 @@ When HTTPS is enabled, the emulator looks for the files: **server.crt** and **se
 
 ## Static emulation of a mockup
 
-The emulator can be used to support mockups, statically. The means on HTTP GETs will work.  This can be done by just copying the mockup hierarchy to the ./static folder.
+The emulator can be used to support static mockups. In a static mock, only HTTP GETs will work.  Other Redfish simulators support static mockups.
 
-The static mockup is found in the directory ./api_emulator/redfish/static.  The emulator comes with a sample Redfish mockup.  This can be replaced with any mockup folder. The Redfish Forum has posted several of their mockups in [DSP2043](https://www.dmtf.org/sites/default/files/DSP2043_1.2.0.zip).
+The static mockup is found in the directory ./api_emulator/redfish/static.  The emulator comes with a sample Redfish mockup already in the directory.  This can be replaced with any mockup folder hierarchy. The Redfish Forum has posted several of their mockups in [DSP2043](https://www.dmtf.org/sites/default/files/DSP2043_1.2.0.zip).
 
 Note: If the new mockup has additional resources in the ServiceRoot, then modifications need to be made in static_resource_emulator.py to adds these new resources.
 
 ## Dynamic emulation
-The emulator was designed to support dynamic resources.  This requires that Python code exists for each dynamic resource. Resources can be incremental recasted as dynamic, so one can straddle static vs dynamic emulation, with some resources static while others are dynamic.
+The emulator was designed to support dynamic resources.  This requires that Python code exists for each dynamic resource. Resources which are static and dynamic can co-exist in an emulator. This means one can straddle static vs dynamic emulation, with some resources static while others are dynamic.
 
-The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.  An example for the Chassis resource is included in the source code.
+The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.
 
-1. Create an API file (e.g. Chassis\_api.py)
-    * The file is placed in the ./api\_emulator/Redfish directory
-    * The file contain the behavior of each HTTP command, of interest
-    * The file contains the API for both the singleton resource and the collection resource (if collection exists)
-2. Create a template file (e.g. Chassis.py)
-    * The file is placed in ./api\_emulator/Redfish/template directory
-    * The file should contain the same properties as the mockup file for the resource
-3. Edit ./api\_emulator/resource\_emulator.py file
-    * Comment out the line which loads the static mockup for the Chassis resource
-    * Add the line to add the resource API defined in chassis_api.py
+To automate step #1 and #2, below, code generators exists in the ./codegen directory.
+
+### Manually creating a dynamic resource
+A dynamic resource is made by creating a template-file and an API-file for the resource.
+
+* The template-file contain the properties of the resource.  The file is used when a new instance of the resource is created.
+* The API-file contain the behavior of the resource for each HTTP command.  If there is an associated collection resource, the file also contains the behavior of the collection resource.
+
+Once the files are created, they are placed in the emulator directory structure.
+
+* The template-file is placed in the directory ./api\_emulator/Redfish/template
+* The API-file is placed in the directory ./api\_emulator/Redfish
+* If the resource in the Service Root, the the emulator.py file needs to be edited.
+	* If the dynamic resource replaces a static resource, then replace the line which loads the static mockup with the line to add to dynamic resource API.
 
 To automate step #1 and #2, above, a code generator exists in the ./codegen directory.
 
-#### Auto-generate the API file
+Finally, the appendix lists the dynamic resources that are currently implemented.
+
+### Auto-generate the API file
 To generate a API file, execute the following command
 
 	codegen_api [mockup] [outputdir]
@@ -172,7 +182,7 @@ The generated code supports the HTTP GET, PATCH, POST and DELETE commands
 
 If the resource has subordinate resources that need to be instantiated when this resource is instantiated, that code will need to be manually added.
 
-#### Auto-generate the template file
+### Auto-generate the template file
 To generate a template file, execute the following command
 
 	codegen_template [mockup] [outputdir]
@@ -187,7 +197,7 @@ Where
 
 The codegen_template source file contains a dictionary with the names of Redfish collections and their corresponding wildcard.  This dictionary needs to be manually updated to the keep in sync with Redfish modeling. 
 
-## Populating the dynamic emulator - INFRAGEN Module
+## Auto-populating the dynamic emulator
 
 Once a resource is made dynamic, the emulator can either start up with no members in its collections or some initial set of members.
 
@@ -308,3 +318,49 @@ sh release.sh <NewVersion>
 ```
 
 Enter the release notes when prompted; an empty line signifies no more notes to add.
+
+# Appendix - Available Dynamic Resources
+
+## In SNIA API Emulator
+
+| API-file          | Resource
+| :---              | :---                                
+| Chassis_api./Chassis/{id} | ./Chassis/{id}     
+| ComputerSystem_api | ./Systems/{id}
+| Subscriptions |
+| c_memory |
+| classofservice |
+| dataprotectionloscapabilities |
+| datasecurityloscapabilities |
+| datastorageloscapabilities |
+| Drives | ./Drives
+| EndpointGroups |
+| Endpoints |
+| Fabric_Connections |
+| Fabric_EndpointGroups |
+| Fabric_Endpoints |
+| Fabric_Switches |
+| Fabric_Switch_Ports |
+| Fabric_Zones |
+| Fabric_Ports |
+| FabricAdapters |
+| filesystems |
+| IOConnectivityLOSCapabilities |
+| IOPerformanceLOSCapabilities |
+| mc_ports |
+| mc_ports |
+| MediaControllers |
+| Memory |
+| Memory_Domains |
+| networkadapters_ap |
+| networkdevicefunctions_api |
+| nwports_api |
+| serviceroot_api |
+| storage_api |
+| storagecontroller_api |
+| storagegroups_api |
+| storagepools_api |
+| storageservices_api |
+| storagesystems_api |
+| volumes_api |
+ 
