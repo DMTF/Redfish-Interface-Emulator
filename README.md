@@ -321,13 +321,15 @@ Enter the release notes when prompted; an empty line signifies no more notes to 
 
 # Appendix - Available Dynamic Resources implementations
 
-The emulator is made dynamic by added python code to emulate a resources RESTful behavior, call the API-file.
+The emulator is made dynamic by added python code to emulate a resources RESTful behavior, call the API-file. 
+
+Dynamic resources implementations can be found in the Redfish Interface Emulator repository and the SNIA API Emulator repository.
+
+The repository also had the codegen_api code generator for creating an API-file for a resource with some default behaviors.  The code generator takes a mockup file as input.
+
+## Redfish Interface Emulator
 
 The Redfish Interface Emulator comes with a small set of API-files to demonstrate the code structure.  The repository also had the codegen_api code generator for creating an API-file for a resource with some default behaviors.  The code generator takes a mockup file as input.
-
-The Swordfish API Emulator added the API-files to emulate the Swordfish schema.
-
-## In Redfish Interface Emulator
 
 These dynamic resources are available in the [Redfish Interface Emulator repository](https://github.com/dmtf/Redfish-Interface-Emulator) in the api_emulator/redfish directory.
 
@@ -347,7 +349,9 @@ These dynamic resources are available in the [Redfish Interface Emulator reposit
 | ./Managers/{id} | Manager_api.py   
 
 
-## In SNIA API Emulator
+## SNIA API Emulator
+
+The Swordfish API Emulator added the API-files to emulate the Swordfish schema.
 
 These dynamic resources are available in the [SNIA API Emulator repository](https://github.com/SNIA/Swordfish-API-Emulator) in the api_emulator/redfish directory.
 
@@ -373,7 +377,6 @@ These dynamic resources are available in the [SNIA API Emulator repository](http
 | ./Fabrics/{id}/Switches/{id} | f_switches.py 
 | ./Fabrics/{id}/Switches/{id}/Ports/{id} | f_switch_ports_api.py
 | ./Fabrics/{id}/Zones/{id} | f_zones_api.py
-| ./Fabrics/{id}/Ports/{id} | fa_ports_api.py
 | ./Fabrics/{id}/FabricAdapters/{id} | fabricadapters.py
 | ./Fabrics/{id}/FabricAdapters/{id}/Ports/{id} | fa_ports_api.py
 | ./Storage | storage_api.py
