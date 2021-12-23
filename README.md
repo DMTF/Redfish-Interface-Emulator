@@ -146,9 +146,9 @@ Note: If the new mockup has additional resources in the ServiceRoot, then modifi
 ## Dynamic emulation
 The emulator was designed to support dynamic resources.  This requires that Python code exists for each dynamic resource. Resources which are static and dynamic can co-exist in an emulator. This means one can straddle static vs dynamic emulation, with some resources static while others are dynamic.
 
-The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory.
+Dynamic resource implementations which have been implemented are provided in the Appendix.
 
-To automate step #1 and #2, below, code generators exists in the ./codegen directory.
+The following outlines the overall process. More complete documentation is in a Word document in the ./doc directory. To expedite the creation of the API-file and template file, the code generators for both files are described.
 
 ### Manually creating a dynamic resource
 A dynamic resource is made by creating a template-file and an API-file for the resource.
@@ -162,10 +162,6 @@ Once the files are created, they are placed in the emulator directory structure.
 * The API-file is placed in the directory ./api\_emulator/Redfish
 * If the resource in the Service Root, the the emulator.py file needs to be edited.
 	* If the dynamic resource replaces a static resource, then replace the line which loads the static mockup with the line to add to dynamic resource API.
-
-To automate step #1 and #2, above, a code generator exists in the ./codegen directory.
-
-Finally, the appendix lists the dynamic resources that are currently implemented.
 
 ### Auto-generate the API file
 To generate a API file, execute the following command
