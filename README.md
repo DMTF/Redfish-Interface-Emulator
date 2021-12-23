@@ -319,48 +319,80 @@ sh release.sh <NewVersion>
 
 Enter the release notes when prompted; an empty line signifies no more notes to add.
 
-# Appendix - Available Dynamic Resources
+# Appendix - Available Dynamic Resources implementations
+
+The emulator is made dynamic by added python code to emulate a resources RESTful behavior, call the API-file.
+
+The Redfish Interface Emulator comes with a small set of API-files to demonstrate the code structure.  The repository also had the codegen_api code generator for creating an API-file for a resource with some default behaviors.  The code generator takes a mockup file as input.
+
+The Swordfish API Emulator added the API-files to emulate the Swordfish schema.
+
+## In Redfish Interface Emulator
+
+These dynamic resources are available in the [Redfish Interface Emulator repository](https://github.com/dmtf/Redfish-Interface-Emulator) in the api_emulator/redfish directory.
+
+| Resource          | API-file
+| :---              | :---   
+| ./CompositionService | CompositionService_api.py  
+| ./EventService | event_service.py  
+| ./SessionService |  
+| ./SessionService/Sessions/{id} | sessions_api.py  
+| ./Chassis/{id} | Chassis_api.py     
+| ./Chassis/{id}/Thermal | thermal_api.py  
+| ./Chassis/{id}/Power | power_api.py  
+| ./Systems/{id} | ComputerSystem_api.py  
+| ./Systems/{id}/Memory | memory.py  
+| ./Systems/{id}/Processors/{id} | processor.py   
+| ./Systems/{id}/SimpleStorage/{id} | simple_storage.py  
+| ./Managers/{id} | Manager_api.py   
+
 
 ## In SNIA API Emulator
 
+These dynamic resources are available in the [SNIA API Emulator repository](https://github.com/SNIA/Swordfish-API-Emulator) in the api_emulator/redfish directory.
+
 | API-file          | Resource
 | :---              | :---                                
-| Chassis_api./Chassis/{id} | ./Chassis/{id}     
-| ComputerSystem_api | ./Systems/{id}
-| Subscriptions |
-| c_memory |
-| classofservice |
-| dataprotectionloscapabilities |
-| datasecurityloscapabilities |
-| datastorageloscapabilities |
-| Drives | ./Drives
-| EndpointGroups |
-| Endpoints |
-| Fabric_Connections |
-| Fabric_EndpointGroups |
-| Fabric_Endpoints |
-| Fabric_Switches |
-| Fabric_Switch_Ports |
-| Fabric_Zones |
-| Fabric_Ports |
-| FabricAdapters |
-| filesystems |
-| IOConnectivityLOSCapabilities |
-| IOPerformanceLOSCapabilities |
-| mc_ports |
-| mc_ports |
-| MediaControllers |
-| Memory |
-| Memory_Domains |
-| networkadapters_ap |
-| networkdevicefunctions_api |
-| nwports_api |
-| serviceroot_api |
-| storage_api |
-| storagecontroller_api |
-| storagegroups_api |
-| storagepools_api |
-| storageservices_api |
-| storagesystems_api |
-| volumes_api |
+| . | serviceroot_api
+| ./EventService/Subscriptions | Subscriptions.py
+| ./Chassis/{id} | Chassis_api.py     
+| ./Chassis/{id}/Memory | c_memory  
+| ./Chassis/{id}/Drives/{id} | drives_api.py
+| ./Chassis/{id}/NetworkAdapters | networkadapaters_api.py
+| ./Chassis/{id}/NetworkAdapters/{id}/NetworkDeviceFunctions/{id} | networkdevicefunctions_api.py  
+| ./Chassis/{id}/NetworkAdapters/{id}/Ports/{id} | nwports_api\.py
+| ./Systems/{id} | ComputerSystem_api.py   
+| ./Systems/{id}/Storage/{id}/Volumes/{id} | volumes_api  
+| ./Systems/{id}/Storage/{id}/StoragePools/{id} | storagepools_api.py  
+| ./Systems/{id}/Memory/{id} | memory.py
+| ./Systems/{id}/Memory/{id}/MemoryDomains/{id} | memory_domains_api.py
+| ./Systems/{id}/Memory/{id}/MemoryDomains/{id}/MemoryChunks/{id} | md_chunks_api.py
+| ./Fabrics/{id}/Connections/{id} | f_connections.py   
+| ./Fabrics/{id}/EndpointGroups/{id} | f_endpointgroups.py
+| ./Fabrics/{id}/Endpoints/{id} | f_endpoints.py
+| ./Fabrics/{id}/Switches/{id} | f_switches.py 
+| ./Fabrics/{id}/Switches/{id}/Ports/{id} | f_switch_ports_api.py
+| ./Fabrics/{id}/Zones/{id} | f_zones_api.py
+| ./Fabrics/{id}/Ports/{id} | fa_ports_api.py
+| ./Fabrics/{id}/FabricAdapters/{id} | fabricadapters.py
+| ./Fabrics/{id}/FabricAdapters/{id}/Ports/{id} | fa_ports_api.py
+| ./Storage | storage_api.py
+| ./Storage/{id}/Controllers/{id} | storagecontrollers_api
+| ./StorageSystems/{id} | storagesystems_api.py
+| | storagegroups_api.py
+| | classofservice_api.py  
+| | dataprotectionloscapabilities_api.py   
+| | datasecurityloscapabilities_api.py   
+| | datastorageloscapabilities_api.py   
+| | EndpointGroups_api.py   
+| | Endpoints_api.py   
+| | filesystems_api.py   
+| | IOConnectivityLOSCapabilities_api.py   
+| | IOPerformanceLOSCapabilities_api.py   
+| | mc_ports_api.py  
+| | MediaControllers_api.py  
+
+
+
+
  
