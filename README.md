@@ -378,18 +378,18 @@ These dynamic resources are available in the [SNIA API Emulator repository](http
 | ./Storage | storage_api.py
 | ./Storage/{id}/Controllers/{id} | storagecontrollers_api
 | ./StorageSystems/{id} | storagesystems_api.py
-| | storagegroups_api.py
-| | classofservice_api.py  
-| | dataprotectionloscapabilities_api.py   
-| | datasecurityloscapabilities_api.py   
-| | datastorageloscapabilities_api.py   
-| | EndpointGroups_api.py   
-| | Endpoints_api.py   
-| | filesystems_api.py   
-| | IOConnectivityLOSCapabilities_api.py   
-| | IOPerformanceLOSCapabilities_api.py   
-| | mc_ports_api.py  
-| | MediaControllers_api.py  
+| ./Storage/{id}/StorageGroups  | storagegroups_api.py
+| ./StorageServices/{id}/ClassesOfService | classofservice_api.py  
+| ./StorageServices/{id}/DataProtectionLoSCapabilities | dataprotectionloscapabilities_api.py   
+| ./StorageServices/{id}/DataSecurityLoSCapabilities | datasecurityloscapabilities_api.py   
+| ./StorageServices/{id}/DataStorageLoSCapabilities| datastorageloscapabilities_api.py   
+| ./StorageServices/{id}/EndpointGroups | EndpointGroups_api.py   
+| ./StorageServices/{id}/Endpoints | Endpoints_api.py   
+| ./Storage/{id}/FileSystems | filesystems_api.py   
+| ./StorageServices/{id}/IOConnectivityLoSCapabilities | IOConnectivityLOSCapabilities_api.py   
+| ./StorageServices/{id}/IOPerformanceLoSCapabilities | IOPerformanceLOSCapabilities_api.py   
+| ./Chassis/{id}/MediaControllers/{id}/Ports| mc_ports_api.py  
+| ./Chassis/{id}/MediaController | MediaControllers_api.py  
 
 
 
