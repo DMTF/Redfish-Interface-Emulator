@@ -358,6 +358,8 @@ These dynamic resources are available in the [SNIA API Emulator repository](http
 | ./Chassis/{id} | Chassis_api.py     
 | ./Chassis/{id}/Memory | c_memory  
 | ./Chassis/{id}/Drives/{id} | drives_api.py
+| ./Chassis/{id}/MediaController | MediaControllers_api.py  
+| ./Chassis/{id}/MediaControllers/{id}/Ports| mc_ports_api.py  
 | ./Chassis/{id}/NetworkAdapters | networkadapaters_api.py
 | ./Chassis/{id}/NetworkAdapters/{id}/NetworkDeviceFunctions/{id} | networkdevicefunctions_api.py  
 | ./Chassis/{id}/NetworkAdapters/{id}/Ports/{id} | nwports_api\.py
@@ -377,21 +379,15 @@ These dynamic resources are available in the [SNIA API Emulator repository](http
 | ./Fabrics/{id}/FabricAdapters/{id}/Ports/{id} | fa_ports_api.py
 | ./Storage | storage_api.py
 | ./Storage/{id}/Controllers/{id} | storagecontrollers_api
-| ./StorageSystems/{id} | storagesystems_api.py
+| ./Storage/{id}/FileSystems | filesystems_api.py  
 | ./Storage/{id}/StorageGroups  | storagegroups_api.py
+| ./StorageSystems/{id} | storagesystems_api.py
 | ./StorageServices/{id}/ClassesOfService | classofservice_api.py  
 | ./StorageServices/{id}/DataProtectionLoSCapabilities | dataprotectionloscapabilities_api.py   
 | ./StorageServices/{id}/DataSecurityLoSCapabilities | datasecurityloscapabilities_api.py   
 | ./StorageServices/{id}/DataStorageLoSCapabilities| datastorageloscapabilities_api.py   
 | ./StorageServices/{id}/EndpointGroups | EndpointGroups_api.py   
 | ./StorageServices/{id}/Endpoints | Endpoints_api.py   
-| ./Storage/{id}/FileSystems | filesystems_api.py   
 | ./StorageServices/{id}/IOConnectivityLoSCapabilities | IOConnectivityLOSCapabilities_api.py   
 | ./StorageServices/{id}/IOPerformanceLoSCapabilities | IOPerformanceLOSCapabilities_api.py   
-| ./Chassis/{id}/MediaControllers/{id}/Ports| mc_ports_api.py  
-| ./Chassis/{id}/MediaController | MediaControllers_api.py  
 
-
-
-
- 
