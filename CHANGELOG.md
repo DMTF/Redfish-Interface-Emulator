@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.7] - 2022-01-10
+- Added requirements for Python 3.9
+
 ## [1.1.6] - 2021-08-06
 - Added support for /redfish/v1/odata
 - Fixed usage of /redfish/v1/$metadata
