@@ -180,6 +180,12 @@ class ComputerSystemCollectionAPI(Resource):
 
     def verify(self, config):
         #TODO: Implement a method to verify that the POST body is valid
+        if 'Id' not in config:
+            return False, "Missing attribute: Id"
+        if 'Links' not in config:
+            return False, "Missing attribute: Links"
+        if 'ResourceBlocks' not in config['Links']:
+            return False, "Missing array: Links['ResourceBlocks']"
         return True,{}
 
     # HTTP POST
@@ -199,7 +205,8 @@ class ComputerSystemCollectionAPI(Resource):
                 resp = msg, 400
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
+            resp = "Internal Server Error", INTERNAL_ERROR
+
         return resp
 
         '''
