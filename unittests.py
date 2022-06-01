@@ -133,15 +133,50 @@ class TestRedfishEmulator(unittest.TestCase):
 
         self.do_gets(params, logger)
 
+    def test_redfish_create_system_status_codes(self):
+        """
+        Unit test to get resource of a system instance
+
+        NOTE: The emulator must be in the redfish mode to run this test
+        """
+        self.log_file = 'test-create-system-status-codes.log'
+        logger = self.get_logger(
+            'test-create-system-status-codes',
+            self.log_file)
+
         with open('test-composed.json') as payload:
             headers = {'Content-Type': 'application/json'}
             r = requests.post(self.url('Systems'), data=payload, headers=headers)
-            self.do_gets([(self.url('Systems/Composed-1'), 'ComposedSystem member')], logger)
+            self.assert_status(r, 400, logger)
+
+        r = requests.get(self.url('Systems/Composed-1'))
+        self.assert_status(r, 404, logger)
 
         # Testing deleting the system instance (expect to fail with 404)
         r = requests.delete(self.url('Systems/Composed-1'))
+        self.assert_status(r, 404, logger)
+
+    def test_redfish_create_system(self):
+        """
+        Unit test to get resource of a system instance
+
+        NOTE: The emulator must be in the redfish mode to run this test
+        """
+        self.log_file = 'test-create-system-status-codes.log'
+        logger = self.get_logger(
+            'test-create-system-status-codes',
+            self.log_file)
+
+        with open('test-composed-with-id.json') as payload:
+            headers = {'Content-Type': 'application/json'}
+            r = requests.post(self.url('Systems'), data=payload, headers=headers)
+            self.assert_status(r, 201, logger)
+
+        r = requests.get(self.url('Systems/Composed-1'))
         self.assert_status(r, 200, logger)
-	    #logger.info('PASS: Unable to delete system instance')
+
+        r = requests.delete(self.url('Systems/Composed-1'))
+        self.assert_status(r, 200, logger)
 
 if __name__ == '__main__':
     #main(sys.argv[2:])
