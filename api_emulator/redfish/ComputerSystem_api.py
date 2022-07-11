@@ -129,15 +129,14 @@ class ComputerSystemAPI(Resource):
         logging.info('ComputerSystemAPI DELETE called')
         try:
             if ident in members:
-                #if members[ident]['SystemType'] == 'Composed':
-                #    # Delete a composed system
-                #    resp = DeleteComposedSystem(ident)
-                #    resp = 200
-                #else:
-                # Delete a physical system
-                member = members[ident]
-                del(members[ident])
-                resp = member, 200
+                if 'SystemType' in members[ident] and members[ident]['SystemType'] == 'Composed':
+                    # Delete a composed system
+                    resp = DeleteComposedSystem(ident)
+                    resp = 200
+                else:
+                    # Delete a physical system
+                    del(members[ident])
+                    resp = 200
             else:
                 resp = "System " + ident + " not found", 404
         except Exception:
