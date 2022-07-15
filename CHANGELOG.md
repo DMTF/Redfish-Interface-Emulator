@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.8] - 2022-07-15
+- Various fixes to handling of composition requests
+
 ## [1.1.7] - 2022-01-10
 - Added requirements for Python 3.9
 
