@@ -72,15 +72,16 @@ class ComputerSystemAPI(Resource):
         logging.info('ComputerSystemAPI GET called')
         try:
             # Find the entry with the correct value for Id
-            resp = 404
             if ident in members:
                 conf= members[ident]
                 conf['ProcessorSummary']=self.processor_summary(ident)
                 conf['MemorySummary']=self.memory_summary(ident)
                 resp = conf, 200
+            else:
+                resp = "System " + ident + " not found" , 404
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
+            resp = "Internal Server Error", INTERNAL_ERROR
         return resp
 
     # HTTP PUT
@@ -127,9 +128,8 @@ class ComputerSystemAPI(Resource):
     def delete(self, ident):
         logging.info('ComputerSystemAPI DELETE called')
         try:
-            resp = 404
             if ident in members:
-                if members[ident]['SystemType'] == 'Composed':
+                if 'SystemType' in members[ident] and members[ident]['SystemType'] == 'Composed':
                     # Delete a composed system
                     resp = DeleteComposedSystem(ident)
                     resp = 200
@@ -137,9 +137,11 @@ class ComputerSystemAPI(Resource):
                     # Delete a physical system
                     del(members[ident])
                     resp = 200
+            else:
+                resp = "System " + ident + " not found", 404
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
+            resp = "Internal Server Error", INTERNAL_ERROR
         return resp
 
    
@@ -180,6 +182,12 @@ class ComputerSystemCollectionAPI(Resource):
 
     def verify(self, config):
         #TODO: Implement a method to verify that the POST body is valid
+        if 'Id' not in config:
+            return False, "Missing attribute: Id"
+        if 'Links' not in config:
+            return False, "Missing attribute: Links"
+        if 'ResourceBlocks' not in config['Links']:
+            return False, "Missing array: Links['ResourceBlocks']"
         return True,{}
 
     # HTTP POST
@@ -193,13 +201,15 @@ class ComputerSystemCollectionAPI(Resource):
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
             if ok:
+                config["@odata.id"]= "/redfish/v1/Systems/"+ config['Id']
                 members[config['Id']] = config
                 resp = config, 201
             else:
                 resp = msg, 400
         except Exception:
             traceback.print_exc()
-            resp = INTERNAL_ERROR
+            resp = "Internal Server Error", INTERNAL_ERROR
+
         return resp
 
         '''
