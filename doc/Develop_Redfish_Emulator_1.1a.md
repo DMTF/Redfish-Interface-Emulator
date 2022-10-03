@@ -471,90 +471,51 @@ When the API should be available in the model will determine where the api.add_r
 
 # Emulator Source Tree
 
-## Root directory
-
 This directory contain source for the root of the source tree. The following subdirectories are described in greater detail below:
 
 -   root
 -   api_emulator
 -   api_emulator/redfish (Redfish resources)
 
-+---------------------+------------------------------------------------+
-| **Files &           | **Description of Contents**                    |
-| Directories**       |                                                |
-+=====================+================================================+
-| Emulator.py         | The main Python file for the emulator. Reads   |
-|                     | the emulator-config.json file.                 |
-+---------------------+------------------------------------------------+
-| E                   | Contains configuration properties for the      |
-| mulator-config.json | emulator. See description above.               |
-|                     |                                                |
-+---------------------+------------------------------------------------+
-| Install.py          | Installs all the dependencies for python       |
-|                     | packages which are present in 'Dependencies'   |
-|                     | folder. This file is used to prepare the local |
-|                     | environment to run the emulator.               |
-+---------------------+------------------------------------------------+
-| Requirements.txt    | The file lists the python packages which are   |
-|                     | required to be installed. The Cloud Foundry    |
-|                     | should install these packages automatically as |
-|                     | part of the \'cf push\'                        |
-+---------------------+------------------------------------------------+
-| ProcFile            | This file is used by the Cloud Foundry.        |
-|                     |                                                |
-|                     | The file specifies the command to execute      |
-|                     | after a successfully \'cf push\'               |
-+---------------------+------------------------------------------------+
-| Unittests.py        | Tests the emulator locally - few tests have    |
-|                     | been defined locally. Reads to                 |
-|                     | emulator-config.json file.                     |
-+---------------------+------------------------------------------------+
-| Unittest_data       | Used by unittest.py for testing purposes.      |
-+---------------------+------------------------------------------------+
-| ./Dependencies      | Directory which contains Python packages that  |
-|                     | need to be installed to support the emulator.  |
-|                     | These packages are referenced by install.py,   |
-|                     | when executed.                                 |
-+---------------------+------------------------------------------------+
+## Root directory
+
+The following table describes the files in the root directory
+
+| Files | Description      |
+| :---         | :---       |
+| emulator.py  | The main Python file for the emulator. |
+| emulator-conf.json | Configuration properties for the emulator |
+| install.py | Installs the dependent python packages which are present in Dependencies folder. |
+| requirements.txt | Lists the python packages which need to be installed\. The Cloud Foundry will install these packages as part of processing the \'cf push\ command. |
+| ProcFile | The file executed by the Cloud Foundry at the end of the \'cf push\' |
+| unittests.py | Tests the emulator locally. |
+| unittests.data | Used by unittest.py for testing purposes |
+
 
 ## api_emulator directory
 
-This directory contain source for the emulator infrastructure.
+The following table describes the files in the api-emulator directory.
 
-+---------------------+------------------------------------------------+
-| **Files &           | **Description of Contents**                    |
-| Directories**       |                                                |
-+=====================+================================================+
-| E                   | Loads the resources that become the resource   |
-| mulator_resource.py | pool. Components of tray are defined. See      |
-|                     | Resource/Systems.                              |
-+---------------------+------------------------------------------------+
-| Exception.py        | Exceptions thrown in the API Emulator          |
-+---------------------+------------------------------------------------+
-| Resource_manager.py | Loads and constructs the resources that are    |
-|                     | emulated. Loads both the static and dynamic    |
-|                     | resources. Loads the resource pool.            |
-|                     |                                                |
-|                     | Creation, deletion and utility of resources    |
-+---------------------+------------------------------------------------+
-| Static_loader.py    | Called by resource_manager.py to recursive     |
-|                     | load a static resource from the                |
-|                     | ./redfish/static directory. The recursion is   |
-|                     | performed by following the subordinate         |
-|                     | odata.id URI\'s in each resource.              |
-+---------------------+------------------------------------------------+
-| Utils.py            | Supporting functions                           |
-+---------------------+------------------------------------------------+
+| Files | Description      |
+| :---         | :---       |
+| emulator_resource.py  | Loads the resources that become the resoure pool. Components of the tray are defined |
+| exception.py | Exceptions thrown by the emulator |
+| resource_manager.py | Attaches the resources that are emulated.  Attaches both the static and dynamic resources. |
+| static_loader.py | Recursive loads static resources from the ./redfish/static directory. |
+| utils.py | Supporting functions |
 
 ## api_emulator/redfish directory
 
-This directory contain source for models for Redfish 1.0 specification.
+The following table describes the folders in the redfish directory.
 
-  -----------------------------------------------------------------------
-  **Files &              **Description of Contents**
-  Directories**          
-  ---------------------- ------------------------------------------------
-  ./                     Contains code for dynamic resources
-  ./static               Contains the mockup code for static resources.
-  ./templates            Contains the template files for the dynamic resources.
-  -----------------------------------------------------------------------
+| Foldrs | Description      |
+| :---         | :---       |
+| ./  | Contains the implementatons for each dynamic resource's API |
+| ./static | Contains the mockups for the statis resources |
+| ./templates | Contains the templates for each dynamic resource. |
+  
+# ANNEX A (informative) Change log
+
+| Version | Date       | Description |
+| :---    | :---       | :---        |
+| 1.0.0   | 2020-03-27 | Initial release. Converted from Word document. |
