@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.9] - 2023-02-10
+- Updated various package versions based on GitHub recommendations
+
 ## [1.1.8] - 2022-07-15
 - Various fixes to handling of composition requests
 
