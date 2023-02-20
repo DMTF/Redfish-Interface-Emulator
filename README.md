@@ -1,4 +1,4 @@
-Copyright 2016-2022 DMTF. All rights reserved.
+Copyright 2016-2023 DMTF. All rights reserved.
 
 # Redfish Interface Emulator
 
@@ -20,13 +20,9 @@ When executing the Emulator locally, the Redfish service appears at port 5000, b
 
 ### Package Installation
 
-The required python packages are listed in the files in the **./packageSets** directory.
+Several external packages are required for this tool.  You may install the prerequisites by running:
 
-The 'pip' command can be used to install the environment.
-
-	pip install -r [packageSet]
-
-If you are able to execute this emulator on later versions of Python, please issue the 'pip freeze' command.  Then place the output into a Github issue. We can add the package set to this repository.
+    pip3 install -r requirements.txt
 
 ### Invocation
 
