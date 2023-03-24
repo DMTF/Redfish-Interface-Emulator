@@ -60,7 +60,7 @@ Use one of these actions to pull or build the container:
     ```bash
     docker pull dmtf/redfish-interface-emulator:latest
     ```
-* Build a container from local source. Make sure to change directory to the roof of the code that contains the Dockerfile :
+* Build a container from local source.  Make sure to run from the root directory of the code that contains the Dockerfile:
 
     ```bash
     docker build -t dmtf/redfish-interface-emulator:latest .
