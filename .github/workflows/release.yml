@@ -68,7 +68,7 @@ jobs:
         git config user.email "<>"
         git add CHANGELOG.md api_emulator/version.py
         git commit -s -m "${{github.event.inputs.version}} versioning"
-        git push origin master
+        git push origin main
     - name: Make the release
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

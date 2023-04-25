@@ -2,7 +2,7 @@
 #
 # Copyright Notice:
 # Copyright 2016-2019 DMTF. All rights reserved.
-# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md
+# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/main/LICENSE.md
 '''
     This program generates a dynamic template file for the Redfish Interface
     Emulator from a mockup file.
@@ -27,7 +27,7 @@ def write_program_header(outfile, base_program_name):
     outfile.write('#!/usr/bin/env python3\n')
     outfile.write('# Copyright Notice:\n')
     outfile.write('# Copyright 2017-2019 DMTF. All rights reserved.\n')
-    outfile.write('# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/master/LICENSE.md\n')
+    outfile.write('# License: BSD 3-Clause License. For full text see link: https://github.com/DMTF/Redfish-Interface-Emulator/blob/main/LICENSE.md\n')
     outfile.write('\n')
     outfile.write('# {0}.py\n'.format(base_program_name))
     outfile.write('\n')
