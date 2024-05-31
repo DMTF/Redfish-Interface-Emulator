@@ -1,6 +1,6 @@
 {
 	"@odata.type": "#Bios.v1_0_0.Bios",
-	"Id": "BIOS",
+	"Id": "Bios",
 	"Name": "BIOS Configuration Current Settings",
 	"AttributeRegistry": "BiosAttributeRegistryP89.v1_0_0",
 	"Attributes": {
@@ -25,19 +25,19 @@
 			]
 		}],
 		"SettingsObject": {
-			"@odata.id": "/redfish/v1/Systems/437XR1138R2/BIOS/Settings"
+			"@odata.id": "/redfish/v1/Systems/437XR1138R2/Bios/Settings"
 		},
 		"Time": "2016-03-07T14:44.30-05:00"
 	},
 	"Actions": {
 		"#Bios.ResetBios": {
-			"target": "/redfish/v1/Systems/437XR1138R2/BIOS/Actions/Bios.ResetBios"
+			"target": "/redfish/v1/Systems/437XR1138R2/Bios/Actions/Bios.ResetBios"
 		},
 		"#Bios.ChangePassword": {
-			"target": "/redfish/v1/Systems/437XR1138R2/BIOS/Actions/Bios.ChangePassword"
+			"target": "/redfish/v1/Systems/437XR1138R2/Bios/Actions/Bios.ChangePassword"
 		}
 	},
 	"@odata.context": "/redfish/v1/$metadata#Bios.Bios",
-	"@odata.id": "/redfish/v1/Systems/437XR1138R2/BIOS",
+	"@odata.id": "/redfish/v1/Systems/437XR1138R2/Bios",
 	"@Redfish.Copyright": "Copyright 2014-2016 DMTF. For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright."
 }

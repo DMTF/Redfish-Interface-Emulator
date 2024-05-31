@@ -124,13 +124,6 @@ INTERNAL_ERROR = error_response('Internal Server Error', 500)
 class PathError(Exception):
     pass
 
-@g.api.representation('application/xml')
-def output_xml(data, code, headers=None):
-    resp = make_response(data, code)
-    resp.headers.extend(headers or {})
-    resp.headers['Content-Type'] = 'text/xml; charset=ISO-8859-1'
-    return resp
-
 @g.api.representation('application/json')
 def output_json(data, code, headers=None):
     """
@@ -352,7 +345,7 @@ def serviceInfo():
 def browse():
     return render_template('browse.html')
 
-# Return metadata as type text/xml
+# Return metadata as type application/xml
 @g.app.route('/redfish/v1/$metadata')
 def get_metadata():
     logging.info ('In get_metadata')
@@ -365,7 +358,8 @@ def get_metadata():
             filename = 'Resources/$metadata/index.xml'
         else:
             # Use static mockup
-            mockup_path = MOCKUPFOLDERS[0]
+            # Static resource loader relies on the folder to be lower case, but inspects it based on the capitalization...
+            mockup_path = MOCKUPFOLDERS[0].lower()
             filename = os.path.join("api_emulator", mockup_path, 'static', '$metadata', 'index.xml')
 
         with open(filename, 'r') as var:
@@ -374,7 +368,7 @@ def get_metadata():
                 md_xml += line
 
         resp = make_response(md_xml, 200)
-        resp.headers['Content-Type'] = 'text/xml'
+        resp.headers['Content-Type'] = 'application/xml'
         return resp
 
     except Exception:

@@ -16,6 +16,6 @@
 		"UsbControl": "UsbEnabled"
 	},
 	"@odata.context": "/redfish/v1/$metadata#Bios.Bios",
-	"@odata.id": "/redfish/v1/Systems/437XR1138R2/BIOS/Settings",
+	"@odata.id": "/redfish/v1/Systems/437XR1138R2/Bios/Settings",
 	"@Redfish.Copyright": "Copyright 2014-2016 DMTF. For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright."
 }
