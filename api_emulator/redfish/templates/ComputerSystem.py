@@ -82,6 +82,12 @@ _TEMPLATE = \
            "InterfaceTypeSelection": "None"
         }
     ],
+    "Bios": {
+          "@odata.id":"{rb}Systems/{id}/Bios"
+          } ,
+    "SecureBoot":{
+        "@odata.id": "{rb}Systems/{id}/SecureBoot"
+    } ,
     "Processors": {
         "@odata.id": "{rb}Systems/{id}/Processors"
     },
@@ -129,6 +135,8 @@ def get_ComputerSystem_instance(wildcards):
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
     c['Id'] = c['Id'].format(**wildcards)
 
+    c['Bios']['@odata.id'] = c['Bios']['@odata.id'].format(**wildcards)
+    c['SecureBoot']['@odata.id'] = c['SecureBoot']['@odata.id'].format(**wildcards)
     c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
     c['Memory']['@odata.id'] = c['Memory']['@odata.id'].format(**wildcards)
     c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)

@@ -50,6 +50,11 @@ from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
 
+# Bios imports
+from .redfish.Bios_api import BiosAPI
+from .redfish.BiosSettings_api import BiosSettingsAPI
+
+
 mockupfolders = []
 
 # The ResourceManager __init__ method sets up the static and dynamic
@@ -220,6 +225,12 @@ class ResourceManager(object):
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
         g.api.add_resource(ResourceZoneAPI, '/redfish/v1/CompositionService/ResourceZones/<string:ident>',
                 resource_class_kwargs={'rb': g.rest_base})
+        
+        # Bios Resources
+        g.api.add_resource(BiosAPI, '/redfish/v1/Systems/<string:ident>/Bios', resource_class_kwargs={'rb': g.rest_base})
+        # Bios Settings Resources
+        g.api.add_resource(BiosSettingsAPI, '/redfish/v1/Systems/<string:ident>/Bios/Settings', resource_class_kwargs={'rb': g.rest_base})
+
 
 
     @property
