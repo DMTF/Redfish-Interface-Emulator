@@ -338,6 +338,8 @@ These dynamic resources are available in the [Redfish Interface Emulator reposit
 | ./Systems/{id}/Memory | memory.py  
 | ./Systems/{id}/Processors/{id} | processor.py   
 | ./Systems/{id}/SimpleStorage/{id} | simple_storage.py  
+| ./Systems/{id}/Bios | Bios_api.py   
+| ./Systems/{id}/Bios/Settings | BiosSettings_api.py  
 | ./Managers/{id} | Manager_api.py   
 
 
