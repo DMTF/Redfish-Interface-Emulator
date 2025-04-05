@@ -23,10 +23,10 @@ class BiosAPI(Resource):
     def get(self, ident):  # Add 'ident' to capture the system ID from the URL
         logging.info(f'BiosAPI GET called for system {ident}')
         try:
-            global config
+            global bios_config
             # Pass the extracted 'ident' (system ID) to get_Bios_instance
-            config = get_Bios_instance({'rb': self.rb, 'id': ident})  
-            return config, 200
+            bios_config = get_Bios_instance({'rb': self.rb, 'id': ident})  
+            return bios_config, 200
         except Exception:
             traceback.print_exc()
             return INTERNAL_ERROR
