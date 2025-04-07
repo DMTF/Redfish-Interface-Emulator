@@ -341,6 +341,7 @@ These dynamic resources are available in the [Redfish Interface Emulator reposit
 | ./Systems/{id}/Bios | Bios_api.py   
 | ./Systems/{id}/Bios/Settings | BiosSettings_api.py  
 | ./Managers/{id} | Manager_api.py   
+| ./Managers/{id}/VM1 | VirtualMedia_api.py
 
 
 ## SNIA API Emulator
