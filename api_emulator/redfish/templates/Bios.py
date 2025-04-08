@@ -87,11 +87,6 @@ def get_Bios_instance(wildcards):
         c['Actions']['#Bios.ChangePassword']['target'].format(rb=wildcards['rb'], id=wildcards['id'])
     )
 
-    logging.debug(f"Before replace_recurse: {c}")
-
     replace_recurse(c, wildcards)
-
-    logging.debug(f"After replace_recurse: {c}")
-
     return c
 

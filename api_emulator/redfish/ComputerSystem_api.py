@@ -10,7 +10,7 @@ Singleton  API:  GET, POST, PATCH, DELETE
 """
 
 import g
-from api_emulator.redfish.ComputerSystem.ResetActionInfo_template import get_ResetActionInfo_instance
+
 import sys, traceback
 import logging
 import copy
@@ -25,10 +25,9 @@ from .memory import members as memory
 from .ethernetinterface import members as ethernetinterfaces
 from .simplestorage import members as simplestorage
 from .ResourceBlock_api import members as resource_blocks
-from .templates.Bios import get_Bios_instance
-
-
-
+from api_emulator.redfish.ComputerSystem.ResetActionInfo_template import get_ResetActionInfo_instance
+from .BiosSettings_api import get_bios_settings
+from .Bios_api import get_bios_config, set_bios_config
 
 members = {}
 
@@ -53,19 +52,6 @@ class ComputerSystemAPI(Resource):
             wildcards = kwargs
         except Exception:
             traceback.print_exc()
-    
-    def bios_summary(self, ident):
-        bios_data = members.get(ident, {}).get("bios", {})
-        return {
-            "Status": {
-                "Health": bios_data.get("Health", "OK"),
-                "State": bios_data.get("State", "Enabled")
-            },
-            "BiosVersion": bios_data.get("BiosVersion", "Unknown"),
-            "Vendor": bios_data.get("Vendor", "Unknown"),
-            "LastUpdated": bios_data.get("LastUpdated", "N/A"),
-            "SettingsEditable": bios_data.get("SettingsEditable", False)
-        }
 
     def memory_summary(self,ident):
         totalsysmem=sum([x['CapacityMiB']for x in
@@ -91,7 +77,6 @@ class ComputerSystemAPI(Resource):
             # Find the entry with the correct value for Id
             if ident in members:
                 conf= members[ident]
-                conf['BiosSummary']=self.bios_summary(ident)
                 conf['ProcessorSummary']=self.processor_summary(ident)
                 conf['MemorySummary']=self.memory_summary(ident)
                 resp = conf, 200
@@ -113,7 +98,7 @@ class ComputerSystemAPI(Resource):
     # the identifier "ident", which is taken from the end of the URL.
     # PATCH commands can then be used to update the new instance.
     def post(self, ident):
-       
+
         logging.info('ComputerSystemAPI POST called')
         try:
             global config
@@ -121,30 +106,14 @@ class ComputerSystemAPI(Resource):
             wildcards['id'] = ident
             wildcards['linkMgr'] = 'UpdateWithPATCH'
             wildcards['linkChassis'] = ['UpdateWithPATCH']
-
-            # Read posted data
-            request_data = request.get_json(force=True)
-
-            # Initialize system entry
-            members[ident] = {}
-
-            # Extract and store BIOS if provided
-            bios_data = request_data.get('Bios', {})
-            members[ident]['Bios'] = bios_data
-            # Store rest of system config using your instance generator
-            config = get_ComputerSystem_instance(wildcards)
-
-            # You can also merge system info from request_data if needed
-            members[ident].update(config)
-
+            config=get_ComputerSystem_instance(wildcards)
+            members[ident]=config
             resp = config, 200
         except Exception:
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
-
-
-    # HTTP PATCH
+  # HTTP PATCH
     def patch(self, ident):
         logging.info('ComputerSystemAPI PATCH called')
         raw_dict = request.get_json(force=True)
@@ -304,7 +273,7 @@ def CreateComposedSystem(req):
         blocks = req['Links']['ResourceBlocks']
         map_zones = dict()
 
-        resource_ids={'Bios':[],'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
+        resource_ids={'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
 
         for block in blocks:
             block = block['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
@@ -363,18 +332,7 @@ def CreateComposedSystem(req):
                 # Add links to Processors, Memory, SimpleStorage, etc
                 for device_type in resource_ids.keys():
                     for device in resource_ids[device_type]:
-                        if device_type == 'Bios':
-                            device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/', '')
-                            device_back = device
-                            block = device.split('/', 1)[0]
-                            device = device.split('/', 1)[-1]
-                            device = device.split('/', 1)[-1]
-                            try:
-                                bios[req['Name']][device_back] = bios[block][device]
-                            except:
-                                bios[req['Name']] = {}
-                                bios[req['Name']][device_back] = bios[block][device]
-                        elif device_type == 'Processors':
+                        if device_type == 'Processors':
                             device = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
                             device_back = device
                             block = device.split('/', 1)[0]
@@ -444,7 +402,7 @@ def CreateComposedSystem(req):
 
 def DeleteComposedSystem(ident):
     rb = g.rest_base
-    resource_ids={'Bios':[],'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
+    resource_ids={'Processors':[],'Memory':[],'SimpleStorage':[],'EthernetInterfaces':[]}
 
     # Verify if the System exists and if is of type - "SystemType": "Composed"
     if ident in members:
@@ -467,11 +425,7 @@ def DeleteComposedSystem(ident):
             # Remove links to Processors, Memory, SimpleStorage, etc
             for device_type in resource_ids.keys():
                     for device in resource_ids[device_type]:
-                        if device_type == 'Bios':
-                                device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/', '')
-                                del bios[ident][device_back]
-                                if bios[ident] == {}: del bios[ident] # If no BIOS data remains, delete the entry
-                        elif device_type == 'Processors':
+                        if device_type == 'Processors':
                             device_back = device['@odata.id'].replace(rb + 'CompositionService/ResourceBlocks/','')
                             del processors[ident][device_back]
                             if processors[ident]=={}: del processors[ident]
@@ -531,16 +485,6 @@ class CreateComputerSystem(Resource):
             config = get_ComputerSystem_instance(wildcards)
             members[ident] = config
 
-            bios_config = get_Bios_instance(wildcards)  # Generate BIOS from template
-            members[ident]['Bios'] = bios_config  # Store BIOS in global dictionary
-            resource_dictionary.add_resource(f"Systems/{ident}/Bios", bios_config)
-            g.api.add_resource(
-            BiosAPI,
-            f"/redfish/v1/Systems/{ident}/Bios",
-            resource_class_kwargs={'rb': g.rest_base, 'system_id': ident}
-        )
-
-            
             ResetAction_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
             ResetActionInfo_API(resource_class_kwargs={'rb': g.rest_base,'sys_id': ident})
 
@@ -550,15 +494,14 @@ class CreateComputerSystem(Resource):
             resp = INTERNAL_ERROR
         logging.info('CreateComputerSystem init exit')
         return resp
-
-
+    
 class ComputerSystemResetAPI(Resource):
     def __init__(self, **kwargs):
         logging.info('ComputerSystemResetAPI init called')
         global wildcards  
         wildcards = kwargs  
 
-    
+
     def post(self, ident):
         logging.info(f'ComputerSystemResetAPI POST called for {ident}')
         try:
@@ -568,7 +511,7 @@ class ComputerSystemResetAPI(Resource):
                 logging.error(f"System {ident} not found in members.")
                 return {"error": f"System {ident} not found"}, 404
 
-            
+
 
             req = request.get_json()
             if not req or "ResetType" not in req:
@@ -608,6 +551,10 @@ class ComputerSystemResetAPI(Resource):
             response["Parameters"][0]["Value"] = reset_type 
             response["Message"] = f"System {ident} reset with {reset_type}"
             response["PowerState"] = members[ident]["PowerState"]
+            response["Bios"] = get_bios_settings(ident)
+
+            # Set the Bios config same as the Bios settings upon system reset
+            set_bios_config(ident, response['Bios'])
 
             logging.info(f"After reset: {members.get(ident, 'Not found')}")
             logging.info(f"Updated members: {members}")
