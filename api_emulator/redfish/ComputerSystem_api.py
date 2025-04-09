@@ -28,6 +28,7 @@ from .ResourceBlock_api import members as resource_blocks
 from api_emulator.redfish.ComputerSystem.ResetActionInfo_template import get_ResetActionInfo_instance
 from .BiosSettings_api import get_bios_settings
 from .Bios_api import get_bios_config, set_bios_config
+from .templates.Bios import get_Bios_instance
 
 members = {}
 
@@ -551,11 +552,16 @@ class ComputerSystemResetAPI(Resource):
             response["Parameters"][0]["Value"] = reset_type 
             response["Message"] = f"System {ident} reset with {reset_type}"
             response["PowerState"] = members[ident]["PowerState"]
-            response["Bios"] = get_bios_settings(ident)
 
-            # Set the Bios config same as the Bios settings upon system reset
+            bios_config = get_bios_config(ident)
+            
+            # Set the Bios config same as the Bios settings or reset defaults upon system reset   
+            if bios_config["ResetBiosToDefaultsPending"]=="false":
+                response["Bios"] = get_bios_settings(ident)   
+            elif bios_config["ResetBiosToDefaultsPending"]=="true":
+                response["Bios"]= get_Bios_instance({'rb': '/redfish/v1/', 'id': ident})
+                bios_config["ResetBiosToDefaultsPending"]="false"
             set_bios_config(ident, response['Bios'])
-
             logging.info(f"After reset: {members.get(ident, 'Not found')}")
             logging.info(f"Updated members: {members}")
             return response, 200

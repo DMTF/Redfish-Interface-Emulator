@@ -51,7 +51,7 @@ from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
 
 # Bios imports
-from .redfish.Bios_api import BiosAPI
+from .redfish.Bios_api import BiosAPI, BiosResetDefaultAPI
 from .redfish.BiosSettings_api import BiosSettingsAPI
 
 # Virtual Media imports
@@ -233,6 +233,8 @@ class ResourceManager(object):
         
         # Bios Resources
         g.api.add_resource(BiosAPI, '/redfish/v1/Systems/<string:ident>/Bios', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(BiosResetDefaultAPI, '/redfish/v1/Systems/<string:ident>/Bios/Actions/Bios.ResetBios',
+                   resource_class_kwargs={'rb': g.rest_base})
         # Bios Settings Resources
         g.api.add_resource(BiosSettingsAPI, '/redfish/v1/Systems/<string:ident>/Bios/Settings', resource_class_kwargs={'rb': g.rest_base})
         # Virtual Media Resource

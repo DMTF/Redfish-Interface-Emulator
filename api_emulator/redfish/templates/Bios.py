@@ -19,7 +19,7 @@ _TEMPLATE = {
         "ProcTurboMode": "Enabled",
         "UsbControl": "UsbEnabled"
     },
-    "ResetBiosToDefaultsPending": "true",
+    "ResetBiosToDefaultsPending": "false",
     "@Redfish.Settings": {
         "@odata.type": "#Settings.v1_4_0.Settings",
         "ETag": "9234ac83b9700123cc32",

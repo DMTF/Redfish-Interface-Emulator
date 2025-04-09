@@ -58,4 +58,6 @@ class BiosSettingsAPI(Resource):
             return INTERNAL_ERROR
         
 def get_bios_settings(ident):
+    if ident not in bios_setting:
+        bios_setting[ident] = get_Bios_Settings_instance({'rb': '/redfish/v1/', 'id': ident})
     return bios_setting[ident]

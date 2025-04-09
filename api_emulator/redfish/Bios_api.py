@@ -24,8 +24,8 @@ class BiosAPI(Resource):
             global bios_config
             # Pass the extracted 'ident' (system ID) to get_Bios_instance
             if ident not in bios_config:
-                bios_config = get_Bios_instance({'rb': self.rb, 'id': ident})  
-            return bios_config, 200
+                bios_config[ident] = get_Bios_instance({'rb': self.rb, 'id': ident})  
+            return bios_config[ident], 200
         except Exception:
             traceback.print_exc()
             return INTERNAL_ERROR
@@ -37,8 +37,9 @@ def get_bios_config(ident):
     try:
         global bios_config
         # Pass the extracted 'ident' (system ID) to get_Bios_instance
-        bios_config = get_Bios_instance({'rb': '/redfish/v1/', 'id': ident})  
-        return bios_config
+        if ident not in bios_config:
+            bios_config = get_Bios_instance({'rb': '/redfish/v1/', 'id': ident})  
+        return bios_config[ident]
     except Exception:
         traceback.print_exc()
     return bios_config
@@ -59,3 +60,27 @@ def set_bios_config(ident, data):
     except Exception as e:
         logging.error(f"Error setting BIOS config: {e}")
         traceback.print_exc()
+
+class BiosResetDefaultAPI(Resource):
+    def __init__(self, **kwargs):
+        logging.info('BiosResetDefaultAPI init called')
+        logging.info('ResetBiosToDefaultsPending set to true')
+        self.rb = kwargs.get('rb', '')  # Get the Redfish base URL
+
+    def post(self, ident):
+        """ 
+        Sets the ResetBiosToDefaultsPending to true and 
+        waits for a computer reset to reset back to defaults
+        """
+        try:
+            global bios_config
+            # Pass the extracted 'ident' (system ID) to get_Bios_instance
+            if ident not in bios_config:
+                bios_config[ident] = get_Bios_instance({'rb': self.rb, 'id': ident})
+
+            # bios_config[ident]["ResetBiosToDefaultsPending"] is a string
+            bios_config[ident]["ResetBiosToDefaultsPending"] = "true"  
+            return bios_config[ident], 200
+        except Exception:
+            traceback.print_exc()
+            return INTERNAL_ERROR
