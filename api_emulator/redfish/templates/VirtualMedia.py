@@ -2,12 +2,27 @@ import copy
 import logging
 
 _TEMPLATE = {
-    "@odata.type": "#VirtualMediaCollection.VirtualMediaCollection",
-    "@odata.id": "{rb}Managers/{manager_id}/VM1",
-    "Name": "Virtual Media Services",
-    "Description": "Redfish-BMC Virtual Media Service Settings",
-    "Members@odata.count": 0,  # This will be updated based on the number of members
-    "Members": [],
+    "@odata.type": "#VirtualMedia.v1_6_0.VirtualMedia",
+    "@odata.id": "{rb}Managers/{manager_id}/VirtualMedia/{member_id}",
+    "Id": "{member_id}",
+    "Name": "Virtual Media {member_id}",
+    "Description": "Represents a virtual media device for remote mounting",
+    "Inserted": False,
+    "Image": None,
+    "MediaTypes": ["CD", "DVD", "Floppy", "USBStick"],
+    "WriteProtected": True,
+    "ConnectedVia": "NotConnected",
+    "TransferMethod": None,
+    "TransferProtocolType": None,
+    "VerifyCertificate": False,
+    "UserName": None,
+    "Password": None,
+    "ImageName": None,
+    "Oem": {},
+    "Status": {
+        "State": "Enabled",
+        "Health": "OK"
+    }
 }
 
 def replace_recurse(c, wildcards):
@@ -27,32 +42,19 @@ def replace_recurse(c, wildcards):
         for i in range(len(c)):
             replace_recurse(c[i], wildcards)
 
-
-def get_virtual_media_instance(wildcards, member_ids):
+def get_virtual_media_instance(wildcards):
     """
-    Generates a Virtual Media Collection instance with specified member IDs.
+    Returns a single Virtual Media resource.
 
     Args:
-        wildcards (dict): Must include 'rb' and 'manager_id'
-        member_ids (list): List of virtual media device names like ['Floppy1', 'CD1']
+        wildcards (dict): Must include 'rb', 'manager_id', 'member_id'
 
     Returns:
-        dict: Fully populated VirtualMediaCollection instance
+        dict: Virtual Media resource
     """
-
-    if 'rb' not in wildcards or 'manager_id' not in wildcards:
+    if not all(k in wildcards for k in ['rb', 'manager_id', 'member_id']):
         raise KeyError(f"Missing required wildcards: {wildcards}")
 
     c = copy.deepcopy(_TEMPLATE)
-    c['@odata.id'] = c['@odata.id'].format(rb=wildcards['rb'], manager_id=wildcards['manager_id'])
-    c["Members@odata.count"] = len(member_ids)
-
-    # Generate member entries
-    for member in member_ids:
-        c["Members"].append({
-            "@odata.id": f"{wildcards['rb']}Managers/{wildcards['manager_id']}/VM1/{member}"
-        })
-
     replace_recurse(c, wildcards)
-
     return c

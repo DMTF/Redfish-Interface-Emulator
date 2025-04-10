@@ -55,7 +55,7 @@ from .redfish.Bios_api import BiosAPI, BiosResetDefaultAPI
 from .redfish.BiosSettings_api import BiosSettingsAPI
 
 # Virtual Media imports
-from .redfish.VirtualMedia_api import VirtualMediaAPI
+from .redfish.VirtualMedia_api import VirtualMediaAPI, VirtualMediaCollectionAPI, VirtualMediaEjectAPI, VirtualMediaInsertAPI
 
 
 mockupfolders = []
@@ -238,10 +238,11 @@ class ResourceManager(object):
         # Bios Settings Resources
         g.api.add_resource(BiosSettingsAPI, '/redfish/v1/Systems/<string:ident>/Bios/Settings', resource_class_kwargs={'rb': g.rest_base})
         # Virtual Media Resource
-        g.api.add_resource(VirtualMediaAPI, '/redfish/v1/Managers/<string:ident>/VM1', resource_class_kwargs={'rb': g.rest_base})
-
-
-
+        g.api.add_resource(VirtualMediaCollectionAPI, '/redfish/v1/Managers/<string:ident>/VirtualMedia', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaEjectAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>/Actions/VirtualMedia.EjectMedia', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaInsertAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>/Actions/VirtualMedia.InsertMedia', resource_class_kwargs={'rb': g.rest_base})
+    
     @property
     def configuration(self):
         """
