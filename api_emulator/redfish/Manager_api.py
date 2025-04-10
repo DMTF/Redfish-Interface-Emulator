@@ -158,7 +158,7 @@ class ManagerCollectionAPI(Resource):
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
             if ok:
-                members[config['Id']] = config
+                members[config['id']] = config
                 resp = config, 201
             else:
                 resp = msg, 400
@@ -211,3 +211,69 @@ class CreateManager(Resource):
             resp = INTERNAL_ERROR
         logging.info('CreateManager init exit')
         return resp
+
+class ManagerResetAPI(Resource):
+    def __init__(self, **kwargs):
+        logging.info('ManagerResetAPI init called')
+        global wildcards  
+        wildcards = kwargs  
+
+    def post(self, ident):
+        logging.info(f'ManagerResetAPI POST called for {ident}')
+        try:
+            global wildcards 
+            if ident not in members:
+                logging.error(f"Manager {ident} not found in members.")
+                return {"error": f"Manager {ident} not found"}, 404
+
+            req = request.get_json()
+            if not req or "ResetType" not in req:
+                return {"error": "Missing ResetType"}, 400
+
+            wildcards['sys_id'] = ident
+            wildcards['rb'] = "/redfish/v1/"
+            valid_reset_types = ["ForceRestart", "GracefulRestart"]
+
+            reset_type = req["ResetType"]
+            if reset_type not in valid_reset_types:
+                return {"error": f"Invalid ResetType: {reset_type}"}, 400
+
+            from time import sleep
+            if "Status" not in members[ident]:
+                members[ident]["Status"] = {}
+            if "State" not in members[ident]["Status"]:
+                logging.warning(f"'Status' key missing in {ident}, initializing it.")
+                members[ident]["Status"]["State"] = "Unknown"
+
+            current_state = members[ident]["Status"]["State"]
+            if current_state == "Disabled":
+                members[ident]["Status"]["State"] = "Enabled"
+                logging.info(f"{ident} enabled")
+            if reset_type=="ForceRestart":
+                members[ident]["Status"]["State"] = "Disabled"
+                logging.info(f"{ident} Restart pending")
+                sleep(2)
+                members[ident]["Status"]["State"] = "Enabled"
+                logging.info(f"{ident} powered back On after Restart.")
+            else:
+                logging.info("Shutting down all processes")
+                sleep(2)
+                members[ident]["Status"]["State"] = "Disabled"
+                logging.info(f"{ident} Restart pending")
+                sleep(2)
+                members[ident]["Status"]["State"] = "Enabled"
+                logging.info(f"{ident} powered back On after Restart.")
+            response = {
+                "Id": ident,
+                "ResetType": reset_type,
+                "Status": members[ident]["Status"],
+                "Message": f"Manager {ident} reset successfully using {reset_type}"
+            }
+
+            return response, 200
+
+        except Exception as e:
+            logging.error(f"Error in Reset API: {e}")
+            traceback.print_exc()
+            return {"error": "Internal Server Error"}, INTERNAL_ERROR
+
