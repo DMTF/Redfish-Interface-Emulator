@@ -78,6 +78,11 @@ class VirtualMediaInsertAPI(Resource):
                 if ident1 not in member_data:
                     member_data[ident1] = {}
                 member_data[ident1][ident2]= get_virtual_media_instance(wildcards={"rb": self.rb, "manager_id": ident1, "member_id":ident2})    
+            
+            # Ensure that insert cannot be performed unless media is ejected
+            if member_data[ident1][ident2]["Image"] is not None:
+                err_message = {"error": "Cannot insert unless media is ejected."}
+                return err_message, 200
             if not request.json:
                 return "Invalid input, expected JSON", 400
             for key, value in request.json.items():
