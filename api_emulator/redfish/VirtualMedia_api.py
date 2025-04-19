@@ -56,11 +56,15 @@ class VirtualMediaEjectAPI(Resource):
             if ident2 not in member_data.get(ident1, {}):
                 if ident1 not in member_data:
                     member_data[ident1] = {}
-                member_data[ident1][ident2]= get_virtual_media_instance(wildcards={"rb": self.rb, "manager_id": ident1, "member_id":ident2})    
-            member_data[ident1][ident2]["Inserted"]= False
-            member_data[ident1][ident2]["Image"]= None
-            member_data[ident1][ident2]["ImageName"]= None
-            member_data[ident1][ident2]["ConnectedVia"]="NotConnected"
+                member_data[ident1][ident2]= get_virtual_media_instance(wildcards={"rb": self.rb, "manager_id": ident1, "member_id":ident2}) 
+            
+            if member_data[ident1][ident2]["Image"] is None and member_data[ident1][ident2]["Inserted"] == False:
+                error_message = {"error": "No media is inserted. Please insert a media before ejecting."}
+                return error_message
+            
+            member_data[ident1][ident2]= get_virtual_media_instance(wildcards={"rb": self.rb, "manager_id": ident1, "member_id":ident2}) 
+            member_data[ident1][ident2]["Inserted"] = False
+            
             return member_data[ident1][ident2], 200
         except Exception:
             traceback.print_exc()
@@ -78,6 +82,11 @@ class VirtualMediaInsertAPI(Resource):
                 if ident1 not in member_data:
                     member_data[ident1] = {}
                 member_data[ident1][ident2]= get_virtual_media_instance(wildcards={"rb": self.rb, "manager_id": ident1, "member_id":ident2})    
+            
+            # Ensure that insert cannot be performed unless media is ejected
+            if member_data[ident1][ident2]["Image"] is not None:
+                err_message = {"error": "Cannot insert unless media is ejected."}
+                return err_message, 200
             if not request.json:
                 return "Invalid input, expected JSON", 400
             for key, value in request.json.items():
