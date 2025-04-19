@@ -101,6 +101,7 @@ class ComputerSystemAPI(Resource):
     def post(self, ident):
 
         logging.info('ComputerSystemAPI POST called')
+        return 'POST is not a supported command for ComputerSystemAPI', 405
         try:
             global config
             global wildcards
@@ -131,6 +132,7 @@ class ComputerSystemAPI(Resource):
     # HTTP DELETE
     def delete(self, ident):
         logging.info('ComputerSystemAPI DELETE called')
+        return 'DELETE is not a supported command for ComputerSystemAPI', 405
         try:
             if ident in members:
                 if 'SystemType' in members[ident] and members[ident]['SystemType'] == 'Composed':
@@ -201,6 +203,7 @@ class ComputerSystemCollectionAPI(Resource):
     # TODO: May need an update for composed systems.
     def post(self):
         logging.info('ComputerSystemCollectionAPI POST called')
+        return 'POST is not a supported command for ChassisCollectionAPI', 405
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)

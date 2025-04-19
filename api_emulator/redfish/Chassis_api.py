@@ -71,6 +71,7 @@ class ChassisAPI(Resource):
     # PATCH commands can then be used to update the new instance.
     def post(self, ident):
         logging.info('ChassisAPI POST called')
+        return 'POST is not a supported command for ChassisAPI', 405
         try:
             global config
             global wildcards
@@ -89,6 +90,7 @@ class ChassisAPI(Resource):
     # HTTP PATCH
     def patch(self, ident):
         logging.info('ChassisAPI PATCH called')
+        return 'PATCH is not a supported command for ChassisAPI', 405
         raw_dict = request.get_json(force=True)
         try:
             # Update specific portions of the identified object
@@ -103,6 +105,7 @@ class ChassisAPI(Resource):
     # HTTP DELETE
     def delete(self, ident):
         logging.info('ChassisAPI DELETE called')
+        return 'DELETE is not a supported command for ChassisAPI', 405
         try:
             # Find the entry with the correct value for Id
             resp = 404
@@ -156,6 +159,7 @@ class ChassisCollectionAPI(Resource):
     # TODO: 'id' should be obtained from the request data.
     def post(self):
         logging.info('ChassisCollectionAPI POST called')
+        return 'POST is not a supported command for ChassisCollectionAPI', 405
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)

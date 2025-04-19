@@ -68,6 +68,19 @@ def create_resources(template, chassis, suffix, suffix_id):
                                     speedmbps=eth.get('SpeedMbps', 1000))
     return resource_ids
 
+def recursive_format(obj, index):
+    if isinstance(obj, dict):
+        return {k: recursive_format(v, index) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [recursive_format(elem, index) for elem in obj]
+    elif isinstance(obj, str):
+        try:
+            return obj.format(index)
+        except:
+            return obj
+    else:
+        return obj
+    
 def populate(cfg):
     #cfg = 10
     if type(cfg) is int:

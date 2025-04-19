@@ -154,6 +154,7 @@ class ManagerCollectionAPI(Resource):
     # TODO: 'id' should be obtained from the request data.
     def post(self):
         logging.info('ManagerCollectionAPI POST called')
+        return 'POST is not a supported command for ManagerCollectionAPI', 405
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
@@ -220,6 +221,7 @@ class ManagerResetAPI(Resource):
 
     def post(self, ident):
         logging.info(f'ManagerResetAPI POST called for {ident}')
+        
         try:
             global wildcards 
             if ident not in members:
