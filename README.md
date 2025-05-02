@@ -156,7 +156,7 @@ Once the files are created, they are placed in the emulator directory structure.
 
 * The template-file is placed in the directory ./api\_emulator/Redfish/template
 * The API-file is placed in the directory ./api\_emulator/Redfish
-* If the resource in the Service Root, the the emulator.py file needs to be edited.
+* If the resource in the Service Root, then the emulator.py file needs to be edited.
 	* If the dynamic resource replaces a static resource, then replace the line which loads the static mockup with the line to add to dynamic resource API.
 
 ### Auto-generate the API file
