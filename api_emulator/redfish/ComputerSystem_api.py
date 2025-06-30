@@ -159,11 +159,10 @@ class ComputerSystemCollectionAPI(Resource):
             '@odata.id': self.rb + 'ComputerSystemCollection',
             '@odata.type': '#ComputerSystemCollection.ComputerSystemCollection',
             'Name': 'ComputerSystem Collection',
-            'Links': {}
-        }
-        self.config['Links']['Members@odata.count'] = len(members)
-        self.config['Links']['Members'] = [{'@odata.id':x['@odata.id']} for
+            'Members@odata.count': len(members),
+            'Members': [{'@odata.id':x['@odata.id']} for
                 x in list(members.values())]
+        }
 
     # HTTP GET
     def get(self):
