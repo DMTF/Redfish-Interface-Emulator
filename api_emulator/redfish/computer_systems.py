@@ -39,11 +39,8 @@ class ComputerSystemCollection(object):
             '@odata.type': '#ComputerSystemCollection.ComputerSystemCollection',
             '@odata.id': '/redfish/v1/Systems',
             'Name': 'Computer System Collection',
-
-            'Links': {
-                'Members@odata.count': len(systems),
-                'Members': systems
-            }
+            'Members@odata.count': len(systems),
+            'Members': systems
         }
 
     @property
