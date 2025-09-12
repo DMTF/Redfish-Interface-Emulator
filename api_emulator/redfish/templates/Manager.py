@@ -64,7 +64,7 @@ _TEMPLATE = \
         "@odata.id": "{rb}Managers/{id}/LogServices"
     },
     "VirtualMedia": {
-        "@odata.id": "{rb}Managers/{id}/VM1"
+        "@odata.id": "{rb}Managers/{id}/VirtualMedia"
     },
     "Links": {
         "ManagerForServers": [

@@ -16,7 +16,9 @@ import logging
 import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
-
+from .ResetActionInfo_api import ResetActionInfo_API
+from .ResetAction_api import ResetAction_API
+from api_emulator.redfish.ComputerSystem.ResetActionInfo_template import get_ResetActionInfo_instance
 # Resource and SubResource imports
 from .templates.Chassis import get_Chassis_instance
 from .thermal_api import ThermalAPI, CreateThermal
@@ -71,6 +73,7 @@ class ChassisAPI(Resource):
     # PATCH commands can then be used to update the new instance.
     def post(self, ident):
         logging.info('ChassisAPI POST called')
+        return 'POST is not a supported command for ChassisAPI', 405
         try:
             global config
             global wildcards
@@ -89,6 +92,7 @@ class ChassisAPI(Resource):
     # HTTP PATCH
     def patch(self, ident):
         logging.info('ChassisAPI PATCH called')
+        return 'PATCH is not a supported command for ChassisAPI', 405
         raw_dict = request.get_json(force=True)
         try:
             # Update specific portions of the identified object
@@ -103,6 +107,7 @@ class ChassisAPI(Resource):
     # HTTP DELETE
     def delete(self, ident):
         logging.info('ChassisAPI DELETE called')
+        return 'DELETE is not a supported command for ChassisAPI', 405
         try:
             # Find the entry with the correct value for Id
             resp = 404
@@ -156,6 +161,7 @@ class ChassisCollectionAPI(Resource):
     # TODO: 'id' should be obtained from the request data.
     def post(self):
         logging.info('ChassisCollectionAPI POST called')
+        return 'POST is not a supported command for ChassisCollectionAPI', 405
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
@@ -213,3 +219,65 @@ class CreateChassis(Resource):
             resp = INTERNAL_ERROR
         logging.info('CreateChassis init exit')
         return resp
+
+class ChassisResetAPI(Resource):
+    def __init__(self, **kwargs):
+        logging.info('ChassisResetAPI init called')
+        global wildcards  
+        wildcards = kwargs  
+
+
+    def post(self, ident):
+        logging.info(f'ChassisResetAPI POST called for {ident}')
+        try:
+            global wildcards 
+
+            if ident not in members:
+                logging.error(f"Chassis {ident} not found in members.")
+                return {"error": f"Chassis {ident} not found"}, 404
+
+
+
+            req = request.get_json()
+            if not req or "ResetType" not in req:
+                return {"error": "Missing ResetType"}, 400
+
+            wildcards['id'] = ident
+            wildcards['rb'] = "/redfish/v1/"
+            reset_info = get_ResetActionInfo_instance(wildcards)
+            valid_reset_types = reset_info["Parameters"][0]["AllowableValues"]
+
+            reset_type = req["ResetType"]
+            if reset_type not in valid_reset_types:
+                return {"error": f"Invalid ResetType: {reset_type}"}, 400
+
+            power_state_map = {
+                "On": "On",
+                "ForceOn": "On",
+                "ForceOff": "Off",
+                "GracefulShutdown": "Off",
+                "GracefulRestart": "On",
+                "ForceRestart": "On",
+                "Nmi": "Interrupt sent"
+            }
+
+            # Ensure PowerState exists
+            if "PowerState" not in members[ident]:
+                logging.warning(f"'PowerState' key missing in {ident}, initializing it.")
+                members[ident]["PowerState"] = "Unknown"
+
+            # Update PowerState
+            if(reset_type!="PushPowerButton"):
+                members[ident]["PowerState"] = power_state_map.get(reset_type, "Unknown")
+            else:
+                members[ident]["PowerState"]="On" if members[ident]["PowerState"]=="Off" else "Off"
+            # Prepare response
+            response = copy.deepcopy(reset_info)
+            response["Parameters"][0]["Value"] = reset_type 
+            response["Message"] = f"{ident} reset with {reset_type}"
+            response["PowerState"] = members[ident]["PowerState"]
+            return response
+        except Exception as e:
+            logging.error(f"Error in Reset API: {e}")
+            traceback.print_exc()
+            return "Internal Server Error", INTERNAL_ERROR
