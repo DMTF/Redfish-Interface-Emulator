@@ -27,16 +27,20 @@ from .redfish.event import Event
 from .redfish.EventService_api import EventServiceAPI, CreateEventService
 from .redfish.Subscriptions_api import SubscriptionCollectionAPI, SubscriptionAPI, CreateSubscription
 # Chassis imports
-from .redfish.Chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis
+from .redfish.Chassis_api import ChassisCollectionAPI, ChassisAPI, CreateChassis,ChassisResetAPI
 from .redfish.power_api import PowerAPI, CreatePower
 from .redfish.thermal_api import ThermalAPI, CreateThermal
+from .redfish.Drives_api import CreateDrives,Drives_API
+from .redfish.Drive_api import CreateDrive,Drive_API
 # Manager imports
-from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager
+from .redfish.Manager_api import ManagerCollectionAPI, ManagerAPI, CreateManager,ManagerResetAPI
 # EgResource imports
 from .redfish.eg_resource_api import EgResourceCollectionAPI, EgResourceAPI, CreateEgResource
 from .redfish.eg_subresource_api import EgSubResourceCollectionAPI, EgSubResourceAPI, CreateEgSubResource
 # ComputerSystem imports
-from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSystemAPI, CreateComputerSystem
+from .redfish.ComputerSystem_api import ComputerSystemCollectionAPI, ComputerSystemAPI,ComputerSystemResetAPI,CreateComputerSystem
+from .redfish.Storage_api import Storage_API
+from .redfish.storages_api import Storages_API
 from .redfish.processor import Processor, Processors
 from .redfish.memory import Memory, MemoryCollection
 from .redfish.simplestorage import SimpleStorage, SimpleStorageCollection
@@ -49,6 +53,16 @@ from .redfish.pcie_switch_api import PCIeSwitchesAPI, PCIeSwitchAPI
 from .redfish.CompositionService_api import CompositionServiceAPI
 from .redfish.ResourceBlock_api import ResourceBlockCollectionAPI, ResourceBlockAPI, CreateResourceBlock
 from .redfish.ResourceZone_api import ResourceZoneCollectionAPI, ResourceZoneAPI, CreateResourceZone
+
+# Bios imports
+from .redfish.Bios_api import BiosAPI, BiosResetDefaultAPI
+from .redfish.BiosSettings_api import BiosSettingsAPI
+
+# Virtual Media imports
+from .redfish.VirtualMedia_api import VirtualMediaAPI, VirtualMediaCollectionAPI, VirtualMediaEjectAPI, VirtualMediaInsertAPI
+
+# Volume imports
+from .redfish.Volume_api import VolumeAPI, VolumeCollectionAPI
 
 mockupfolders = []
 
@@ -152,13 +166,18 @@ class ResourceManager(object):
         g.api.add_resource(ThermalAPI, '/redfish/v1/Chassis/<string:ident>/Thermal',
                 resource_class_kwargs={'rb': g.rest_base})
         # Chassis SubResources
+        g.api.add_resource(Drives_API, '/redfish/v1/Chassis/<string:ident>/Drives',
+                resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(Drive_API, '/redfish/v1/Chassis/<string:ident>/Drives/<string:ident1>',
+                resource_class_kwargs={'rb': g.rest_base})
         g.api.add_resource(PowerAPI, '/redfish/v1/Chassis/<string:ident>/Power',
                 resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ChassisResetAPI, '/redfish/v1/Chassis/<string:ident>/Actions/Chassis.Reset')
 
         # Manager Resources
         g.api.add_resource(ManagerCollectionAPI, '/redfish/v1/Managers')
         g.api.add_resource(ManagerAPI, '/redfish/v1/Managers/<string:ident>', resource_class_kwargs={'rb': g.rest_base})
-
+        g.api.add_resource(ManagerResetAPI, '/redfish/v1/Managers/<string:ident>/Actions/Manager.Reset', resource_class_kwargs={'rb': g.rest_base})
         # EgResource Resources (Example entries for attaching APIs)
         # g.api.add_resource(EgResourceCollectionAPI,
         #     '/redfish/v1/EgResources')
@@ -176,8 +195,12 @@ class ResourceManager(object):
 
         # System Resources
         g.api.add_resource(ComputerSystemCollectionAPI, '/redfish/v1/Systems')
+        g.api.add_resource(Storage_API, '/redfish/v1/Systems/<string:ident>/Storage')
         g.api.add_resource(ComputerSystemAPI, '/redfish/v1/Systems/<string:ident>',
                 resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(ComputerSystemResetAPI, '/redfish/v1/Systems/<string:ident>/Actions/ComputerSystem.Reset',
+                   resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(Storages_API, '/redfish/v1/Systems/<string:ident>/Storage/Storage-1')
         # System SubResources
         g.api.add_resource(Processors, '/redfish/v1/Systems/<string:ident>/Processors',
                 resource_class_kwargs={'rb': g.rest_base,'suffix':'Systems'})
@@ -220,7 +243,21 @@ class ResourceManager(object):
         g.api.add_resource(ResourceZoneCollectionAPI, '/redfish/v1/CompositionService/ResourceZones')
         g.api.add_resource(ResourceZoneAPI, '/redfish/v1/CompositionService/ResourceZones/<string:ident>',
                 resource_class_kwargs={'rb': g.rest_base})
-
+        
+        # Bios Resources
+        g.api.add_resource(BiosAPI, '/redfish/v1/Systems/<string:ident>/Bios', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(BiosResetDefaultAPI, '/redfish/v1/Systems/<string:ident>/Bios/Actions/Bios.ResetBios',
+                   resource_class_kwargs={'rb': g.rest_base})
+        # Bios Settings Resources
+        g.api.add_resource(BiosSettingsAPI, '/redfish/v1/Systems/<string:ident>/Bios/Settings', resource_class_kwargs={'rb': g.rest_base})
+        # Virtual Media Resource
+        g.api.add_resource(VirtualMediaCollectionAPI, '/redfish/v1/Managers/<string:ident>/VirtualMedia', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaEjectAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>/Actions/VirtualMedia.EjectMedia', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VirtualMediaInsertAPI, '/redfish/v1/Managers/<string:ident1>/VirtualMedia/<string:ident2>/Actions/VirtualMedia.InsertMedia', resource_class_kwargs={'rb': g.rest_base})
+        # Volume Resources
+        g.api.add_resource(VolumeCollectionAPI, '/redfish/v1/Systems/<string:ident1>/Storage/<string:ident2>/Volumes', resource_class_kwargs={'rb': g.rest_base})
+        g.api.add_resource(VolumeAPI, '/redfish/v1/Systems/<string:ident1>/Storage/<string:ident2>/Volumes/<string:ident3>', resource_class_kwargs={'rb': g.rest_base})
 
     @property
     def configuration(self):

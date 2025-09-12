@@ -9,12 +9,16 @@ from api_emulator.redfish.thermal_api import CreateThermal
 from api_emulator.redfish.ResetAction_api import ResetAction_API
 from api_emulator.redfish.ResetActionInfo_api import ResetActionInfo_API
 from api_emulator.redfish.processor import CreateProcessor
+from api_emulator.redfish.storages_api import CreateStorages
+from api_emulator.redfish.Drives_api import CreateDrives
+from api_emulator.redfish.Drive_api import CreateDrive
 from api_emulator.redfish.memory import CreateMemory
 from api_emulator.redfish.simplestorage import CreateSimpleStorage
 from api_emulator.redfish.ethernetinterface import CreateEthernetInterface
-
+from api_emulator.redfish.Storage_api import CreateStorage
+import logging
 import g
-
+import uuid
 from api_emulator.redfish.ResourceBlock_api import CreateResourceBlock
 from api_emulator.redfish.ResourceZone_api import CreateResourceZone
 
@@ -79,20 +83,32 @@ def populate(cfg):
     for chassi_template in cfg['Chassis']:
         for i in range(chassi_template.get('Count', 1)):
             chassis_count += 1
+            csno="437XR"+str(1137+chassis_count)+"R2"
             chassis = chassi_template['Id'].format(chassis_count)
             bmc = 'BMC-{}'.format(chassis_count)
+            name=chassi_template['Name']
             sys_ids = []
             rb_ids = []
             for compsys_template in chassi_template['Links'].get('ComputerSystems',[]):
                 for j in range(compsys_template.get('Count', 1)):
+                    uid=uuid.uuid1()
                     cs_count += 1
+                    sno="2M220"+str(99+cs_count)+"SL"
+                    sku="P2"+str(4840+cs_count)+"-B21"
                     compSys = compsys_template['Id'].format(cs_count)
                     sys_ids.append(compSys)
                     CreateComputerSystem(
-                        resource_class_kwargs={'rb': g.rest_base, 'linkChassis': [chassis], 'linkMgr': bmc}).put(
+                        resource_class_kwargs={'rb': g.rest_base, 'linkChassis': [chassis], 'linkMgr': bmc,'uuid':uid,'sno':sno,'sku':sku}).put(
                         compSys)
                     create_resources(compsys_template, chassis, 'Systems', compSys)
-
+                    CreateStorage(
+                        resource_class_kwargs={'rb': g.rest_base}).put(
+                        compSys)
+                    CreateStorages(
+                        resource_class_kwargs={'rb': g.rest_base}).put(
+                        compSys)
+                    for i in range(6):
+                        CreateDrive(resource_class_kwargs={'rb': g.rest_base,'ch_id':chassis,'dr_id':i,'id':compSys}).put()
             for rb_template in chassi_template['Links'].get('ResourceBlocks',[]):
                 for j in range(rb_template.get('Count', 1)):
                     rb_count += 1
@@ -113,7 +129,8 @@ def populate(cfg):
                             rb.post(g.rest_base,rb_id,resource_name,resource_id)
 
             CreateChassis(resource_class_kwargs={
-                'rb': g.rest_base, 'linkSystem': sys_ids, 'linkResourceBlocks':rb_ids, 'linkMgr': bmc}).put(chassis)
+                'rb': g.rest_base, 'linkSystem': sys_ids, 'linkResourceBlocks':rb_ids, 'linkMgr': bmc,'name':name,'cno':csno}).put(chassis)
+            CreateDrives(resource_class_kwargs={'rb': g.rest_base,'ch_id':chassis}).put(chassis)
             CreatePower(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
             CreateThermal(resource_class_kwargs={'rb': g.rest_base, 'ch_id': chassis}).put(chassis)
             CreateManager(resource_class_kwargs={

@@ -16,6 +16,10 @@ import logging
 import copy
 from flask import Flask, request, make_response, render_template
 from flask_restful import reqparse, Api, Resource
+import uuid
+import os
+from flask import jsonify
+ROOT = os.path.join(os.path.dirname(__file__), 'Systems')
 
 from .templates.ComputerSystem import get_ComputerSystem_instance
 from .ResetActionInfo_api import ResetActionInfo_API
@@ -25,6 +29,10 @@ from .memory import members as memory
 from .ethernetinterface import members as ethernetinterfaces
 from .simplestorage import members as simplestorage
 from .ResourceBlock_api import members as resource_blocks
+from api_emulator.redfish.ComputerSystem.ResetActionInfo_template import get_ResetActionInfo_instance
+from .BiosSettings_api import get_bios_settings
+from .Bios_api import get_bios_config, set_bios_config
+from .templates.Bios import get_Bios_instance
 
 members = {}
 
@@ -95,7 +103,9 @@ class ComputerSystemAPI(Resource):
     # the identifier "ident", which is taken from the end of the URL.
     # PATCH commands can then be used to update the new instance.
     def post(self, ident):
+
         logging.info('ComputerSystemAPI POST called')
+        return 'POST is not a supported command for ComputerSystemAPI', 405
         try:
             global config
             global wildcards
@@ -109,8 +119,7 @@ class ComputerSystemAPI(Resource):
             traceback.print_exc()
             resp = INTERNAL_ERROR
         return resp
-
-    # HTTP PATCH
+  # HTTP PATCH
     def patch(self, ident):
         logging.info('ComputerSystemAPI PATCH called')
         raw_dict = request.get_json(force=True)
@@ -127,6 +136,7 @@ class ComputerSystemAPI(Resource):
     # HTTP DELETE
     def delete(self, ident):
         logging.info('ComputerSystemAPI DELETE called')
+        return 'DELETE is not a supported command for ComputerSystemAPI', 405
         try:
             if ident in members:
                 if 'SystemType' in members[ident] and members[ident]['SystemType'] == 'Composed':
@@ -143,7 +153,49 @@ class ComputerSystemAPI(Resource):
             traceback.print_exc()
             resp = "Internal Server Error", INTERNAL_ERROR
         return resp
+    
+    # patch for systems
+    def patch(self, ident):
+        logging.info('ComputerSystemAPI PATCH called for {ident}')
+        patch_data = request.get_json(force=True)
 
+        try:
+            
+            if ident not in members:
+                logging.error(f"System {ident} not found in members")
+                return {"error": f"{ident} not found."}, 404
+            
+            updatable_fields = ["Name", "HostName", "AssetTag", "SerialNumber", "UUID"]
+            updated_fields = {}
+
+            for key in patch_data:
+                for key in patch_data:
+                    if key not in updatable_fields:
+                        return {
+                            "error": f"Field '{key}' is not updatable"
+                        }, 400
+                if key in updatable_fields and key in members[ident]:
+                    if key == "UUID":
+                        try:
+                            new_uuid=uuid.UUID(patch_data[key])
+                        except ValueError:
+                            return{
+                                "error": "Invalid UUID format"
+                            }, 400
+                        
+                        for sys_id, sys_data in members.items():
+                            if sys_id != ident and sys_data.get("UUID") == str(new_uuid):
+                                return {"error": f"UUID {new_uuid} is already used by {sys_id}."}, 400
+                        
+                    members[ident][key] = patch_data[key]
+                    updated_fields[key] = patch_data[key]
+            
+            return members[ident], 200
+        
+        except Exception as e:
+            logging.error(f"Error during patch for {ident}: {str(e)}")
+            traceback.print_exc()
+            return jsonify({"error": f"An error occurred: {str(e)}"}), 500
    
 
 
@@ -196,6 +248,7 @@ class ComputerSystemCollectionAPI(Resource):
     # TODO: May need an update for composed systems.
     def post(self):
         logging.info('ComputerSystemCollectionAPI POST called')
+        return 'POST is not a supported command for ChassisCollectionAPI', 405
         try:
             config = request.get_json(force=True)
             ok, msg = self.verify(config)
@@ -490,3 +543,78 @@ class CreateComputerSystem(Resource):
             resp = INTERNAL_ERROR
         logging.info('CreateComputerSystem init exit')
         return resp
+    
+class ComputerSystemResetAPI(Resource):
+    def __init__(self, **kwargs):
+        logging.info('ComputerSystemResetAPI init called')
+        global wildcards  
+        wildcards = kwargs  
+
+
+    def post(self, ident):
+        logging.info(f'ComputerSystemResetAPI POST called for {ident}')
+        try:
+            global wildcards 
+
+            if ident not in members:
+                logging.error(f"System {ident} not found in members.")
+                return {"error": f"System {ident} not found"}, 404
+
+
+
+            req = request.get_json()
+            if not req or "ResetType" not in req:
+                return {"error": "Missing ResetType"}, 400
+
+            wildcards['sys_id'] = ident
+            wildcards['rb'] = "/redfish/v1/"
+            reset_info = get_ResetActionInfo_instance(wildcards)
+            valid_reset_types = reset_info["Parameters"][0]["AllowableValues"]
+
+            reset_type = req["ResetType"]
+            if reset_type not in valid_reset_types:
+                return {"error": f"Invalid ResetType: {reset_type}"}, 400
+
+            power_state_map = {
+                "On": "On",
+                "ForceOn": "On",
+                "ForceOff": "Off",
+                "GracefulShutdown": "Off",
+                "GracefulRestart": "On",
+                "ForceRestart": "On",
+                "Nmi": "Interrupt sent to System"
+            }
+
+            # Ensure PowerState exists
+            if "PowerState" not in members[ident]:
+                logging.warning(f"'PowerState' key missing in {ident}, initializing it.")
+                members[ident]["PowerState"] = "Unknown"
+
+            # Update PowerState
+            if(reset_type!="PushPowerButton"):
+                members[ident]["PowerState"] = power_state_map.get(reset_type, "Unknown")
+            else:
+                members[ident]["PowerState"]="On" if members[ident]["PowerState"]=="Off" else "Off"
+            # Prepare response
+            response = copy.deepcopy(reset_info)
+            response["Parameters"][0]["Value"] = reset_type 
+            response["Message"] = f"{ident} reset with {reset_type}"
+            response["PowerState"] = members[ident]["PowerState"]
+
+            bios_config = get_bios_config(ident)
+            
+            # Set the Bios config same as the Bios settings or reset defaults upon system reset   
+            if bios_config["ResetBiosToDefaultsPending"]=="false":
+                response["Bios"] = get_bios_settings(ident)   
+            elif bios_config["ResetBiosToDefaultsPending"]=="true":
+                response["Bios"]= get_Bios_instance({'rb': '/redfish/v1/', 'id': ident})
+                bios_config["ResetBiosToDefaultsPending"]="false"
+            set_bios_config(ident, response['Bios'])
+            logging.info(f"After reset: {members.get(ident, 'Not found')}")
+            logging.info(f"Updated members: {members}")
+            return response, 200
+
+        except Exception as e:
+            logging.error(f"Error in Reset API: {e}")
+            traceback.print_exc()
+            return "Internal Server Error", INTERNAL_ERROR

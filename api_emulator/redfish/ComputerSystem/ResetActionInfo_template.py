@@ -8,7 +8,6 @@ _TEMPLATE = \
 {
 	"@Redfish.Copyright": "Copyright 2014-2016 DMTF. All rights reserved.",
 	"@odata.context": "{rb}$metadata#ActionInfo.ActionInfo",
-	"@odata.id": "{rb}Systems/{sys_id}/ResetActionInfo",
 	"@odata.type": "#ActionInfo.v1_0_0.ActionInfo",
 	"Parameters": [{
 		"Name": "ResetType",
@@ -31,6 +30,6 @@ def get_ResetActionInfo_instance(wildcards):
     c = copy.deepcopy(_TEMPLATE)
     print (wildcards)
     c['@odata.context']=c['@odata.context'].format(**wildcards)
-    c['@odata.id']=c['@odata.id'].format(**wildcards)
+    
 
     return c

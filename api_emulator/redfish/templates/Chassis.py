@@ -14,12 +14,12 @@ _TEMPLATE = \
         "@odata.id": "{rb}Chassis/{id}",
         "@odata.type": "#Chassis.v1_0_0.Chassis",
         "Id": "{id}",
-        "Name": "Computer System Chassis",
+        "Name": "{name}",
         "ChassisType": "RackMount",
         "Manufacturer": "Redfish Computers",
         "Model": "3500RX",
         "SKU": "8675309",
-        "SerialNumber": "437XR1138R2",
+        "SerialNumber": "{cno}",
         "Version": "1.02",
         "PartNumber": "224071-J23",
         "AssetTag": "Chicago-45Z-2381",
@@ -33,6 +33,10 @@ _TEMPLATE = \
         "Power": {
             "@odata.id": "{rb}Chassis/{id}/Power"
         },
+        "PowerState":"On",
+        "Drives": {
+            "@odata.id": "{rb}Chassis/{id}/Drives"
+        },
         "Links": {
             "ComputerSystems": [],
             "ResourceBlocks": [],
@@ -42,6 +46,11 @@ _TEMPLATE = \
                 }
             ],
          },
+        "Actions": {
+        "#Chassis.Reset": {
+            "target": "{rb}Chassis/{id}/Actions/Chassis.Reset", "@Redfish.ActionInfo": "{rb}Chassis/{id}/ResetActionInfo"
+        },
+    }
     }
 
 

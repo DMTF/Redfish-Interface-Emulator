@@ -18,11 +18,11 @@ _TEMPLATE = \
     "AssetTag": "free form asset tag",
     "Manufacturer": "Manufacturer Name",
     "Model": "Model Name",
-    "SKU": "",
-    "SerialNumber": "2M220100SL",
+    "SKU": "2M220100SL",
+    "SerialNumber": "{sno}",
     "PartNumber": "",
     "Description": "Description of server",
-    "UUID": "00000000-0000-0000-0000-000000000000",
+    "UUID": "{uuid}",
     "HostName": "web-srv344",
     "Status": {
         "State": "Enabled",
@@ -82,6 +82,12 @@ _TEMPLATE = \
            "InterfaceTypeSelection": "None"
         }
     ],
+    "Bios": {
+          "@odata.id":"{rb}Systems/{id}/Bios"
+          } ,
+    "SecureBoot":{
+        "@odata.id": "{rb}Systems/{id}/SecureBoot"
+    } ,
     "Processors": {
         "@odata.id": "{rb}Systems/{id}/Processors"
     },
@@ -91,6 +97,10 @@ _TEMPLATE = \
     "EthernetInterfaces": {
         "@odata.id": "{rb}Systems/{id}/EthernetInterfaces"
     },
+    "Storage":{
+        "@odata.id":"{rb}Systems/{id}/Storage"
+    },
+    
     "SimpleStorage": {
         "@odata.id": "{rb}Systems/{id}/SimpleStorage"
     },
@@ -128,8 +138,12 @@ def get_ComputerSystem_instance(wildcards):
     c['@odata.context'] = c['@odata.context'].format(**wildcards)
     c['@odata.id'] = c['@odata.id'].format(**wildcards)
     c['Id'] = c['Id'].format(**wildcards)
-
+    c['UUID']=c['UUID'].format(**wildcards)
+    c['SerialNumber']=c['SerialNumber'].format(**wildcards)
+    c['Bios']['@odata.id'] = c['Bios']['@odata.id'].format(**wildcards)
+    c['SecureBoot']['@odata.id'] = c['SecureBoot']['@odata.id'].format(**wildcards)
     c['Processors']['@odata.id'] = c['Processors']['@odata.id'].format(**wildcards)
+    c['Storage']['@odata.id'] = c['Storage']['@odata.id'].format(**wildcards)
     c['Memory']['@odata.id'] = c['Memory']['@odata.id'].format(**wildcards)
     c['EthernetInterfaces']['@odata.id'] = c['EthernetInterfaces']['@odata.id'].format(**wildcards)
     c['SimpleStorage']['@odata.id'] = c['SimpleStorage']['@odata.id'].format(**wildcards)
